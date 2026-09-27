@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ospra film</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  :root {
+    --brand: #1447e6; --brand-300: #8ea7ff; --brand-200: #b9c8ff; --brand-700: #0b298f;
+    --ink: #111110; --t700: #403e38; --t500: #6d6a60; --t400: #8e8a7e; --t300: #b8b4a9;
+    --canvas: #F5F7FA; --card: #ffffff; --dark: #252525; --hair: rgba(0,0,0,0.08);
+    --serif: "Instrument Serif", Georgia, serif;
+    --sans: "Inter", system-ui, sans-serif;
+    --mono: "DM Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: var(--canvas); overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  #stage {
+    position: relative; width: 1920px; height: 1080px; flex: none; overflow: hidden;
+    background: var(--canvas); color: var(--ink); font-family: var(--sans); font-weight: 500;
+    -webkit-font-smoothing: antialiased; transform-origin: center center;
+  }
+  .grid-bg { position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(107,114,128,0.05) 1px, transparent 1px),
+                      linear-gradient(to right, rgba(107,114,128,0.05) 1px, transparent 1px);
+    background-size: 64px 64px; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .inner { position: absolute; inset: 0; padding: 150px 92px 120px; display: flex; flex-direction: column; gap: 34px; }
+  .eyebrow { font-family: var(--mono); font-size: 24px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--t400); }
+  .h2 { font-family: var(--serif); font-weight: 400; font-size: 96px; line-height: 1.02; letter-spacing: -0.025em; }
+  .h2 em, .h1 em { color: var(--brand); font-style: italic; }
+  .h1 { font-family: var(--serif); font-weight: 400; font-size: 120px; line-height: 1.0; letter-spacing: -0.028em; }
+  .body { font-size: 30px; line-height: 1.5; color: var(--t700); }
+  .card { background: var(--card); border: 1px solid var(--hair); border-radius: 24px; padding: 38px; display: flex; flex-direction: column; gap: 14px; }
+  .card.blue { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .card.dark { background: var(--dark); border-color: var(--dark); color: #fff; }
+  .cid { font-family: var(--mono); font-size: 22px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand); }
+  .card.blue .cid, .card.dark .cid { color: rgba(255,255,255,0.7); }
+  .ct { font-size: 38px; font-weight: 600; line-height: 1.22; letter-spacing: -0.01em; }
+  .cb { font-size: 29px; line-height: 1.45; color: var(--t500); }
+  .card.blue .cb { color: rgba(255,255,255,0.88); }
+  .card.dark .cb { color: rgba(255,255,255,0.8); }
+  .chip { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase;
+          color: var(--t500); background: #fff; border: 1px solid rgba(0,0,0,0.09); padding: 12px 26px; border-radius: 999px; white-space: nowrap; }
+  .chip.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .row { display: flex; gap: 24px; }
+  .abs { position: absolute; }
+  .icon { width: 76px; height: 76px; border-radius: 20px; background: rgba(20,71,230,0.08); display: flex; align-items: center; justify-content: center; }
+  .icon svg { width: 38px; height: 38px; fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .card.dark .icon { background: rgba(255,255,255,0.08); }
+  .card.dark .icon svg { stroke: var(--brand-300); }
+  .wordmark { font-family: var(--serif); font-size: 52px; line-height: 1; letter-spacing: -0.02em; }
+  .dot { color: var(--brand); }
+  .w { display: inline-block; white-space: pre; }
+  #chrome-mark { position: absolute; left: 92px; top: 56px; }
+  #chrome-tag { position: absolute; right: 92px; top: 68px; }
+  #progress { position: absolute; left: 0; bottom: 0; height: 5px; background: var(--brand); width: 0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="grid-bg"></div>
+
+  <!-- ───────────── 1. Intro ───────────── -->
+  <section class="scene" data-s="0" data-e="5.2">
+    <div class="inner" style="align-items:center; justify-content:center; text-align:center; gap:40px;">
+      <div class="h1" style="font-size:240px;" data-in="0.3" data-a="scale" data-d="1.2">Ospra<span class="dot" data-in="1.0" data-a="pop">.</span></div>
+      <div class="eyebrow" data-in="1.4" data-a="up">The traceable data layer for battery manufacturers</div>
+      <div class="h2" style="font-size:64px; max-width:1500px;" data-in="2.3" data-a="words">From the production floor to the field, <em>one identity per battery.</em></div>
+    </div>
+  </section>
+
+  <!-- ───────────── 2. Position ───────────── -->
+  <section class="scene" data-s="5.2" data-e="10.6">
+    <div class="inner">
+      <div class="eyebrow" data-in="5.5" data-a="up">01. The position</div>
+      <div class="h2" data-in="5.7" data-a="words">Battery manufacturers sit <em>in the middle.</em></div>
+      <div class="row" style="align-items:stretch; margin-top:40px; gap:0;">
+        <div class="card" style="flex:1;" data-in="6.5" data-a="up">
+          <div class="cid" style="color:var(--t400)">Upstream</div>
+          <div class="ct">Cell producers</div>
+          <div class="cb">Cells, chemistry, lot data.</div>
+        </div>
+        <svg width="120" height="60" viewBox="0 0 120 60" style="align-self:center; flex:none;"><path pathLength="1" data-in="6.9" data-a="draw" d="M14 30 H100 M88 18 L102 30 L88 42" fill="none" stroke="#b8b4a9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="card blue" style="flex:1.25;" data-in="7.2" data-a="scale">
+          <div class="cid">You are here</div>
+          <div class="ct">Battery manufacturers</div>
+          <div class="cb">Module and pack assembly, testing, shipping, warranty.</div>
+        </div>
+        <svg width="120" height="60" viewBox="0 0 120 60" style="align-self:center; flex:none;"><path pathLength="1" data-in="7.6" data-a="draw" d="M14 30 H100 M88 18 L102 30 L88 42" fill="none" stroke="#b8b4a9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="card" style="flex:1;" data-in="7.9" data-a="up">
+          <div class="cid" style="color:var(--t400)">Downstream</div>
+          <div class="ct">OEMs and end users</div>
+          <div class="cb">Vehicles, storage, fleets.</div>
+        </div>
+      </div>
+      <div class="body" style="margin-top:20px;" data-in="8.7" data-a="up">As demand for electric vehicles and clean energy grows, <b style="color:var(--ink); font-weight:600;">the pressure lands here first.</b></div>
+    </div>
+  </section>
+
+  <!-- ───────────── 3. On the floor ───────────── -->
+  <section class="scene" data-s="10.6" data-e="16.8">
+    <div class="inner">
+      <div class="eyebrow" data-in="10.9" data-a="up">02. On the floor</div>
+      <div class="h2" data-in="11.1" data-a="words">Fast lines, <em>scattered data.</em></div>
+      <div class="row" style="height:560px; gap:40px; margin-top:10px;">
+        <div style="flex:1; position:relative;">
+          <div class="chip abs" style="left:30px; top:40px;" data-in="11.8" data-a="pop">MES</div>
+          <div class="chip abs" style="left:330px; top:120px;" data-in="12.1" data-a="pop">SCADA</div>
+          <div class="chip abs" style="left:90px; top:220px;" data-in="12.4" data-a="pop">Test logs</div>
+          <div class="chip abs" style="left:450px; top:290px;" data-in="12.7" data-a="pop">Excel</div>
+          <div class="body abs" style="left:0; bottom:10px; width:760px;" data-in="15.2" data-a="up">Over time, yield drops. <b style="color:var(--ink); font-weight:600;">Scrap and rework costs rise silently.</b></div>
+        </div>
+        <div class="card dark" style="flex:1; gap:22px; padding:46px;" data-in="13.2" data-a="left">
+          <div class="cid">End-of-line test</div>
+          <div class="ct" style="font-size:38px;">A batch fails self-discharge testing.</div>
+          <div style="height:1px; background:rgba(255,255,255,0.12);"></div>
+          <div class="cb" style="font-size:30px;" data-in="13.8" data-a="up">Which station, lot or shift caused it?</div>
+          <div class="cb" style="font-size:30px;" data-in="14.3" data-a="up">Which other packs share that history?</div>
+          <div class="cb" style="font-size:30px;" data-in="14.8" data-a="up">Have any of them already shipped?</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 4. In the field ───────────── -->
+  <section class="scene" data-s="16.8" data-e="22">
+    <div class="inner">
+      <div class="eyebrow" data-in="17.1" data-a="up">03. In the field</div>
+      <div class="h2" data-in="17.3" data-a="words">Packs ship out. <em>Usage data rarely comes back.</em></div>
+      <div style="position:relative; flex:1;">
+        <div class="card abs" style="left:0; top:70px; width:420px;" data-in="18.0" data-a="up">
+          <div class="cid">Manufacturer</div><div class="ct">Your floor</div>
+        </div>
+        <div class="card abs" style="right:0; top:70px; width:420px;" data-in="18.3" data-a="up">
+          <div class="cid" style="color:var(--t400)">In the market</div><div class="ct">OEMs and fleets</div>
+        </div>
+        <svg class="abs" style="left:0; top:0;" width="1736" height="420" viewBox="0 0 1736 420">
+          <path pathLength="1" data-in="18.6" data-a="draw" data-d="1.2" d="M440 120 H1296" stroke="#1447e6" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path data-in="18.6" data-a="fade" d="M1280 106 L1298 120 L1280 134" stroke="#1447e6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path data-in="19.9" data-a="fade" d="M1296 250 C 1100 250, 1000 250, 860 250" stroke="#b8b4a9" stroke-width="3" fill="none" stroke-dasharray="10 12"/>
+        </svg>
+        <div class="eyebrow abs" style="left:740px; top:70px; color:var(--brand);" data-in="18.9" data-a="fade">Packs</div>
+        <div class="eyebrow abs" style="left:980px; top:270px;" data-in="20.1" data-a="fade">Usage data ?</div>
+        <div class="body abs" style="left:0; top:400px; width:1400px;" data-in="20.6" data-a="up">So R&amp;D designs the next cell on lab simulations, not on how packs are actually used.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 5. At return ───────────── -->
+  <section class="scene" data-s="22" data-e="27.2">
+    <div class="inner">
+      <div class="eyebrow" data-in="22.3" data-a="up">04. At return</div>
+      <div class="h2" data-in="22.5" data-a="words">When packs come back, <em>the history doesn't.</em></div>
+      <div class="row" style="margin-top:40px; gap:28px;">
+        <div class="card" style="flex:1; padding:48px; gap:20px;" data-in="23.3" data-a="up">
+          <div class="cid">A warranty dispute</div>
+          <div class="ct" style="font-size:44px;">Misuse, or a genuine defect?</div>
+          <div class="cb" style="font-size:30px;">Field history and build history live in different places. Investigations drag on.</div>
+        </div>
+        <div class="card blue" style="flex:1; padding:48px; gap:20px;" data-in="24.1" data-a="up">
+          <div class="cid">And a recall</div>
+          <div class="ct" style="font-size:44px;">Scoped on assumptions, not data.</div>
+          <div class="cb" style="font-size:30px;">Without traceability, good packs come back with the bad.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 6. The handoffs ───────────── -->
+  <section class="scene" data-s="27.2" data-e="32.6">
+    <div class="inner">
+      <div class="eyebrow" data-in="27.5" data-a="up">05. The handoffs</div>
+      <div class="h2" data-in="27.7" data-a="words">Four gaps, <em>one missing layer.</em></div>
+      <div class="row" style="margin-top:30px;">
+        <div class="card" style="flex:1;" data-in="28.3" data-a="up"><div class="cid">01 · Floor</div><div class="ct">MES and SCADA data stays on the floor</div></div>
+        <div class="card" style="flex:1;" data-in="28.6" data-a="up"><div class="cid">02 · Field</div><div class="ct">Telematics stays with the OEMs</div></div>
+        <div class="card" style="flex:1;" data-in="28.9" data-a="up"><div class="cid">03 · Returns</div><div class="ct">Returned packs have no queryable history</div></div>
+        <div class="card" style="flex:1;" data-in="29.2" data-a="up"><div class="cid">04 · Compliance</div><div class="ct">Compliance teams rebuild the same data</div></div>
+      </div>
+      <div style="position:relative; height:90px;">
+        <div class="abs" style="left:0; right:0; top:30px; height:6px; border-radius:6px; background:var(--brand);" data-in="30.0" data-a="grow" data-d="1.2"></div>
+        <div class="eyebrow abs" style="left:0; top:60px; color:var(--brand);" data-in="30.8" data-a="up">The unified data layer traceability demands</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 7. Ospra ───────────── -->
+  <section class="scene" data-s="32.6" data-e="38.4">
+    <div class="inner">
+      <div class="eyebrow" data-in="32.9" data-a="up">06. Ospra</div>
+      <div class="h2" data-in="33.1" data-a="words">One digital identity <em>per battery.</em></div>
+    </div>
+    <svg class="abs" style="left:0; top:0;" width="1920" height="1080" viewBox="0 0 1920 1080">
+      <g fill="none" stroke="#1447e6" stroke-width="3" stroke-linecap="round">
+        <path pathLength="1" data-in="34.3" data-a="draw" d="M540 500 C 720 500, 760 680, 880 680"/>
+        <path pathLength="1" data-in="34.4" data-a="draw" d="M540 620 C 720 620, 760 680, 880 680"/>
+        <path pathLength="1" data-in="34.5" data-a="draw" d="M540 740 C 720 740, 760 680, 880 680"/>
+        <path pathLength="1" data-in="34.6" data-a="draw" d="M540 860 C 720 860, 760 680, 880 680"/>
+        <path pathLength="1" data-in="35.4" data-a="draw" d="M1040 680 C 1160 680, 1200 500, 1380 500"/>
+        <path pathLength="1" data-in="35.5" data-a="draw" d="M1040 680 C 1160 680, 1200 620, 1380 620"/>
+        <path pathLength="1" data-in="35.6" data-a="draw" d="M1040 680 C 1160 680, 1200 740, 1380 740"/>
+        <path pathLength="1" data-in="35.7" data-a="draw" d="M1040 680 C 1160 680, 1200 860, 1380 860"/>
+      </g>
+      <circle cx="960" cy="680" r="80" fill="none" stroke="#1447e6" stroke-width="2" data-a="pulse" data-in="35.0"/>
+      <circle cx="960" cy="680" r="80" fill="#1447e6" data-in="34.9" data-a="pop"/>
+    </svg>
+    <div class="abs" style="left:880px; top:600px; width:160px; height:160px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; font-family:var(--mono); font-size:22px; letter-spacing:0.16em; text-align:center; line-height:1.3;" data-in="35.1" data-a="fade">BATTERY<br>ID</div>
+    <div class="abs" style="left:92px; top:470px; width:448px; display:flex; flex-direction:column; align-items:flex-end; gap:60px;">
+      <div class="chip" data-in="33.8" data-a="left">MES</div>
+      <div class="chip" data-in="33.9" data-a="left">SCADA</div>
+      <div class="chip" data-in="34.0" data-a="left">EOL testers</div>
+      <div class="chip" data-in="34.1" data-a="left">Spreadsheets</div>
+    </div>
+    <div class="abs" style="left:1380px; top:470px; width:448px; display:flex; flex-direction:column; align-items:flex-start; gap:60px;">
+      <div class="chip" data-in="36.0" data-a="up">Telematics</div>
+      <div class="chip" data-in="36.1" data-a="up">BMS data</div>
+      <div class="chip" data-in="36.2" data-a="up">Service events</div>
+      <div class="chip" data-in="36.3" data-a="up">Returns</div>
+    </div>
+    <div class="eyebrow abs" style="left:92px; top:400px; color:var(--brand);" data-in="33.8" data-a="fade">The floor</div>
+    <div class="eyebrow abs" style="left:1380px; top:400px; color:var(--brand);" data-in="36.0" data-a="fade">The field</div>
+  </section>
+
+  <!-- ───────────── 8. FloorSight ───────────── -->
+  <section class="scene" data-s="38.4" data-e="44">
+    <div class="inner">
+      <div class="eyebrow" data-in="38.7" data-a="up">07. FloorSight · Analyse</div>
+      <div class="h2" data-in="38.9" data-a="words">See where <em>yield goes.</em></div>
+      <div class="row" style="margin-top:40px;">
+        <div class="card" style="flex:1; gap:22px;" data-in="39.7" data-a="up">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16V5"/></svg></div>
+          <div class="ct">Locate yield loss</div><div class="cb">The station, shift or cell lot where yield drops.</div>
+        </div>
+        <div class="card" style="flex:1; gap:22px;" data-in="40.2" data-a="up">
+          <div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="ct">Trace failed tests quickly</div><div class="cb">From a failure to its root cause, and every pack that shares it.</div>
+        </div>
+        <div class="card" style="flex:1; gap:22px;" data-in="40.7" data-a="up">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+          <div class="ct">Stop bad packs at the gate</div><div class="cb">Flag a risky build history before it ships.</div>
+        </div>
+        <div class="card dark" style="flex:1; gap:22px;" data-in="41.2" data-a="up">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+          <div class="ct">Know the true cost of quality</div><div class="cb">Real scrap and rework costs, for fair pricing with suppliers and partners.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 9. TraceSight ───────────── -->
+  <section class="scene" data-s="44" data-e="49.8">
+    <div class="inner">
+      <div class="eyebrow" data-in="44.3" data-a="up">08. TraceSight · Trace</div>
+      <div class="h2" data-in="44.5" data-a="words">A record that <em>follows the pack.</em></div>
+      <div class="row" style="gap:40px; margin-top:30px;">
+        <div class="card dark" style="flex:1; gap:18px; padding:44px;" data-in="45.2" data-a="up">
+          <div class="cid">Battery ID · one record</div>
+          <div class="cid" style="color:var(--brand-300); margin-top:6px;" data-in="45.7" data-a="fade">Static</div>
+          <div class="cb" style="font-size:28px;" data-in="45.8" data-a="up">Cell supplier and lot · chemistry · build line and station · end-of-line results</div>
+          <div style="height:1px; background:rgba(255,255,255,0.12);" data-in="46.3" data-a="grow"></div>
+          <div class="cid" style="color:var(--brand-300);" data-in="46.4" data-a="fade">Dynamic</div>
+          <div class="cb" style="font-size:28px;" data-in="46.5" data-a="up">State of health · cycles · temperature exposure · service and return events</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:30px; justify-content:center;">
+          <div data-in="47.0" data-a="left">
+            <div class="cid">Warranty</div>
+            <div class="ct" style="margin-top:10px;">Misuse or a genuine defect, settled on evidence.</div>
+          </div>
+          <div data-in="47.6" data-a="left">
+            <div class="cid">Compliance</div>
+            <div class="ct" style="margin-top:10px;">The same identity, reported once.</div>
+          </div>
+          <div class="row" style="flex-wrap:wrap; gap:14px;">
+            <div class="chip on" data-in="48.1" data-a="pop">EU Battery Passport</div>
+            <div class="chip" data-in="48.3" data-a="pop">Battery Aadhaar</div>
+            <div class="chip" data-in="48.5" data-a="pop">EPR · CPCB</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 10. FieldSight ───────────── -->
+  <section class="scene" data-s="49.8" data-e="55.4">
+    <div class="inner">
+      <div class="eyebrow" data-in="50.1" data-a="up">09. FieldSight · Learn</div>
+      <div class="h2" data-in="50.3" data-a="words">Learn from <em>real usage.</em></div>
+      <div class="row" style="flex:1; gap:40px; margin-top:10px;">
+        <div class="card" style="flex:1.3; padding:36px;" data-in="50.9" data-a="up">
+          <div class="row" style="justify-content:space-between;"><div class="cid" style="color:var(--t400)">Averaged SOH</div><div class="cid" style="color:var(--t400)">Illustrative</div></div>
+          <svg width="100%" height="380" viewBox="0 0 900 380" preserveAspectRatio="none">
+            <line x1="30" y1="20" x2="30" y2="350" stroke="#d8d6cf" stroke-width="2"/>
+            <line x1="30" y1="350" x2="890" y2="350" stroke="#d8d6cf" stroke-width="2"/>
+            <g fill="none" stroke="#c8c5be" stroke-width="2.5">
+              <path pathLength="1" data-in="51.3" data-a="draw" data-d="1.4" d="M30 40 C 270 60, 500 110, 890 190"/>
+              <path pathLength="1" data-in="51.45" data-a="draw" data-d="1.4" d="M30 40 C 250 80, 480 160, 890 260"/>
+              <path pathLength="1" data-in="51.6" data-a="draw" data-d="1.4" d="M30 40 C 300 55, 560 95, 890 160"/>
+              <path pathLength="1" data-in="51.75" data-a="draw" data-d="1.4" d="M30 40 C 230 95, 450 180, 890 300"/>
+              <path pathLength="1" data-in="51.9" data-a="draw" data-d="1.4" d="M30 40 C 280 70, 520 130, 890 220"/>
+            </g>
+            <path pathLength="1" data-in="52.5" data-a="draw" data-d="1.5" d="M30 40 C 265 72, 500 128, 890 216" fill="none" stroke="#1447e6" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <div class="row" style="justify-content:space-between;"><div class="cid" style="color:var(--t400)">Time in service</div><div class="cid" data-in="53.6" data-a="fade">Fleet average</div></div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:34px; justify-content:center;">
+          <div data-in="51.6" data-a="left"><div class="cid">For R&amp;D</div><div class="ct" style="margin-top:10px;">Design new cells and packs on real-world usage across regions and demographics.</div></div>
+          <div data-in="52.6" data-a="left"><div class="cid">For commercial</div><div class="ct" style="margin-top:10px;">Compare SOH across thousands of fleets, packs and suppliers. Quote fair prices on evidence.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 11. Sequence (blue) ───────────── -->
+  <section class="scene" data-s="55.4" data-e="60.8" style="background:var(--brand); color:#fff;">
+    <div class="inner" style="justify-content:center; gap:26px;">
+      <div class="eyebrow" style="color:rgba(255,255,255,0.7);" data-in="55.7" data-a="up">10. The sequence</div>
+      <div class="h2" style="font-size:108px;" data-in="56.0" data-a="up">Analyse your floor today.</div>
+      <div class="h2" style="font-size:108px;" data-in="56.9" data-a="up">Trace it tomorrow.</div>
+      <div class="h2" style="font-size:108px; color:var(--brand-200); font-style:italic;" data-in="57.8" data-a="up">Learn from its usage the day after.</div>
+      <div class="row" style="margin-top:50px; gap:28px;">
+        <div class="chip" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.25);" data-in="58.8" data-a="pop">Today · FloorSight</div>
+        <div class="chip" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.25);" data-in="59.0" data-a="pop">Tomorrow · TraceSight</div>
+        <div class="chip" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.25);" data-in="59.2" data-a="pop">Day after · FieldSight</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── 12. End card ───────────── -->
+  <section class="scene" data-s="60.8" data-e="66">
+    <div class="inner" style="align-items:center; justify-content:center; text-align:center; gap:40px;">
+      <div class="h1" style="font-size:200px;" data-in="61.1" data-a="scale" data-d="1.1">Ospra<span class="dot">.</span></div>
+      <div class="h2" style="font-size:64px;" data-in="61.7" data-a="words">Start with <em>your floor.</em></div>
+      <div class="row" style="align-items:center; gap:22px; font-family:var(--mono); font-size:30px; color:var(--t500);" data-in="62.4" data-a="up">
+        <span>ospra.co</span><span style="width:6px;height:6px;border-radius:50%;background:var(--brand);"></span>
+        <span>sales@ospra.co</span><span style="width:6px;height:6px;border-radius:50%;background:var(--brand);"></span>
+        <span>+91 81251 65218</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- persistent chrome -->
+  <div id="chrome-mark" class="wordmark" data-chrome>Ospra<span class="dot">.</span></div>
+  <div id="progress"></div>
+</div>
+
+<script>
+(() => {
+  const TOTAL = 66;
+  const stage = document.getElementById('stage');
+  const scenes = [...document.querySelectorAll('.scene')].map(el => ({ el, s: +el.dataset.s, e: +el.dataset.e }));
+  const mark = document.getElementById('chrome-mark');
+  const progress = document.getElementById('progress');
+
+  // Split word-reveal headings into per-word spans, keeping inline <em>.
+  document.querySelectorAll('[data-a="words"]').forEach(el => {
+    const base = +el.dataset.in; let i = 0;
+    const walk = node => {
+      [...node.childNodes].forEach(n => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const s = document.createElement('span');
+            s.className = 'w'; s.textContent = part;
+            s.dataset.in = (base + i++ * 0.08).toFixed(2); s.dataset.a = 'rise';
+            frag.appendChild(s);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el);
+    delete el.dataset.in; el.removeAttribute('data-a');
+  });
+
+  const anims = [...document.querySelectorAll('[data-in]')].map(el => ({
+    el, t0: +el.dataset.in, d: +(el.dataset.d || (el.dataset.a === 'draw' ? 0.9 : 0.8)), a: el.dataset.a || 'up'
+  }));
+  anims.forEach(({ el, a }) => { if (a === 'grow') el.style.transformOrigin = 'left center'; if (a === 'pulse') el.style.transformOrigin = '960px 680px'; });
+
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const ease = p => 1 - Math.pow(1 - p, 4);            // close to the Ospra ease-out curve
+  const back = p => { const c = 1.5; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  function render(t) {
+    for (const sc of scenes) {
+      const on = t >= sc.s - 0.01 && t <= sc.e;
+      const o = on ? Math.min(clamp((t - sc.s) / 0.5), clamp((sc.e - t) / 0.45)) : 0;
+      sc.el.style.opacity = o;
+      sc.el.style.visibility = o > 0 ? 'visible' : 'hidden';
+      // slow drift keeps every frame alive
+      const k = clamp((t - sc.s) / (sc.e - sc.s));
+      sc.el.style.transform = `scale(${1 + 0.018 * k})`;
+    }
+    for (const { el, t0, d, a } of anims) {
+      const raw = clamp((t - t0) / d), p = ease(raw);
+      switch (a) {
+        case 'up':    el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * 36}px)`; break;
+        case 'rise':  el.style.opacity = p; el.style.transform = `translateY(${(1 - p) * 0.35}em)`; break;
+        case 'left':  el.style.opacity = p; el.style.transform = `translateX(${(1 - p) * -60}px)`; break;
+        case 'fade':  el.style.opacity = p; break;
+        case 'scale': el.style.opacity = p; el.style.transform = `scale(${0.9 + 0.1 * p})`; break;
+        case 'pop':   el.style.opacity = clamp(raw * 2); el.style.transform = `scale(${raw <= 0 ? 0.6 : 0.6 + 0.4 * back(raw)})`; break;
+        case 'grow':  el.style.transform = `scaleX(${p})`; el.style.opacity = raw > 0 ? 1 : 0; break;
+        case 'draw':  el.style.strokeDasharray = '1 1'; el.style.strokeDashoffset = 1 - p; el.style.opacity = raw > 0 ? 1 : 0; break;
+        case 'pulse': {
+          if (t < t0) { el.style.opacity = 0; break; }
+          const q = ((t - t0) % 1.6) / 1.6;
+          el.style.opacity = 0.6 * (1 - q); el.style.transform = `scale(${1 + 0.6 * q})`; break;
+        }
+      }
+    }
+    // small wordmark only between intro and end card
+    const m = Math.min(clamp((t - 5.4) / 0.5), clamp((60.6 - t) / 0.4));
+    mark.style.opacity = m;
+    const onBlue = t > 55.2 && t < 61;
+    mark.style.color = onBlue ? '#fff' : '';
+    mark.firstElementChild.style.color = onBlue ? '#b9c8ff' : '';
+    progress.style.width = `${(t / TOTAL) * 100}%`;
+  }
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `scale(${s})`;
+  }
+
+  window.OSPRA_FILM = { TOTAL, render };
+  const capture = new URLSearchParams(location.search).has('capture');
+  render(0);
+  if (!capture) {
+    fit(); window.addEventListener('resize', fit);
+    document.fonts.ready.then(() => {
+      const start = performance.now();
+      const loop = now => { render(((now - start) / 1000) % TOTAL); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    });
+  }
+})();
+</script>
+</body>
+</html>
