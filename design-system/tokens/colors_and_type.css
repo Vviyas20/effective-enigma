@@ -1,0 +1,276 @@
+/*
+ * Ospra — colour, type, semantic tokens.
+ * Import:  <link rel="stylesheet" href="colors_and_type.css">
+ *
+ * Mirrors the Tailwind v4 @theme used inside `@ospra/design-system` and
+ * `landing/styles/globals.css`. Use the `--color-*` tokens directly, or
+ * the semantic `--fg-*`, `--bg-*`, `--border-*` wrappers.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Mona+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  /* ─────────────────────────────────────────────  BRAND  */
+  /* Single signal colour. The dot in the logo, the italic accent word,
+     the live ping, focus rings, key chart strokes. */
+  --color-brand-50:  #eef2ff;
+  --color-brand-100: #dbe4ff;
+  --color-brand-200: #b9c8ff;
+  --color-brand-300: #8ea7ff;   /* italic accent on dark */
+  --color-brand-400: #5a7dff;   /* link hover, icon accents */
+  --color-brand-500: #1447e6;   /* PRIMARY — dot, focus, ping */
+  --color-brand-600: #0e35b8;
+  --color-brand-700: #0b298f;   /* radial wallpaper glow */
+  --color-brand-800: #091f6b;
+  --color-brand-900: #061548;
+  --color-brand-950: #030a24;
+
+  --color-brand: var(--color-brand-500);
+  --color-brand-rgb: 20 71 230;
+
+  /* ─────────────────────────────────────────────  TAUPE (neutral)  */
+  /* Warm, low‑chroma neutral scale. Replaces "gray".               */
+  --color-taupe-50:  #f7f6f3;
+  --color-taupe-100: #ecebe6;
+  --color-taupe-200: #d8d6cf;
+  --color-taupe-300: #b8b4a9;
+  --color-taupe-400: #8e8a7e;
+  --color-taupe-500: #6d6a60;
+  --color-taupe-600: #54524a;
+  --color-taupe-700: #403e38;
+  --color-taupe-800: #2c2b27;
+  --color-taupe-900: #1b1a17;
+  --color-taupe-950: #0d0d0b;
+
+  /* ─────────────────────────────────────────────  CANVAS  */
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  /* On-dark opacities used everywhere (express as rgba helpers) */
+  --on-dark-2:  rgb(255 255 255 / 0.02);  /* card surface (subtle)  */
+  --on-dark-5:  rgb(255 255 255 / 0.05);  /* card surface, glass    */
+  --on-dark-10: rgb(255 255 255 / 0.10);  /* border, button hover   */
+  --on-dark-40: rgb(255 255 255 / 0.40);  /* body copy (muted)      */
+  --on-dark-70: rgb(255 255 255 / 0.70);  /* body copy (emphasised) */
+
+  /* ─────────────────────────────────────────────  SEMANTIC (dark)  */
+  --bg:            var(--color-black);
+  --bg-elevated:   var(--on-dark-5);     /* glass card */
+  --bg-elevated-hi:var(--on-dark-10);
+  --bg-module:     rgb(10 13 20 / 0.4);  /* #0A0D14 / 40% */
+
+  --fg:            var(--color-white);
+  --fg-muted:      var(--on-dark-70);
+  --fg-subtle:     var(--on-dark-40);
+  --fg-brand:      var(--color-brand-400);
+  --fg-accent:     var(--color-brand-300); /* italic accent word */
+
+  --border:        var(--on-dark-10);
+  --border-subtle: var(--on-dark-5);
+  --border-brand:  rgb(20 71 230 / 0.5);
+
+  --ring:          rgb(20 71 230 / 0.1);
+  --ring-strong:   rgb(20 71 230 / 0.4);
+
+  /* Halo / glow used as 'shadow' */
+  --glow-brand:    rgb(20 71 230 / 0.2);
+  --glow-brand-soft: rgb(20 71 230 / 0.1);
+
+  /* ─────────────────────────────────────────────  TYPE FAMILIES  */
+  --font-serif:   "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans:    "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-display: "Mona Sans", "Inter", system-ui, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Mona Sans variable font: extended axis */
+  --font-display-variation: "wdth" 112.5;
+
+  /* ─────────────────────────────────────────────  TYPE SCALE  */
+  /* Marketing surface is generous; UI body is 16 px.            */
+  --text-xs:    12px;
+  --text-sm:    14px;
+  --text-base:  16px;
+  --text-lg:    18px;
+  --text-xl:    20px;
+  --text-2xl:   24px;
+  --text-3xl:   30px;
+  --text-4xl:   36px;
+  --text-5xl:   48px;
+  --text-6xl:   60px;
+  --text-7xl:   72px;
+  --text-8xl:   96px;
+  --text-hero:  124px;     /* hero h1 on lg+ */
+
+  /* Tracking */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.05em;
+  --tracking-widest:   0.2em;
+  --tracking-eyebrow:  0.25em;
+
+  /* Line heights */
+  --leading-tight:  1.1;
+  --leading-snug:   1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
+  --leading-loose:  1.8;
+
+  /* Weights */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ─────────────────────────────────────────────  RADII  */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;        /* value cards */
+  --radius-3xl:  32px;
+  --radius-4xl:  40px;        /* module grid, CTA */
+  --radius-full: 9999px;      /* buttons, nav, pills */
+
+  /* ─────────────────────────────────────────────  SPACING  */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* ─────────────────────────────────────────────  MOTION  */
+  --ease-ospra: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:   200ms;
+  --dur-base:   300ms;
+  --dur-slow:   700ms;
+  --dur-hero:   1000ms;
+
+  /* ─────────────────────────────────────────────  GRID PATTERN  */
+  --grid-line: rgb(107 114 128 / 0.04);
+  --grid-bg:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
+  --grid-size: 64px 64px;
+}
+
+/* ────────────────────────────────────────────  SEMANTIC HELPERS  */
+/* These are NOT @apply-d into Tailwind classes — they exist so that
+ * static HTML cards inside preview/ can style themselves with one
+ * source of truth.  Use them as you would normal CSS. */
+
+body, .ospra-canvas {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Display headlines — serif w/ italic accent baked in */
+.h1, h1.ospra {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: clamp(48px, 8vw, var(--text-hero));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.h2, h2.ospra {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.h3, h3.ospra {
+  font-family: var(--font-serif);
+  font-weight: var(--weight-regular);
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+}
+em.accent, .accent {
+  color: var(--fg-accent);
+  font-style: italic;
+}
+
+/* Body */
+p.ospra, .body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-subtle);
+}
+.body--lg {
+  font-size: var(--text-xl);
+  color: var(--fg-muted);
+  line-height: var(--leading-loose);
+}
+
+/* Mono eyebrow */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--on-dark-70);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow::before { content: "["; opacity: 0.75; }
+.eyebrow::after  { content: "]"; opacity: 0.75; }
+
+/* Mono ID / part number */
+.id-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  color: var(--fg-brand);
+  text-transform: uppercase;
+}
+
+/* Pill button (primary white-on-dark) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  color: var(--color-black);
+  border: 1px solid transparent;
+  transition: background var(--dur-base) var(--ease-ospra);
+}
+.btn:hover { background: rgb(255 255 255 / 0.9); }
+.btn--ghost {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border);
+}
+.btn--ghost:hover { background: var(--on-dark-10); }
+
+/* Glass card */
+.glass {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-2xl);
+}

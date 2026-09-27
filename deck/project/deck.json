@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-09-27T16:45:00Z" },
+  "title": "Ospra — the traceable data layer",
+  "order": ["cover", "position", "floor", "field", "returns", "handoffs", "ospra", "floorsight", "tracesight", "fieldsight", "sequence", "close"],
+  "sections": {
+    "s1": { "description": "Who battery manufacturers are and why the surge in demand strains them", "start": "cover" },
+    "s2": { "description": "Where the data breaks: on the floor, in the field, at return", "start": "floor" },
+    "s3": { "description": "Ospra's unified data layer and its three modules", "start": "ospra" },
+    "s4": { "description": "The sequence and how to start", "start": "sequence" }
+  },
+  "faces": {
+    "instrument-serif": { "family": "Instrument Serif", "href": "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" },
+    "inter": { "family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" },
+    "dm-mono": { "family": "DM Mono", "href": "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" }
+  },
+  "designSystems": []
+}
