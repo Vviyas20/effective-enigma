@@ -1,1 +1,4 @@
 video/dist/
+
+# Outreach CRM: never commit the real contact export (prospect PII)
+outreach-crm/data/sheet.json

@@ -1,0 +1,119 @@
+{
+ "generated": "2026-11-25",
+ "source": "SYNTHETIC SAMPLE: fictional people and companies, not real data",
+ "contacts": [
+  {
+   "id": "alex.rivera@northwind.example",
+   "name": "Alex Rivera",
+   "account": "Northwind Chemicals",
+   "title": "VP Corporate Strategy",
+   "email": "alex.rivera@northwind.example",
+   "location": "Houston, Texas, United States",
+   "phone": "+1 555 0100",
+   "stage": "Meeting conducted",
+   "sheetTab": "Northwind Chemicals",
+   "sheetMeeting": "Yes",
+   "emails": 3,
+   "firstEmail": "2026-08-03",
+   "lastEmail": "2026-08-20"
+  },
+  {
+   "id": "priya.shah@northwind.example",
+   "name": "Priya Shah",
+   "account": "Northwind Chemicals",
+   "title": "Director, Market Intelligence",
+   "email": "priya.shah@northwind.example",
+   "location": "Mumbai, India",
+   "phone": "+91 55500 10001",
+   "stage": "Emailed",
+   "sheetTab": "Northwind Chemicals",
+   "sheetNext": "2026-12-02",
+   "sheetStatus": "Follow up after Q4"
+  },
+  {
+   "id": "jordan.lee@acmeglass.example",
+   "name": "Jordan Lee",
+   "account": "Acme Glass",
+   "title": "Head of Business Development",
+   "email": "jordan.lee@acmeglass.example",
+   "location": "Painted Post, New York, United States",
+   "phone": "+1 555 0101",
+   "stage": "Contacted",
+   "sheetTab": "Acme Glass",
+   "tz": "America/New_York"
+  },
+  {
+   "id": "maria.costa@acmeglass.example",
+   "name": "Maria Costa",
+   "account": "Acme Glass",
+   "title": "Commercial Manager",
+   "email": "maria.costa@acmeglass.example",
+   "location": "Sao Paulo, Brazil",
+   "stage": "Nurture",
+   "sheetTab": "Acme Glass",
+   "prev": "Yes"
+  },
+  {
+   "id": "tom.becker@acmeglass.example",
+   "name": "Tom Becker",
+   "account": "Acme Glass",
+   "title": "Procurement Lead",
+   "email": "tom.becker@acmeglass.example",
+   "location": "Berlin, Germany",
+   "stage": "Bounced",
+   "sheetTab": "Acme Glass",
+   "note": "Bounce: needs a new email"
+  },
+  {
+   "id": "sam.okafor@globex.example",
+   "name": "Sam Okafor",
+   "account": "Globex Materials",
+   "title": "Chief Technology Officer",
+   "email": "sam.okafor@globex.example",
+   "location": "London, United Kingdom",
+   "phone": "+44 5550 100200",
+   "stage": "Do not contact",
+   "sheetTab": "Globex Materials",
+   "dnc": true,
+   "dncReason": "Asked to be removed"
+  },
+  {
+   "id": "kenji.sato@globex.example",
+   "name": "Kenji Sato",
+   "account": "Globex Materials",
+   "title": "Strategy Manager",
+   "email": "kenji.sato@globex.example",
+   "location": "Tokyo, Japan",
+   "stage": "Not interested",
+   "sheetTab": "Globex Materials",
+   "sheetStatus": "Not now, budget frozen"
+  },
+  {
+   "id": "dana-white",
+   "name": "Dana White",
+   "account": "Globex Materials",
+   "title": "Senior Director, Growth",
+   "location": "Seattle, Washington",
+   "phone": "+1 555 0102",
+   "stage": "Contacted",
+   "sheetTab": "Contacts List",
+   "linkedin": "https://www.linkedin.com/in/example-dana-white",
+   "callOutcome": "Voicemail"
+  }
+ ],
+ "meetings": [
+  {
+   "name": "Alex Rivera",
+   "account": "Northwind Chemicals",
+   "location": "Houston, Texas, United States",
+   "role": "VP Corporate Strategy",
+   "month": "2026-08",
+   "attendees": "Alex Rivera; Sales rep"
+  }
+ ],
+ "domains": {
+  "northwind.example": "Northwind Chemicals",
+  "acmeglass.example": "Acme Glass",
+  "globex.example": "Globex Materials"
+ }
+}

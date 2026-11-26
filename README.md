@@ -7,6 +7,8 @@ battery that connects the production floor to the battery's field lifecycle.
   specimen). Base for all decks and social posts.
 - `deck/project/` — source for the pitch deck (`deck.json` index plus one HTML
   file per slide), built on the design system.
+- `outreach-crm/` — source of the live Outreach CRM (single-file app). See
+  `outreach-crm/README.md`. Real contact data is never committed.
 - `video/` — the Ospra brand film (about 66 s, 1920×1080, silent, loops).
   - `ospra-film.html` is the source animation. Opened directly, it plays live
     and loops, scaled to the window. Fonts are self-hosted in `video/fonts/`.
