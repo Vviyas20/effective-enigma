@@ -1,6 +1,6 @@
 # Outreach CRM V1 (copy)
 
-A copy of the Outreach CRM V1 repository, kept here for reference. Make changes in Outreach CRM V1 first.
+A copy of the Outreach CRM repository (version 1), https://github.com/Vviyas20/Outreach-CRM, kept here for reference. Make changes there first.
 
 Code for the outreach CRM: the live app, its sandbox, and the design work for its new look.
 
