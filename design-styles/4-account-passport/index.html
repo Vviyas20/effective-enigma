@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account passport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Concept 4. Account passport.
+   Ospra sells one digital identity per battery; the CRM gives one identity
+   per account. Static facts on the left, live engagement on the right,
+   exactly like TraceSight's static and dynamic record. The stakeholder map
+   is the bold element: who we have reached, and the seats still empty. */
+:root{
+  --brand:#1447e6; --brand-600:#0e35b8; --brand-50:#eef2ff; --brand-100:#dbe4ff; --brand-300:#8ea7ff;
+  --ink:#111110; --t700:#403e38; --t500:#6d6a60; --t400:#8e8a7e; --t300:#b8b4a9; --t200:#d8d6cf; --t100:#ecebe6; --t50:#f7f6f3;
+  --canvas:#f5f7fa; --card:#fff; --dark:#252525; --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
+  --serif:"Instrument Serif",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"DM Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink);font:500 14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+svg{display:block}
+
+.top{display:flex;align-items:center;gap:28px;height:60px;padding:0 24px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{font:400 26px/1 var(--serif);letter-spacing:-.02em}.logo b{color:var(--brand);font-weight:400}
+.nav{display:flex;gap:4px}
+.nav a{padding:6px 12px;border-radius:999px;color:var(--t500);text-decoration:none}
+.nav a[aria-current]{background:var(--t100);color:var(--ink)}
+.me{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+
+.shell{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:calc(100vh - 60px)}
+.rail{border-right:1px solid var(--line);background:var(--card);padding:16px 10px;position:sticky;top:0;align-self:start;height:100vh;overflow:auto}
+.rail input{width:100%;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:var(--t50);outline:0}
+.rail input:focus{border-color:var(--brand);background:#fff}
+.acct{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px;border-radius:10px}
+.acct:hover{background:var(--t50)}
+.acct[aria-current="true"]{background:var(--brand-50)}
+.acct .nm{font-weight:600;font-size:13.5px;line-height:1.3}
+.acct .ct{font-size:12px;color:var(--t500)}
+.acct .seats{margin-left:auto;display:flex;gap:3px}
+.acct .seats i{width:6px;height:6px;border-radius:50%;border:1.5px solid var(--t300)}
+.acct .seats i.on{background:var(--brand);border-color:var(--brand)}
+.mob-pick{display:none}
+
+.main{padding:28px 32px 48px;max-width:1240px}
+.id-row{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.code{font:400 13px var(--mono);color:var(--t500)}
+.id-row h1{font:400 64px/1 var(--serif);letter-spacing:-.025em;margin-top:6px}
+.id-row .desc{color:var(--t700);margin-top:10px;max-width:60ch}
+.id-row .acts{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;background:var(--t100);font-size:13px;color:var(--t700)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;font-weight:600;font-size:13.5px;border:1px solid var(--line-2);background:#fff}
+.btn:hover{background:var(--t50)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.primary:hover{background:var(--brand-600)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 24px}
+.box h2{font-size:13px;font-weight:600;color:var(--t500);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.box h2 .r{margin-left:auto;font-weight:500;color:var(--t400)}
+dl.rec{display:grid;grid-template-columns:140px 1fr;gap:10px 16px}
+dl.rec dt{color:var(--t400)}
+dl.rec dd{color:var(--ink)}
+.dark{background:var(--dark);border-color:transparent;color:rgba(255,255,255,.82)}
+.dark h2{color:rgba(255,255,255,.6)}
+.dark h2 .r{color:rgba(255,255,255,.4)}
+.meters{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.meter .v{font:400 44px/1 var(--serif);color:#fff;letter-spacing:-.02em}
+.meter .l{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:6px}
+.dark .last{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:13.5px}
+.dark .last b{color:var(--brand-300);font-weight:600}
+
+/* stakeholder map */
+.map-box{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+.map-box svg{width:100%;height:auto}
+.node text{font:500 12px var(--sans);fill:var(--t700)}
+.node .nm{font-weight:600;fill:var(--ink)}
+.node circle{transition:r .2s}
+.node{cursor:pointer}
+.node:hover circle.ring,.node.on circle.ring{stroke:var(--brand);stroke-width:2}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--t500);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%}
+.people{list-style:none;display:flex;flex-direction:column}
+.people li{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.people li:last-child{border:0}
+.people .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;background:var(--t100);color:var(--t700)}
+.people .av.champion{background:var(--brand);color:#fff}
+.people .av.gap{background:none;border:1.5px dashed var(--t300);color:var(--t400)}
+.people .n{font-weight:600;font-size:13.5px}
+.people .r{font-size:12.5px;color:var(--t500)}
+.people .tag{font-size:12px;color:var(--t500)}
+.people li.gap .n{color:var(--t500);font-weight:500}
+.people li.on{background:linear-gradient(90deg,var(--brand-50),transparent)}
+.find{font-size:12.5px;font-weight:600;color:var(--brand);padding:4px 10px;border-radius:999px;border:1px solid var(--brand-100)}
+.find:hover{background:var(--brand-50)}
+
+/* timeline and next touch */
+.tl{list-style:none;position:relative}
+.tl li{display:grid;grid-template-columns:72px 16px 1fr;gap:12px;padding-bottom:16px;position:relative}
+.tl time{font:400 12px var(--mono);color:var(--t400);padding-top:2px;text-align:right}
+.tl .d{width:10px;height:10px;border-radius:50%;background:var(--t300);margin:6px 3px 0}
+.tl li.in .d{background:var(--brand)}
+.tl li::after{content:"";position:absolute;left:91px;top:20px;bottom:0;width:1px;background:var(--t200)}
+.tl li:last-child::after{display:none}
+.tl .w{font-weight:600;font-size:13.5px}
+.tl .x{font-size:13px;color:var(--t500)}
+.next{background:var(--brand);border-color:var(--brand);color:#fff}
+.next h2{color:rgba(255,255,255,.75)}
+.next .why{font:400 24px/1.25 var(--serif);letter-spacing:-.01em;color:#fff;margin-bottom:14px;max-width:34ch}
+.next .msg{background:rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.92);white-space:pre-line}
+.next .row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.next .btn{background:#fff;color:var(--brand);border-color:#fff}
+.next .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+
+.swap{animation:swap .35s var(--ease)}
+@keyframes swap{from{opacity:.3}}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:1fr}
+  .rail{display:none}
+  .mob-pick{display:block;margin-bottom:16px}
+  .mob-pick select{width:100%;height:40px;border:1px solid var(--line-2);border-radius:10px;padding:0 12px;background:#fff}
+  .map-box{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .top{padding:0 16px;gap:12px}.nav{display:none}
+  .main{padding:18px 16px 40px}
+  .id-row h1{font-size:44px}
+  .id-row .acts{margin-left:0}
+  .grid{grid-template-columns:1fr}
+  dl.rec{grid-template-columns:110px 1fr}
+  .meter .v{font-size:36px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">Ospra<b>.</b></div>
+  <nav class="nav" aria-label="Main"><a href="#">Today</a><a href="#" aria-current="page">Accounts</a><a href="#">Sequences</a><a href="#">Reports</a></nav>
+  <div class="me">AV</div>
+</header>
+<div class="shell">
+  <nav class="rail" aria-label="Accounts">
+    <input id="filter" placeholder="Filter accounts" aria-label="Filter accounts">
+    <div id="list"></div>
+  </nav>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+const A=[
+ {id:'kaveri',code:'IN-TN-HOS-0142',co:'Kaveri Energy Systems',city:'Hosur, Tamil Nadu',seg:'Three-wheeler and ESS packs',vol:'9,000 packs a month',lines:'3 pack lines, 1 module line',cells:'LFP prismatic, imported',stack:'Tally ERP, paper travellers on the line',compliance:'EPR registered, Battery Aadhaar pending',stage:'Replied',owner:'Aditi V.',
+  opens:14,replies:2,days:19,last:'Arjun replied yesterday asking for the warranty case study.',
+  people:[
+   {n:'Arjun Iyer',r:'VP Operations',k:'champion',note:'Replied twice'},
+   {n:'Lakshmi Pillai',r:'Head of Quality',k:'user',note:'Opened 4 emails'},
+   {n:'Suresh Kannan',r:'CFO',k:'buyer',note:'Signs anything above 25 lakh'},
+   {n:'',r:'Head of Warranty',k:'gap'},
+   {n:'',r:'IT lead',k:'gap'}],
+  tl:[['Nov 25','in','Arjun replied','"Send the warranty case study and we can talk next week."'],['Nov 21','out','Follow-up email','Opened 6 times, forwarded internally'],['Nov 18','in','Lakshmi viewed the deck','Spent 4 minutes on TraceSight'],['Nov 12','out','Intro email','Opened 4 times'],['Nov 08','out','Met at the India Battery Show','Booth conversation about field returns']],
+  next:{why:'Arjun forwarded your email to finance. Send the case study and name the CFO\'s question before it is asked.',msg:'Hi Arjun,\n\nAttached is the warranty case study. A pack maker at your volume cut disputed claims by a third once build and field data sat on one record.\n\nIf Suresh asks about cost, the pilot runs on one line for 60 days.\n\nThursday or Friday for 30 minutes?'}},
+ {id:'veltra',code:'IN-MH-PNQ-0087',co:'Veltra Cells',city:'Pune, Maharashtra',seg:'Two-wheeler packs',vol:'18,000 packs a month',lines:'5 pack lines',cells:'NMC cylindrical 21700',stack:'SAP B1, in-house MES',compliance:'EPR registered',stage:'Following up',owner:'Aditi V.',
+  opens:9,replies:0,days:12,last:'Ritika opened your first email three times since Friday.',
+  people:[{n:'Ritika Menon',r:'Head of Quality',k:'champion',note:'3 opens, no reply'},{n:'',r:'Plant Head',k:'gap'},{n:'',r:'CFO',k:'gap'},{n:'Manish Gokhale',r:'Line Engineer',k:'user',note:'Connected on LinkedIn'}],
+  tl:[['Nov 24','in','Ritika opened again','Third open, from a mobile device'],['Nov 21','out','Follow-up email','No reply'],['Nov 14','out','Intro email','Opened 3 times']],
+  next:{why:'Three opens and no reply usually means interest without a reason to answer. Give her one question she can answer in a line.',msg:'Hi Ritika,\n\nOne quick question: when a pack comes back under warranty today, how long does it take your team to find the cell lot and the line it was built on?\n\nIf it is more than a day, Ospra can help.'}},
+ {id:'northgrid',code:'IN-HR-GGN-0031',co:'Northgrid EV',city:'Gurugram, Haryana',seg:'In-house two-wheeler packs',vol:'12,000 packs a month',lines:'2 pack lines',cells:'NMC pouch',stack:'Oracle NetSuite',compliance:'EPR registered, exporting to EU in 2027',stage:'Meeting booked',owner:'Aditi V.',
+  opens:21,replies:4,days:26,last:'Demo booked for Thursday at 11:00 with two line supervisors.',
+  people:[{n:'Kabir Malhotra',r:'Director, Manufacturing',k:'champion',note:'Booked the demo'},{n:'Priya Sethi',r:'VP Engineering',k:'buyer',note:'Accepted the invite'},{n:'Dev Arora',r:'Compliance Manager',k:'blocker',note:'Prefers the current vendor'},{n:'',r:'Procurement',k:'gap'}],
+  tl:[['Nov 24','in','Demo booked','Thursday 11:00'],['Nov 20','in','Kabir replied','Asked about EU Battery Passport'],['Nov 15','out','Intro email','Opened 8 times']],
+  next:{why:'Dev Arora prefers the current vendor. Open the demo with the EU passport export, the gap their vendor does not cover.',msg:'Prep for Thursday:\n\n1. Start with the EU Battery Passport export for 2027.\n2. Show cell lot to field return in one click.\n3. Close on a 60 day pilot on line 2.'}},
+ {id:'halden',code:'IN-TS-HYD-0115',co:'Halden Energy',city:'Hyderabad, Telangana',seg:'Cell assembly',vol:'11,000 cells a day',lines:'1 cell line',cells:'LFP cylindrical, in-house',stack:'Excel and a custom MES',compliance:'Battery Aadhaar pilot participant',stage:'Replied',owner:'Rahul K.',
+  opens:7,replies:1,days:9,last:'Ananya asked how Battery Aadhaar reporting works.',
+  people:[{n:'Ananya Rao',r:'QA Manager',k:'champion',note:'Replied'},{n:'',r:'Plant Head',k:'gap'},{n:'',r:'Founder',k:'gap'}],
+  tl:[['Nov 25','in','Ananya replied','Asked about Battery Aadhaar'],['Nov 19','out','Intro email','Opened 5 times']],
+  next:{why:'She asked a compliance question, so answer it precisely and ask who owns the reporting today.',msg:'Hi Ananya,\n\nBattery Aadhaar reporting pulls from the same identity Ospra records on your cell line, so you report once instead of rebuilding the data.\n\nWho owns that reporting today? Happy to walk you both through it.'}},
+ {id:'arkos',code:'IN-TN-MAA-0064',co:'Arkos Power',city:'Chennai, Tamil Nadu',seg:'Cell assembly',vol:'25,000 cells a day',lines:'2 cell lines',cells:'LFP prismatic',stack:'SAP S/4HANA',compliance:'EPR registered',stage:'Last touches',owner:'Rahul K.',
+  opens:5,replies:0,days:16,last:'Divya visited the pricing page twice this week.',
+  people:[{n:'Divya Raman',r:'Plant Head',k:'user',note:'Pricing page visits'},{n:'',r:'Head of Quality',k:'gap'},{n:'',r:'CFO',k:'gap'}],
+  tl:[['Nov 24','in','Pricing page visit','Second visit this week'],['Nov 20','out','Follow-up email','Opened once'],['Nov 10','out','Intro email','Opened 4 times']],
+  next:{why:'Pricing visits without a reply often mean a budget check. Call, and lead with pilot cost.',msg:'Call plan:\n\nOpen with the pricing visit and offer the one-line pilot price.\nAsk who else weighs in on line software.\nIf no answer, voicemail and a short email.'}},
+];
+let cur='kaveri';
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(x=>x[0]).join('');
+const KIND={champion:{l:'Champion',c:'var(--brand)'},buyer:{l:'Decision maker',c:'var(--ink)'},user:{l:'Engaged',c:'var(--t300)'},blocker:{l:'Skeptical',c:'#fff'},gap:{l:'Not reached',c:'none'}};
+
+function list(q=''){
+ $('#list').innerHTML=A.filter(a=>(a.co+a.city).toLowerCase().includes(q.toLowerCase())).map(a=>{
+  const reached=a.people.filter(p=>p.k!=='gap').length;
+  return `<button class="acct" data-id="${a.id}" aria-current="${a.id===cur}"><div><div class="nm">${a.co}</div><div class="ct">${a.stage}</div></div><span class="seats" title="${reached} of ${a.people.length} key people reached">${a.people.map(p=>p.k!=='gap').sort((x,y)=>y-x).map(on=>`<i class="${on?'on':''}"></i>`).join('')}</span></button>`}).join('')||'<p style="padding:12px;color:var(--t500)">No account matches that name.</p>';
+}
+function mapSVG(a){
+ const W=520,H=300,cx=W/2,cy=H/2,R=112;
+ const n=a.people.length;
+ const nodes=a.people.map((p,i)=>{const ang=-Math.PI/2+i*2*Math.PI/n;return{...p,i,x:cx+Math.cos(ang)*R*1.55,y:cy+Math.sin(ang)*R}});
+ const edges=nodes.map(p=>`<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="${p.k==='gap'?'var(--t300)':p.k==='champion'?'var(--brand)':'var(--t400)'}" stroke-width="${p.k==='champion'?2:1.2}" ${p.k==='gap'?'stroke-dasharray="4 4"':''}/>`).join('');
+ const nd=nodes.map(p=>{
+  const fill=p.k==='gap'?'#fff':KIND[p.k].c;const stroke=p.k==='gap'?'var(--t300)':p.k==='blocker'?'var(--ink)':fill;
+  const txt=p.k==='champion'||p.k==='buyer'?'#fff':'var(--t700)';
+  const below=p.y>=cy;
+  return `<g class="node" data-p="${p.i}" tabindex="0" role="button" aria-label="${p.n||'Not reached'}, ${p.r}">
+   <circle class="ring" cx="${p.x}" cy="${p.y}" r="22" fill="${fill}" stroke="${stroke}" stroke-width="1.5" ${p.k==='gap'?'stroke-dasharray="3 3"':''}/>
+   <text x="${p.x}" y="${p.y+4}" text-anchor="middle" style="fill:${txt};font-weight:600">${p.n?ini(p.n):'?'}</text>
+   <text class="nm" x="${p.x}" y="${below?p.y+40:p.y-30}" text-anchor="middle">${p.n||'Not reached'}</text>
+   <text x="${p.x}" y="${below?p.y+55:p.y-44}" text-anchor="middle" style="fill:var(--t500)">${p.r}</text></g>`}).join('');
+ return `<svg viewBox="0 0 ${W} ${H+40}" role="img" aria-label="Stakeholder map for ${a.co}"><g transform="translate(0,20)">${edges}
+  <rect x="${cx-58}" y="${cy-20}" width="116" height="40" rx="10" fill="var(--canvas)" stroke="var(--line-2)"/>
+  <text x="${cx}" y="${cy+5}" text-anchor="middle" style="font:400 18px var(--serif);fill:var(--ink)">${a.co.split(' ')[0]}</text>${nd}</g></svg>`;
+}
+function render(anim){
+ const a=A.find(x=>x.id===cur);const reached=a.people.filter(p=>p.k!=='gap').length;
+ $('#main').innerHTML=`
+ <div class="mob-pick"><select id="pick" aria-label="Account">${A.map(x=>`<option value="${x.id}" ${x.id===cur?'selected':''}>${x.co}</option>`).join('')}</select></div>
+ <div class="id-row">
+  <div><div class="code">Account ${a.code}</div><h1>${a.co}</h1><p class="desc">${a.seg} in ${a.city}, about ${a.vol}.</p></div>
+  <div class="acts"><span class="pill"><i></i>${a.stage}</span><span class="pill">${a.owner}</span><button class="btn primary">Log a touch</button></div>
+ </div>
+ <div class="grid">
+  <section class="box"><h2>What they are<span class="r">Static record</span></h2>
+   <dl class="rec"><dt>Makes</dt><dd>${a.seg}</dd><dt>Volume</dt><dd>${a.vol}</dd><dt>Lines</dt><dd>${a.lines}</dd><dt>Cells</dt><dd>${a.cells}</dd><dt>Current systems</dt><dd>${a.stack}</dd><dt>Compliance</dt><dd>${a.compliance}</dd></dl></section>
+  <section class="box dark"><h2>How they are responding<span class="r">Live record</span></h2>
+   <div class="meters"><div class="meter"><div class="v">${a.opens}</div><div class="l">Email opens</div></div><div class="meter"><div class="v">${a.replies}</div><div class="l">Replies</div></div><div class="meter"><div class="v">${a.days}</div><div class="l">Days in sequence</div></div></div>
+   <p class="last"><b>Latest.</b> ${a.last}</p></section>
+  <section class="box map-box">
+   <div><h2>Who we know<span class="r">${reached} of ${a.people.length} reached</span></h2>${mapSVG(a)}
+    <div class="legend">${['champion','buyer','user','blocker','gap'].map(k=>`<span><i style="background:${KIND[k].c==='none'?'#fff':KIND[k].c};border:1.5px ${k==='gap'?'dashed var(--t300)':'solid '+(k==='blocker'?'var(--ink)':KIND[k].c)}"></i>${KIND[k].l}</span>`).join('')}</div></div>
+   <ul class="people">${a.people.map((p,i)=>`<li class="${p.k}" data-p="${i}"><span class="av ${p.k}">${p.n?ini(p.n):'?'}</span><div><div class="n">${p.n||'Nobody yet'}</div><div class="r">${p.r}${p.note?'. '+p.note:''}</div></div>${p.k==='gap'?`<button class="find">Find contact</button>`:`<span class="tag">${KIND[p.k].l}</span>`}</li>`).join('')}</ul>
+  </section>
+  <section class="box"><h2>History</h2><ol class="tl">${a.tl.map(t=>`<li class="${t[1]}"><time>${t[0]}</time><span class="d"></span><div><div class="w">${t[2]}</div><div class="x">${t[3]}</div></div></li>`).join('')}</ol></section>
+  <section class="box next"><h2>Next best touch</h2><p class="why">${a.next.why}</p><div class="msg">${a.next.msg}</div>
+   <div class="row"><button class="btn">Use this draft</button><button class="btn ghost">Write my own</button></div></section>
+ </div>`;
+ if(anim)$('#main').classList.add('swap'),setTimeout(()=>$('#main').classList.remove('swap'),400);
+ list($('#filter').value);
+}
+function hl(i){document.querySelectorAll('.node,.people li').forEach(el=>el.classList.toggle('on',el.dataset.p==i))}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('.acct');if(b){cur=b.dataset.id;render(true);return}
+ const n=e.target.closest('[data-p]');if(n)hl(n.dataset.p);
+});
+document.addEventListener('mouseover',e=>{const n=e.target.closest('[data-p]');if(n)hl(n.dataset.p)});
+document.addEventListener('focusin',e=>{const n=e.target.closest('.node');if(n)hl(n.dataset.p)});
+document.addEventListener('change',e=>{if(e.target.id==='pick'){cur=e.target.value;render(true)}});
+$('#filter').addEventListener('input',e=>list(e.target.value));
+render();
+</script>
+</body>
+</html>

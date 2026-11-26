@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Concept 2. Pipeline board.
+   Stages as lanes; every card carries a battery cell glyph whose charge is
+   its sequence progress. The glyph is the one bold element. Drag cards
+   between lanes, or focus a card and press [ or ] to move it. */
+:root{
+  --brand:#1447e6; --brand-600:#0e35b8; --brand-50:#eef2ff; --brand-100:#dbe4ff; --brand-200:#b9c8ff;
+  --ink:#111110; --t700:#403e38; --t500:#6d6a60; --t400:#8e8a7e; --t300:#b8b4a9; --t200:#d8d6cf; --t100:#ecebe6; --t50:#f7f6f3;
+  --canvas:#f5f7fa; --card:#fff; --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
+  --serif:"Instrument Serif",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"DM Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink);font:500 14px/1.5 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+svg{display:block}
+
+.top{display:flex;align-items:center;gap:28px;height:60px;padding:0 24px;background:var(--card);border-bottom:1px solid var(--line)}
+.logo{font:400 26px/1 var(--serif);letter-spacing:-.02em}.logo b{color:var(--brand);font-weight:400}
+.nav{display:flex;gap:4px}
+.nav a{padding:6px 12px;border-radius:999px;color:var(--t500);text-decoration:none}
+.nav a[aria-current]{background:var(--t100);color:var(--ink)}
+.me{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600}
+
+.bar{display:flex;align-items:flex-end;gap:20px;padding:24px 24px 16px;flex-wrap:wrap}
+.bar h1{font:400 40px/1 var(--serif);letter-spacing:-.02em}
+.bar p{color:var(--t500);margin-top:6px}
+.filters{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--t100)}
+.seg button{padding:5px 12px;border-radius:999px;color:var(--t500);font-size:13px}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.toggle{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:13px;background:#fff}
+.toggle[aria-pressed="true"]{border-color:var(--brand);color:var(--brand);background:var(--brand-50)}
+.toggle i{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+.board{display:grid;grid-template-columns:repeat(6,minmax(208px,1fr));gap:12px;padding:0 24px 32px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:24px}
+.lane{display:flex;flex-direction:column;min-height:60vh;border-radius:16px;scroll-snap-align:start;transition:background .15s}
+.lane.over{background:var(--brand-50);box-shadow:inset 0 0 0 1.5px var(--brand-200)}
+.lane-head{display:flex;align-items:baseline;gap:8px;padding:10px 8px 12px}
+.lane-head h2{font-size:14px;font-weight:600}
+.lane-head .n{font:400 12px var(--mono);color:var(--t400)}
+.lane-head .rate{margin-left:auto;font:400 12px var(--mono);color:var(--t400)}
+.lane-head .rate b{color:var(--t700);font-weight:500}
+.lane.meeting .lane-head h2{color:var(--brand)}
+.cards{display:flex;flex-direction:column;gap:8px;flex:1;padding:0 2px 8px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:left;width:100%;cursor:grab;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--line-2)}
+.card.dragging{opacity:.4}
+.card:active{cursor:grabbing}
+.card .r1{display:flex;align-items:center;gap:10px}
+.card .co{font-weight:600;font-size:14px;line-height:1.3}
+.card .who{color:var(--t500);font-size:12.5px;margin-top:2px}
+.card .sig{margin-top:10px;font-size:12.5px;color:var(--t700);line-height:1.45}
+.card.warm .sig{color:var(--brand-600)}
+.card .r3{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--t500)}
+.card .due{margin-left:auto;font:400 12px var(--mono)}
+.card .due.overdue{color:#fff;background:var(--ink);padding:1px 7px;border-radius:999px}
+.card .due.today{color:var(--brand)}
+.av{width:22px;height:22px;border-radius:50%;background:var(--t100);display:grid;place-items:center;font-size:10px;font-weight:600;color:var(--t700)}
+
+/* the cell glyph */
+.cell{margin-left:auto;flex:none;display:flex;align-items:center}
+.cell .body{display:flex;gap:2px;padding:2px;width:46px;height:20px;border:1.5px solid var(--ink);border-radius:5px}
+.cell .body i{flex:1;border-radius:1.5px;background:var(--t100)}
+.cell .body i.on{background:var(--brand)}
+.cell .tip{width:3px;height:8px;background:var(--ink);border-radius:0 2px 2px 0}
+.meeting .cell .body i.on{background:var(--ink)}
+.nurture .cell .body{border-color:var(--t300)}.nurture .cell .tip{background:var(--t300)}
+.nurture .cell .body i.on{background:var(--t300)}
+.card.landed .cell .body i.on:last-of-type{animation:charge .6s var(--ease)}
+@keyframes charge{from{background:var(--brand-100)}50%{background:var(--brand-200)}}
+
+.lane-empty{border:1.5px dashed var(--t200);border-radius:12px;padding:20px 12px;text-align:center;color:var(--t400);font-size:12.5px}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(17,17,16,.2);opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:#fff;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .3s var(--ease);display:flex;flex-direction:column;overflow:auto}
+body.open .scrim{opacity:1;pointer-events:auto}
+body.open .drawer{transform:none}
+.drawer header{padding:24px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.drawer h2{font:400 34px/1.05 var(--serif);letter-spacing:-.02em}
+.drawer .close{margin-left:auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line)}
+.drawer section{padding:20px 24px;border-bottom:1px solid var(--line)}
+.drawer h3{font-size:12px;font-weight:600;color:var(--t500);margin-bottom:10px}
+.drawer dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13.5px}
+.drawer dt{color:var(--t400)}.drawer dd{text-align:right}
+.drawer .move{display:flex;flex-wrap:wrap;gap:6px}
+.drawer .move button{padding:6px 12px;border-radius:999px;border:1px solid var(--line-2);font-size:13px}
+.drawer .move button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.big-cell{display:flex;align-items:center;gap:14px}
+.big-cell .cell .body{width:120px;height:36px;border-radius:8px;gap:3px;padding:3px}
+.big-cell .cell .tip{width:5px;height:14px}
+.big-cell p{font-size:13px;color:var(--t700)}
+
+.hint{position:fixed;left:24px;bottom:16px;font-size:12px;color:var(--t400)}
+kbd{font:500 11px var(--mono);padding:0 4px;border:1px solid var(--t300);border-radius:4px}
+
+@media (max-width:760px){
+  .top{padding:0 16px;gap:12px}.nav{display:none}
+  .bar{padding:18px 16px 12px}.bar h1{font-size:32px}.filters{margin-left:0}
+  .board{grid-template-columns:repeat(6,82vw);padding:0 16px 24px;scroll-padding-inline:16px;scroll-snap-type:x mandatory}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">Ospra<b>.</b></div>
+  <nav class="nav" aria-label="Main"><a href="#">Today</a><a href="#" aria-current="page">Pipeline</a><a href="#">Sequences</a><a href="#">Reports</a></nav>
+  <div class="me">AV</div>
+</header>
+
+<div class="bar">
+  <div><h1>Outreach pipeline</h1><p id="summary"></p></div>
+  <div class="filters">
+    <div class="seg" role="group" aria-label="Owner">
+      <button aria-pressed="true" data-owner="all">Everyone</button><button aria-pressed="false" data-owner="AV">Aditi</button><button aria-pressed="false" data-owner="RK">Rahul</button>
+    </div>
+    <button class="toggle" id="warm" aria-pressed="false"><i></i>Warm signals only</button>
+  </div>
+</div>
+
+<main class="board" id="board"></main>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Account details" aria-hidden="true"></aside>
+<p class="hint">Drag a card to change its stage, or focus it and press <kbd>[</kbd> <kbd>]</kbd></p>
+
+<script>
+const STAGES=[
+ {id:'t1',name:'First touch'},{id:'t2',name:'Following up'},{id:'t3',name:'Last touches'},
+ {id:'replied',name:'Replied'},{id:'meeting',name:'Meeting booked'},{id:'nurture',name:'Not now'}];
+const STEPS={t1:1,t2:2,t3:3,replied:4,meeting:5,nurture:2};
+let A=[
+ {id:'veltra',co:'Veltra Cells',city:'Pune',seg:'Two-wheeler packs',vol:'18k packs a month',person:'Ritika Menon',role:'Head of Quality',stage:'t2',due:'overdue',dueL:'2d late',signal:'Opened your first email three times',fit:92,owner:'AV',warm:true},
+ {id:'kaveri',co:'Kaveri Energy Systems',city:'Hosur',seg:'Three-wheeler and ESS packs',vol:'9k packs a month',person:'Arjun Iyer',role:'VP Operations',stage:'replied',due:'today',dueL:'Today',signal:'Asked for the warranty case study',fit:88,owner:'AV',warm:true},
+ {id:'sunline',co:'Sunline Batteries',city:'Ahmedabad',seg:'Lead-acid moving to Li-ion',vol:'40k units a month',person:'Neha Shah',role:'CTO',stage:'t1',due:'today',dueL:'Today',signal:'Hiring a traceability lead',fit:81,owner:'RK'},
+ {id:'northgrid',co:'Northgrid EV',city:'Gurugram',seg:'In-house two-wheeler packs',vol:'12k packs a month',person:'Kabir Malhotra',role:'Director, Manufacturing',stage:'meeting',due:'later',dueL:'Thu 11:00',signal:'Demo booked with two line supervisors',fit:95,owner:'AV',warm:true},
+ {id:'arkos',co:'Arkos Power',city:'Chennai',seg:'Cell assembly',vol:'25k cells a day',person:'Divya Raman',role:'Plant Head',stage:'t3',due:'today',dueL:'Today',signal:'Visited the pricing page twice',fit:77,owner:'RK',warm:true},
+ {id:'trident',co:'Trident Cellworks',city:'Noida',seg:'Energy storage integrator',vol:'1.2 GWh a year',person:'Sameer Kulkarni',role:'Head of Warranty',stage:'t2',due:'later',dueL:'Fri',signal:'Recalled a module batch in October',fit:84,owner:'AV'},
+ {id:'meridian',co:'Meridian Mobility',city:'Bengaluru',seg:'Three-wheeler fleet packs',vol:'6k packs a month',person:'Farah Siddiqui',role:'COO',stage:'t1',due:'today',dueL:'Today',signal:'Raised a Series B to double pack output',fit:73,owner:'RK'},
+ {id:'ojas',co:'Ojas Batteries',city:'Coimbatore',seg:'Replacement two-wheeler packs',vol:'7k packs a month',person:'Vikram Nair',role:'Founder',stage:'nurture',due:'later',dueL:'Apr 1',signal:'Budget opens in Q2',fit:64,owner:'AV'},
+ {id:'halden',co:'Halden Energy',city:'Hyderabad',seg:'Cell assembly',vol:'11k cells a day',person:'Ananya Rao',role:'QA Manager',stage:'replied',due:'overdue',dueL:'1d late',signal:'Asked how Battery Aadhaar reporting works',fit:86,owner:'RK',warm:true},
+ {id:'saarthi',co:'Saarthi EV Packs',city:'Indore',seg:'E-rickshaw packs',vol:'5k packs a month',person:'Rohan Jain',role:'Owner',stage:'t3',due:'later',dueL:'Mon',signal:'Accepted your connection request',fit:69,owner:'AV'},
+ {id:'vayu',co:'Vayu Storage',city:'Pune',seg:'Home inverter batteries',vol:'15k units a month',person:'Isha Deshpande',role:'Quality Lead',stage:'t1',due:'later',dueL:'Mon',signal:'No reply yet',fit:58,owner:'AV'},
+];
+let owner='all',warmOnly=false,lastMoved=null;
+const $=s=>document.querySelector(s);
+const ini=n=>n.split(' ').map(x=>x[0]).join('');
+const cellGlyph=(n)=>`<span class="cell" aria-label="${n} of 5 touches"><span class="body">${[0,1,2,3,4].map(i=>`<i class="${i<n?'on':''}"></i>`).join('')}</span><span class="tip"></span></span>`;
+const visible=()=>A.filter(a=>(owner==='all'||a.owner===owner)&&(!warmOnly||a.warm));
+
+function render(){
+ const v=visible();
+ const counts=STAGES.map(s=>v.filter(a=>a.stage===s.id).length);
+ $('#board').innerHTML=STAGES.map((s,i)=>{
+  const cards=v.filter(a=>a.stage===s.id).sort((x,y)=>({overdue:0,today:1,later:2}[x.due]-{overdue:0,today:1,later:2}[y.due]));
+  const reached=counts.slice(i).reduce((p,c,j)=>p+(STAGES[i+j].id==='nurture'?0:c),0);
+  const prev=i?counts.slice(i-1).reduce((p,c,j)=>p+(STAGES[i-1+j].id==='nurture'?0:c),0):0;
+  const rate=i&&i<5&&prev?`<span class="rate" title="Share of accounts that reached this stage"><b>${Math.round(reached/prev*100)}%</b> moved on</span>`:'';
+  return `<section class="lane ${s.id}" data-stage="${s.id}" aria-label="${s.name}">
+   <div class="lane-head"><h2>${s.name}</h2><span class="n">${cards.length}</span>${rate}</div>
+   <div class="cards">${cards.map(card).join('')||`<div class="lane-empty">Drop an account here</div>`}</div></section>`;
+ }).join('');
+ const due=v.filter(a=>a.due!=='later'&&a.stage!=='meeting'&&a.stage!=='nurture').length;
+ const late=v.filter(a=>a.due==='overdue').length;
+ $('#summary').textContent=`${v.length} accounts in outreach. ${due} need a touch today${late?`, ${late} of them late`:''}.`;
+ if(lastMoved){const el=document.querySelector(`[data-id="${lastMoved}"]`);if(el){el.classList.add('landed');el.focus({preventScroll:true})}lastMoved=null}
+}
+function card(a){
+ return `<button class="card ${a.warm?'warm':''}" draggable="true" data-id="${a.id}" aria-label="${a.co}, ${a.person}. ${a.signal}.">
+  <div class="r1"><div><div class="co">${a.co}</div><div class="who">${a.person}, ${a.role}</div></div>${cellGlyph(STEPS[a.stage])}</div>
+  <div class="sig">${a.signal}</div>
+  <div class="r3"><span class="av" title="Owner">${a.owner}</span>Fit ${a.fit}<span class="due ${a.due}">${a.dueL}</span></div></button>`;
+}
+function move(id,stage){const a=A.find(x=>x.id===id);if(!a||a.stage===stage)return;a.stage=stage;lastMoved=id;render();if(document.body.classList.contains('open'))openDrawer(id)}
+
+function openDrawer(id){
+ const a=A.find(x=>x.id===id);const d=$('#drawer');
+ d.innerHTML=`<header><div><h2>${a.co}</h2><p style="color:var(--t500);margin-top:6px">${a.person}, ${a.role}</p></div><button class="close" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+ <section><h3>Sequence progress</h3><div class="big-cell ${a.stage}">${cellGlyph(STEPS[a.stage])}<p>${STEPS[a.stage]} of 5 touches done. Next due ${a.dueL.toLowerCase()}.</p></div></section>
+ <section><h3>Latest signal</h3><p>${a.signal}.</p></section>
+ <section><h3>Account</h3><dl><dt>Location</dt><dd>${a.city}</dd><dt>Makes</dt><dd>${a.seg}</dd><dt>Volume</dt><dd>${a.vol}</dd><dt>Fit</dt><dd>${a.fit} / 100</dd><dt>Owner</dt><dd>${a.owner==='AV'?'Aditi V.':'Rahul K.'}</dd></dl></section>
+ <section><h3>Stage</h3><div class="move">${STAGES.map(s=>`<button data-move="${s.id}" aria-pressed="${a.stage===s.id}">${s.name}</button>`).join('')}</div></section>`;
+ d.dataset.id=id;d.setAttribute('aria-hidden','false');document.body.classList.add('open');d.querySelector('.close').focus();
+}
+function closeDrawer(){const d=$('#drawer');document.body.classList.remove('open');d.setAttribute('aria-hidden','true');const c=document.querySelector(`[data-id="${d.dataset.id}"]`);c&&c.focus()}
+
+document.addEventListener('click',e=>{
+ const o=e.target.closest('[data-owner]');if(o){owner=o.dataset.owner;document.querySelectorAll('[data-owner]').forEach(b=>b.setAttribute('aria-pressed',b===o));render();return}
+ if(e.target.closest('#warm')){warmOnly=!warmOnly;$('#warm').setAttribute('aria-pressed',warmOnly);render();return}
+ const m=e.target.closest('[data-move]');if(m){move($('#drawer').dataset.id,m.dataset.move);return}
+ if(e.target.closest('.close')||e.target.id==='scrim'){closeDrawer();return}
+ const c=e.target.closest('.card');if(c)openDrawer(c.dataset.id);
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&document.body.classList.contains('open')){closeDrawer();return}
+ const c=document.activeElement.closest&&document.activeElement.closest('.card');if(!c)return;
+ const a=A.find(x=>x.id===c.dataset.id);const i=STAGES.findIndex(s=>s.id===a.stage);
+ if(e.key===']'&&i<STAGES.length-1)move(a.id,STAGES[i+1].id);
+ if(e.key==='['&&i>0)move(a.id,STAGES[i-1].id);
+});
+let dragId=null;
+document.addEventListener('dragstart',e=>{const c=e.target.closest('.card');if(!c)return;dragId=c.dataset.id;c.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',dragId)});
+document.addEventListener('dragend',e=>{document.querySelectorAll('.dragging,.over').forEach(x=>x.classList.remove('dragging','over'))});
+document.addEventListener('dragover',e=>{const l=e.target.closest('.lane');if(!l)return;e.preventDefault();document.querySelectorAll('.lane.over').forEach(x=>x!==l&&x.classList.remove('over'));l.classList.add('over')});
+document.addEventListener('drop',e=>{const l=e.target.closest('.lane');if(!l||!dragId)return;e.preventDefault();move(dragId,l.dataset.stage);dragId=null});
+render();
+</script>
+</body>
+</html>

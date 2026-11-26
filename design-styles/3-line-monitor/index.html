@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Concept 3. Line monitor.
+   A dense, dark readout for a rep who works 200 accounts, borrowed from the
+   station screens on a battery line. Each row's sequence is a line of five
+   stations; the account is the unit moving down the line. Everything else
+   is plain table. Press Ctrl/Cmd K for the command bar. */
+:root{
+  --bg:#0a0d14; --panel:#0f131c; --row-hover:#141a26; --sel:#13204a;
+  --fg:#fff; --fg-82:rgba(255,255,255,.82); --fg-60:rgba(255,255,255,.6); --fg-40:rgba(255,255,255,.4); --fg-20:rgba(255,255,255,.2);
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --brand:#1447e6; --brand-400:#5a7dff; --brand-300:#8ea7ff;
+  --serif:"Instrument Serif",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"DM Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg-82);font:500 13px/1.45 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--brand-400);outline-offset:1px}
+svg{display:block}
+
+.top{display:flex;align-items:center;gap:20px;height:52px;padding:0 20px;border-bottom:1px solid var(--line)}
+.logo{font:400 24px/1 var(--serif);letter-spacing:-.02em;color:#fff}.logo b{color:var(--brand-400);font-weight:400}
+.cmd{display:flex;align-items:center;gap:10px;width:360px;height:32px;padding:0 10px;border-radius:8px;background:var(--panel);border:1px solid var(--line);color:var(--fg-40);font-size:13px;text-align:left}
+.cmd kbd{margin-left:auto}
+kbd{font:500 11px var(--mono);padding:1px 5px;border:1px solid var(--line-2);border-radius:4px;color:var(--fg-60)}
+.me{margin-left:auto;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:600}
+
+.views{display:flex;align-items:center;gap:2px;padding:12px 20px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.views button{padding:8px 12px 10px;color:var(--fg-60);border-bottom:2px solid transparent;white-space:nowrap}
+.views button[aria-selected="true"]{color:#fff;border-color:var(--brand-400)}
+.views .n{font-family:var(--mono);font-size:12px;color:var(--fg-40);margin-left:6px}
+.views .density{margin-left:auto;display:flex;gap:2px;padding-bottom:8px}
+.views .density button{padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px}
+.views .density button[aria-pressed="true"]{background:var(--panel);color:#fff;border-color:var(--line-2)}
+
+.wrap{padding:0 8px 80px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1060px}
+th{position:sticky;top:0;background:var(--bg);text-align:left;font-weight:500;color:var(--fg-40);font-size:12px;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1}
+th button{display:inline-flex;align-items:center;gap:4px}
+th button:hover{color:var(--fg-82)}
+th[aria-sort] button{color:#fff}
+td{padding:var(--pad,11px) 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.compact{--pad:6px}
+tr:hover td{background:var(--row-hover)}
+tr.sel td{background:var(--sel)}
+.ck{width:16px;height:16px;accent-color:var(--brand-400)}
+.co{color:#fff;font-weight:600}
+.sub{color:var(--fg-40);font-size:12px}
+.compact .sub{display:none}
+.num{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+
+/* the line: five stations */
+.line{display:flex;align-items:center;gap:0}
+.line span{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--fg-20);position:relative}
+.line span+span{margin-left:10px}
+.line span+span::before{content:"";position:absolute;right:100%;top:50%;width:10px;height:1.5px;background:var(--fg-20);margin-right:1.5px}
+.line span.done{background:var(--fg-60);border-color:var(--fg-60)}
+.line span.done+span::before{background:var(--fg-60)}
+.line span.at{border-color:var(--brand-400);background:var(--brand);box-shadow:0 0 0 3px rgba(20,71,230,.35)}
+.line span.stalled{border-style:dashed}
+.line-label{margin-left:12px;color:var(--fg-60);font-size:12px;white-space:nowrap}
+
+.stage{appearance:none;background:transparent;border:1px solid var(--line-2);border-radius:6px;padding:3px 24px 3px 8px;font-size:12.5px;color:var(--fg-82);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23ffffff99' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.stage option{background:var(--panel)}
+.due{font-family:var(--mono);font-size:12px;white-space:nowrap}
+.due.overdue{background:#fff;color:var(--bg);padding:1px 7px;border-radius:999px}
+.due.today{color:var(--brand-300)}
+.due.later{color:var(--fg-40)}
+.sig{max-width:30ch;color:var(--fg-60)}
+.sig.warm{color:var(--fg-82)}
+.sig.warm::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brand-400);margin-right:8px;vertical-align:2px}
+.fit{display:flex;align-items:center;gap:8px}
+.fit i{display:block;width:44px;height:4px;border-radius:2px;background:var(--fg-20);overflow:hidden}
+.fit i b{display:block;height:100%;background:var(--fg-82)}
+.own{width:24px;height:24px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;font-size:10px;font-weight:600;color:var(--fg-60)}
+
+/* bulk bar */
+.bulk{position:fixed;left:50%;bottom:20px;transform:translate(-50%,calc(100% + 40px));visibility:hidden;display:flex;align-items:center;gap:6px;padding:6px 6px 6px 16px;background:#fff;color:var(--bg);border-radius:12px;transition:transform .25s var(--ease),visibility .25s;z-index:5}
+.bulk.show{transform:translate(-50%,0);visibility:visible}
+.bulk b{margin-right:8px}
+.bulk button{padding:7px 12px;border-radius:8px;font-weight:600;font-size:13px}
+.bulk button:hover{background:#eef2ff}
+.bulk .x{color:#6d6a60}
+
+/* command bar */
+.pal-scrim{position:fixed;inset:0;background:rgba(5,7,12,.6);display:none;align-items:flex-start;justify-content:center;padding-top:14vh;z-index:10}
+.pal-scrim.show{display:flex}
+.pal{width:min(560px,calc(100vw - 32px));background:var(--panel);border:1px solid var(--line-2);border-radius:12px;overflow:hidden}
+.pal input{width:100%;padding:16px 18px;background:none;border:0;border-bottom:1px solid var(--line);outline:0;font-size:15px;color:#fff}
+.pal ul{list-style:none;max-height:340px;overflow:auto;padding:6px}
+.pal li{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer}
+.pal li[aria-selected="true"]{background:var(--sel);color:#fff}
+.pal li .k{margin-left:auto;color:var(--fg-40);font-size:12px}
+.pal .grp{padding:8px 12px 4px;color:var(--fg-40);font-size:12px}
+.pal .none{padding:16px 12px;color:var(--fg-40)}
+
+.toast{position:fixed;right:20px;top:64px;background:var(--panel);border:1px solid var(--line-2);color:#fff;padding:10px 14px;border-radius:10px;opacity:0;transform:translateY(-6px);transition:all .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:none}
+
+@media (max-width:760px){
+  .top{padding:0 16px}.cmd{width:auto;flex:1}.cmd span{display:none}.me{margin-left:0}
+  .views{padding:10px 16px 0}.views .density{display:none}
+  .wrap{padding:0 16px 90px}
+  table{min-width:0}thead{display:none}
+  tbody tr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  tbody td{border:0;padding:0;background:none!important}
+  td.c-ck{grid-row:1/3}td.c-co{grid-column:2}td.c-due{grid-column:3;grid-row:1}
+  td.c-line{grid-column:2/4}td.c-sig{grid-column:2/4}
+  td.c-who,td.c-stage,td.c-fit,td.c-own{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">Ospra<b>.</b></div>
+  <button class="cmd" id="cmdBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Jump to an account or run a command</span><kbd>Ctrl K</kbd></button>
+  <div class="me">AV</div>
+</header>
+
+<div class="views" role="tablist" id="views"></div>
+<div class="wrap" id="wrap">
+  <table aria-label="Accounts in outreach">
+    <thead><tr>
+      <th style="width:36px"><input type="checkbox" class="ck" id="all" aria-label="Select all"></th>
+      <th data-k="co"><button>Account</button></th>
+      <th data-k="person"><button>Contact</button></th>
+      <th data-k="step"><button>Sequence</button></th>
+      <th data-k="stage"><button>Stage</button></th>
+      <th data-k="dueN"><button>Next touch</button></th>
+      <th>Latest signal</th>
+      <th data-k="fit"><button>Fit</button></th>
+      <th>Owner</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<div class="bulk" id="bulk" role="region" aria-label="Bulk actions"><b id="selN"></b>
+  <button data-bulk="pause">Pause sequence</button><button data-bulk="assign">Assign to Rahul</button><button data-bulk="nurture">Move to not now</button><button class="x" data-bulk="clear">Clear</button></div>
+
+<div class="pal-scrim" id="pal"><div class="pal" role="dialog" aria-label="Command bar"><input id="q" placeholder="Type an account, a person or a command" autocomplete="off"><ul id="res" role="listbox"></ul></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const STAGES={t1:'First touch',t2:'Following up',t3:'Last touches',replied:'Replied',meeting:'Meeting booked',nurture:'Not now'};
+const STATION=['Intro email','Follow-up','Call','LinkedIn note','Last email'];
+let A=[
+ {id:'veltra',co:'Veltra Cells',city:'Pune',person:'Ritika Menon',role:'Head of Quality',stage:'t2',step:2,due:'overdue',dueL:'2d late',dueN:-2,signal:'Opened your first email 3 times',fit:92,owner:'AV',warm:true},
+ {id:'kaveri',co:'Kaveri Energy Systems',city:'Hosur',person:'Arjun Iyer',role:'VP Operations',stage:'replied',step:3,due:'today',dueL:'Today',dueN:0,signal:'Asked for the warranty case study',fit:88,owner:'AV',warm:true},
+ {id:'sunline',co:'Sunline Batteries',city:'Ahmedabad',person:'Neha Shah',role:'CTO',stage:'t1',step:0,due:'today',dueL:'Today',dueN:0,signal:'Hiring a traceability lead',fit:81,owner:'RK'},
+ {id:'northgrid',co:'Northgrid EV',city:'Gurugram',person:'Kabir Malhotra',role:'Director, Manufacturing',stage:'meeting',step:5,due:'later',dueL:'Thu 11:00',dueN:2,signal:'Demo booked',fit:95,owner:'AV',warm:true},
+ {id:'arkos',co:'Arkos Power',city:'Chennai',person:'Divya Raman',role:'Plant Head',stage:'t3',step:2,due:'today',dueL:'Today',dueN:0,signal:'Visited the pricing page twice',fit:77,owner:'RK',warm:true},
+ {id:'trident',co:'Trident Cellworks',city:'Noida',person:'Sameer Kulkarni',role:'Head of Warranty',stage:'t2',step:1,due:'later',dueL:'Fri',dueN:3,signal:'Recalled a module batch in Oct',fit:84,owner:'AV'},
+ {id:'meridian',co:'Meridian Mobility',city:'Bengaluru',person:'Farah Siddiqui',role:'COO',stage:'t1',step:0,due:'today',dueL:'Today',dueN:0,signal:'Raised a Series B',fit:73,owner:'RK'},
+ {id:'ojas',co:'Ojas Batteries',city:'Coimbatore',person:'Vikram Nair',role:'Founder',stage:'nurture',step:2,due:'later',dueL:'Apr 1',dueN:120,signal:'Budget opens in Q2',fit:64,owner:'AV',stalled:true},
+ {id:'halden',co:'Halden Energy',city:'Hyderabad',person:'Ananya Rao',role:'QA Manager',stage:'replied',step:2,due:'overdue',dueL:'1d late',dueN:-1,signal:'Asked about Battery Aadhaar',fit:86,owner:'RK',warm:true},
+ {id:'saarthi',co:'Saarthi EV Packs',city:'Indore',person:'Rohan Jain',role:'Owner',stage:'t3',step:3,due:'later',dueL:'Mon',dueN:4,signal:'Accepted your connection',fit:69,owner:'AV'},
+ {id:'vayu',co:'Vayu Storage',city:'Pune',person:'Isha Deshpande',role:'Quality Lead',stage:'t1',step:1,due:'later',dueL:'Mon',dueN:4,signal:'No opens after 6 days',fit:58,owner:'AV',stalled:true},
+ {id:'lumen',co:'Lumen Cell Co',city:'Vadodara',person:'Karan Bhatt',role:'Head of Engineering',stage:'t2',step:2,due:'overdue',dueL:'3d late',dueN:-3,signal:'Bounced on the old address',fit:71,owner:'RK',stalled:true},
+];
+const VIEWS=[
+ {id:'all',name:'All active',f:a=>a.stage!=='nurture'},
+ {id:'due',name:'Due today',f:a=>a.dueN<=0&&a.stage!=='nurture'},
+ {id:'warm',name:'Warm signals',f:a=>a.warm},
+ {id:'stalled',name:'Stalled',f:a=>a.stalled},
+ {id:'mine',name:'Mine',f:a=>a.owner==='AV'},
+];
+let view='all',sort={k:'dueN',dir:1},sel=new Set(),compact=false;
+const $=s=>document.querySelector(s);
+
+function renderViews(){
+ $('#views').innerHTML=VIEWS.map(v=>`<button role="tab" data-view="${v.id}" aria-selected="${v.id===view}">${v.name}<span class="n">${A.filter(v.f).length}</span></button>`).join('')+
+ `<div class="density" role="group" aria-label="Row density"><button data-dens="0" aria-pressed="${!compact}">Comfortable</button><button data-dens="1" aria-pressed="${compact}">Compact</button></div>`;
+}
+function line(a){
+ const at=a.stage==='meeting'?5:a.step;
+ return `<div class="line" aria-label="${at} of 5 touches done">${STATION.map((s,i)=>`<span class="${i<at?'done':i===at?'at'+(a.stalled?' stalled':''):''}" title="${s}"></span>`).join('')}</div>`;
+}
+function renderRows(){
+ const v=VIEWS.find(x=>x.id===view);
+ const rows=A.filter(v.f).sort((x,y)=>{const a=x[sort.k],b=y[sort.k];return(typeof a==='string'?a.localeCompare(b):a-b)*sort.dir});
+ $('#rows').innerHTML=rows.map(a=>`<tr class="${sel.has(a.id)?'sel':''}" data-id="${a.id}">
+  <td class="c-ck"><input type="checkbox" class="ck" ${sel.has(a.id)?'checked':''} aria-label="Select ${a.co}"></td>
+  <td class="c-co"><div class="co">${a.co}</div><div class="sub">${a.city}</div></td>
+  <td class="c-who"><div>${a.person}</div><div class="sub">${a.role}</div></td>
+  <td class="c-line"><div style="display:flex;align-items:center">${line(a)}<span class="line-label">${a.stage==='meeting'?'Done':a.stalled?'Stalled at '+STATION[a.step].toLowerCase():STATION[a.step]}</span></div></td>
+  <td class="c-stage"><select class="stage" aria-label="Stage for ${a.co}">${Object.entries(STAGES).map(([k,n])=>`<option value="${k}" ${k===a.stage?'selected':''}>${n}</option>`).join('')}</select></td>
+  <td class="c-due"><span class="due ${a.due}">${a.dueL}</span></td>
+  <td class="c-sig"><div class="sig ${a.warm?'warm':''}">${a.signal}</div></td>
+  <td class="c-fit"><div class="fit"><span class="num">${a.fit}</span><i><b style="width:${a.fit}%"></b></i></div></td>
+  <td class="c-own"><span class="own">${a.owner}</span></td></tr>`).join('');
+ document.querySelectorAll('th[data-k]').forEach(th=>{th.toggleAttribute('aria-sort',th.dataset.k===sort.k);if(th.dataset.k===sort.k)th.setAttribute('aria-sort',sort.dir>0?'ascending':'descending')});
+ $('table').classList.toggle('compact',compact);
+ $('#all').checked=rows.length&&rows.every(a=>sel.has(a.id));
+ $('#bulk').classList.toggle('show',sel.size>0);$('#selN').textContent=`${sel.size} selected`;
+}
+function render(){renderViews();renderRows()}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
+
+document.addEventListener('click',e=>{
+ const v=e.target.closest('[data-view]');if(v){view=v.dataset.view;sel.clear();render();return}
+ const d=e.target.closest('[data-dens]');if(d){compact=d.dataset.dens==='1';render();return}
+ const th=e.target.closest('th[data-k] button');if(th){const k=th.parentElement.dataset.k;sort=sort.k===k?{k,dir:-sort.dir}:{k,dir:1};renderRows();return}
+ const b=e.target.closest('[data-bulk]');if(b){const n=sel.size;const k=b.dataset.bulk;
+  if(k==='assign')A.forEach(a=>sel.has(a.id)&&(a.owner='RK'));
+  if(k==='nurture')A.forEach(a=>sel.has(a.id)&&(a.stage='nurture'));
+  if(k==='pause')A.forEach(a=>sel.has(a.id)&&(a.stalled=true));
+  if(k!=='clear')toast({assign:`Assigned ${n} to Rahul`,nurture:`Moved ${n} to not now`,pause:`Paused ${n} sequences`}[k]);
+  sel.clear();render();return}
+ if(e.target.closest('#cmdBtn')){openPal();return}
+ if(e.target.id==='pal')closePal();
+});
+document.addEventListener('change',e=>{
+ if(e.target.id==='all'){const v=VIEWS.find(x=>x.id===view);A.filter(v.f).forEach(a=>e.target.checked?sel.add(a.id):sel.delete(a.id));renderRows();return}
+ const tr=e.target.closest('tr[data-id]');if(!tr)return;const a=A.find(x=>x.id===tr.dataset.id);
+ if(e.target.classList.contains('ck')){e.target.checked?sel.add(a.id):sel.delete(a.id);renderRows()}
+ if(e.target.classList.contains('stage')){a.stage=e.target.value;toast(`${a.co} moved to ${STAGES[a.stage].toLowerCase()}`);render()}
+});
+
+/* command bar */
+const CMDS=[
+ {name:'Show accounts due today',run:()=>{view='due';render()}},
+ {name:'Show stalled sequences',run:()=>{view='stalled';render()}},
+ {name:'Switch to compact rows',run:()=>{compact=true;render()}},
+ {name:'Sort by fit, highest first',run:()=>{sort={k:'fit',dir:-1};renderRows()}},
+ {name:'Select all warm accounts',run:()=>{view='warm';A.filter(a=>a.warm).forEach(a=>sel.add(a.id));render()}},
+];
+let hits=[],hi=0;
+function openPal(){$('#pal').classList.add('show');$('#q').value='';search('');$('#q').focus()}
+function closePal(){$('#pal').classList.remove('show');$('#cmdBtn').focus()}
+function search(q){
+ q=q.toLowerCase().trim();
+ const acc=A.filter(a=>!q||(a.co+' '+a.person+' '+a.city).toLowerCase().includes(q)).slice(0,6).map(a=>({type:'Accounts',name:a.co,k:a.person,run:()=>{view='all';sel.clear();render();const r=document.querySelector(`tr[data-id="${a.id}"]`);r.scrollIntoView({block:'center'});r.querySelector('.ck').focus();r.classList.add('sel');setTimeout(()=>r.classList.remove('sel'),1200)}}));
+ const cmd=CMDS.filter(c=>!q||c.name.toLowerCase().includes(q)).map(c=>({type:'Commands',...c,k:''}));
+ hits=[...cmd,...acc];hi=0;draw();
+}
+function draw(){
+ let g='';$('#res').innerHTML=hits.length?hits.map((h,i)=>{const head=h.type!==g?`<div class="grp">${g=h.type}</div>`:'';return head+`<li role="option" data-i="${i}" aria-selected="${i===hi}">${h.name}<span class="k">${h.k}</span></li>`}).join(''):`<div class="none">No account or command matches. Try a company, a person or a city.</div>`;
+}
+$('#q').addEventListener('input',e=>search(e.target.value));
+$('#res').addEventListener('click',e=>{const li=e.target.closest('li');if(li){const h=hits[+li.dataset.i];closePal();h.run()}});
+document.addEventListener('keydown',e=>{
+ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#pal').classList.contains('show')?closePal():openPal();return}
+ if(!$('#pal').classList.contains('show'))return;
+ if(e.key==='Escape')closePal();
+ if(e.key==='ArrowDown'){e.preventDefault();hi=Math.min(hi+1,hits.length-1);draw()}
+ if(e.key==='ArrowUp'){e.preventDefault();hi=Math.max(hi-1,0);draw()}
+ if(e.key==='Enter'&&hits[hi]){const h=hits[hi];closePal();h.run()}
+});
+render();
+</script>
+</body>
+</html>
