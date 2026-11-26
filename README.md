@@ -3,6 +3,7 @@
 Traceable, unified data layer for battery manufacturers: a digital identity per
 battery that connects the production floor to the battery's field lifecycle.
 
+- `outreach-crm-v1-copy/` — copy of the Outreach CRM V1 repo: live CRM code, sandbox, design styles and design options.
 - `design-system/` — the Ospra deck & social design system (tokens, guide,
   specimen). Base for all decks and social posts.
 - `deck/project/` — source for the pitch deck (`deck.json` index plus one HTML

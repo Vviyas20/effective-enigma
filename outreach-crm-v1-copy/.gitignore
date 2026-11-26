@@ -1,0 +1,4 @@
+# Real contact data never goes in git. The live CRM reads crm/data/sheet.json at runtime.
+crm/data/
+*.xlsx
+*.csv

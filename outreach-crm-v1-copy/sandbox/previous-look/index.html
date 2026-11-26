@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Outreach CRM · Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a modern sales cockpit: bold, quick, a little playful
+   IDEA: ink-black rails with coral signals; every card is something you can press
+   PICTURE: black sidebar, white cards with ink outlines and a hard shadow, coral for action, cobalt for second signals
+   COLOUR and TYPE: cool grey ground, ink #121212, coral #F0533A, cobalt #3657FF; Space Grotesk titles and figures, Inter text
+   LAYOUT: sidebar, page title, card row of figures, card grid, working tables, deals board, contact drawer */
+:root{color-scheme:light;--bg:#F1F1F4;--ink:#121212;--mute:#5A5A64;--line:#E3E3E8;--mist:#F3F3F6;--g:#F0533A;--gd:#B5321B;--warn:#B42318;--amber:#3657FF;--navy:#121212;--card:#FFFFFF;--in:#FFFFFF;--band:#121212;--bandInk:#F4F4F6;--soft:#FDE6E1;--r:18px;--rs:12px;--sh:0 2px 0 #121212}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+a{color:#2440E0;text-underline-offset:2px}
+h1,h2,.num{font-family:"Space Grotesk",Inter,sans-serif;font-weight:700;letter-spacing:-.01em}
+h1{font-size:clamp(26px,3vw,34px);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-size:18px;margin:0 0 6px}
+.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.side{background:#121212;color:#F4F4F6;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px;padding:20px 14px;overflow-y:auto;z-index:6}
+.brand{display:flex;gap:10px;align-items:center;padding:2px 8px 18px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--g);color:#121212;display:grid;place-items:center;font:700 14px "Space Grotesk",sans-serif;flex:none}
+.brand b{display:block;font:700 15px "Space Grotesk",sans-serif}.brand small{display:block;color:#B3B3BD;font-size:12px;line-height:1.3}
+nav#tabs{display:flex;flex-direction:column;gap:2px}
+nav a{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border-radius:12px;color:#C4C4CC;text-decoration:none;font-weight:500;transition:background .18s,color .18s}
+nav a svg{flex:none;width:18px;height:18px}
+nav a:hover{background:#26262A;color:#fff}
+nav a.on{background:var(--g);color:#121212;font-weight:700}
+nav a span{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--g);color:#121212;border-radius:999px;padding:1px 8px}
+nav a.on span{background:#121212;color:#fff}
+#fresh{margin-top:auto;padding:12px 8px 0;color:#B3B3BD;font-size:12px;border-top:1px solid #2A2A2E}
+.content{min-width:0}
+.band{padding:clamp(14px,2vw,22px) clamp(16px,3vw,36px)}
+.sub{color:var(--mute);font-size:13px}
+.green{background:transparent;color:var(--ink)}
+[data-go],[data-st],[data-ml]{cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.kpi{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
+.kpi[data-go]:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
+.kpi .num{font-size:clamp(26px,2.8vw,36px);line-height:1}
+.kpi.big .num{font-size:clamp(32px,4vw,48px)}
+.kpi>div:last-child{font-size:13px;color:var(--mute);margin-top:8px}
+.kpis>.kpi.big:first-child{background:var(--g)}.kpis>.kpi.big:first-child>div:last-child{color:#121212}
+.prog{height:8px;border-radius:4px;background:var(--mist);margin-top:12px;overflow:hidden}.prog b{display:block;height:100%;background:var(--g);border-radius:4px;transition:width .5s}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh);padding:18px 20px;position:relative}
+.fig{position:relative;height:240px;margin-top:8px}.fig svg{position:absolute;inset:0}
+.grid line,line.grid{stroke:var(--line)}.tk{fill:var(--mute);font-size:11px}.vl{fill:var(--ink);font-size:11px;font-weight:700}
+.fig rect{transition:opacity .15s}.fig rect:hover{opacity:.7}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.hb{display:grid;grid-template-columns:minmax(90px,170px) 1fr 44px;gap:8px;align-items:center;font-size:13px;padding:4px 0}
+.hb[data-st]{border-radius:8px;padding:4px 6px;margin:0 -6px;transition:background .15s}.hb[data-st]:hover{background:var(--mist)}
+.hb .bar{height:12px;background:var(--mist);border-radius:6px;overflow:hidden;display:flex}
+.hb .bar b{display:block;height:100%;background:var(--g);border-radius:6px;transition:width .5s}.hb .bar b.m{background:var(--navy)}
+.hb .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.hb.wide{grid-template-columns:minmax(90px,170px) 1fr 150px}
+.holq{font-family:"Space Grotesk",Inter,sans-serif;font-weight:700;font-size:clamp(26px,3.6vw,42px);line-height:1.15;max-width:26ch;margin:24px 0 12px;padding:28px 32px;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);box-shadow:0 5px 0 var(--g)}
+.usd{display:inline-flex;align-items:center;border:1.5px solid #D5D5DC;border-radius:10px;background:var(--in);padding-left:10px}.usd>span{color:var(--mute);font-size:14px}.usd input{border:0;background:transparent;width:120px;text-align:right;font-variant-numeric:tabular-nums;min-height:34px}.usd:has(input.bad){border-color:var(--warn)}.usd input.bad{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--mute);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--ink);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.row td{transition:background .12s}tr.row:hover td{background:#F7F7FA}
+.nm{font-weight:700;cursor:pointer;color:var(--ink);background:none;border:0;padding:0;min-height:0;font:inherit;font-weight:700;text-align:left;box-shadow:none}
+.nm:hover{color:var(--gd);text-decoration:underline;box-shadow:none;transform:none}
+.t{color:var(--mute);font-size:12px;display:block}
+select,input,textarea,button{font:inherit;font-size:16px;color:var(--ink)}
+select,input,textarea{background:var(--in);border:1.5px solid #D5D5DC;border-radius:10px;padding:6px 10px;min-height:38px;transition:border-color .15s}
+select:hover,input:hover,textarea:hover{border-color:#9C9CA6}
+td select,td input{font-size:14px;min-height:34px;max-width:170px}
+button{min-height:40px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);cursor:pointer;font-weight:600;transition:transform .12s,box-shadow .12s,background .15s}
+button:hover{box-shadow:0 2px 0 var(--ink);transform:translateY(-1px)}
+button:active{transform:translateY(1px);box-shadow:none}
+button.p{background:var(--g);color:#121212}
+button.dn{background:var(--warn);border-color:var(--warn);color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.bar-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 12px}
+.bar-tools input[type=search]{flex:1 1 220px}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--mist);white-space:nowrap}
+.chip.hot{background:var(--g);color:#121212}.chip.bad{background:var(--soft);color:#9E2A15}.chip.mt{background:#121212;color:#fff}.chip.dnc{background:#121212;color:#fff;box-shadow:inset 0 0 0 1.5px var(--g)}.chip.st{background:var(--amber);color:#fff}
+.due{font-weight:700;white-space:nowrap}.over{color:var(--gd)}.win{font-size:12px;color:var(--mute);white-space:nowrap}
+.mf{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}.mf label{font-size:13px;display:flex;gap:4px;align-items:center}
+.note{background:var(--card);border:1.5px dashed var(--g);border-radius:var(--rs);padding:10px 14px;font-size:13px;margin:10px 0}
+.callgrp h2{margin-top:18px}
+.card{display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:12px 10px;border-bottom:1px solid var(--line);border-radius:12px;transition:background .12s}.card:hover{background:var(--card)}
+.card .r{text-align:right}
+#drawer .block{background:#121212;color:#fff;padding:14px;border-radius:12px;margin:10px 0;box-shadow:inset 0 0 0 2px var(--g)}
+#drawer{position:fixed;inset:0 0 0 auto;width:min(480px,100%);background:var(--card);border-left:1.5px solid var(--ink);box-shadow:-16px 0 40px rgba(18,18,18,.18);transform:translateX(105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);z-index:20;overflow-y:auto;padding:20px}
+#drawer.open{transform:none}
+#scrim{position:fixed;inset:0;background:rgba(18,18,18,.35);display:none;z-index:19}#scrim.open{display:block}
+.fl{display:grid;gap:4px;margin:10px 0}.fl label{font-size:12px;color:var(--mute);font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tl{list-style:none;padding:0;margin:0;font-size:13px}.tl li{padding:7px 0;border-bottom:1px solid var(--line)}
+.empty{color:var(--mute);padding:20px 0}
+.ro input,.ro select,.ro textarea,.ro button.w{pointer-events:none;opacity:.6}
+.scroll{overflow-x:auto}
+details summary{cursor:pointer;color:var(--mute);font-size:13px;margin-top:10px}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--card)}.seg button{border:0;border-radius:0;box-shadow:none;transform:none;min-height:38px}.seg button.on{background:#121212;color:#fff}
+.kb{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px;align-items:start}
+.kcol{background:#E6E6EB;border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:10px;min-height:170px;transition:background .15s,box-shadow .15s}
+.kcol.over{background:var(--soft);box-shadow:inset 0 0 0 2px var(--g)}
+.kcol header{display:flex;align-items:baseline;gap:6px;padding:2px 4px}.kcol header b{font:700 14px "Space Grotesk",sans-serif}.kcol header span{color:var(--mute);font-size:13px}.kcol header em{margin-left:auto;font:700 13px "Space Grotesk",sans-serif;font-style:normal}
+.kcard{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;background:var(--card);border:1.5px solid var(--ink);box-shadow:var(--sh);cursor:grab;transition:transform .12s,box-shadow .12s}
+.kcard:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}.kcard.drag{opacity:.4}
+.kcard .kv{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font:700 17px "Space Grotesk",sans-serif}.kcard .kv.no{color:var(--mute);font:600 13px Inter,sans-serif}
+.kempty{border:1.5px dashed #B9B9C3;border-radius:14px;padding:16px;color:var(--mute);font-size:13px;text-align:center}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.enter>*{animation:rise .32s cubic-bezier(.2,.8,.2,1) both}.enter>*:nth-child(2){animation-delay:.04s}.enter>*:nth-child(3){animation-delay:.08s}.enter>*:nth-child(4){animation-delay:.12s}.enter>*:nth-child(n+5){animation-delay:.16s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{height:auto;flex-direction:row;align-items:center;padding:8px 10px;gap:8px}.brand{padding:0}.brand>div:last-child{display:none}nav#tabs{flex-direction:row;overflow-x:auto}nav a{flex:none}#fresh{display:none}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--mute);font-size:12px}.stack td:empty{display:none}.row2{grid-template-columns:1fr}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+<script>
+/* Dummy data for the Outreach CRM sandbox. Every person and company here is invented.
+   Shape mirrors the live CRM (26 Nov build): about 1,330 BI-sheet contacts across 32 accounts with the
+   same stage and status mix, a 37-row meetings log, and a CRM layer of touches, meetings, deals and
+   warm connects on top. Dates are generated relative to the sandbox clock. */
+window.SBX_SEED=function(now){
+'use strict';
+let s=20261126;const rnd=()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648};
+const pick=a=>a[Math.floor(rnd()*a.length)],chance=p=>rnd()<p;
+const IST=330*60000,day=ts=>new Date(ts+IST).toISOString().slice(0,10);
+const T=day(now.getTime()-4*3600e3);const D=x=>new Date(x+'T00:00:00Z');
+const ago=n=>new Date(D(T).getTime()-n*864e5).toISOString().slice(0,10),ahead=n=>ago(-n);
+const stamp=(d,h)=>new Date(D(d).getTime()+(h||11)*3600e3-IST).toISOString();
+const FN=['Aarav','Maya','Lucas','Priya','Elena','Tomas','Hana','Omar','Grace','Ravi','Sofia','Daniel','Leah','Kenji','Amara','Felix','Nina','Arjun','Clara','Mateo','Zoe','Ibrahim','Lena','Victor','Isla','Rohan','Chloe','Marco','Yara','Ethan','Freya','Samir','Ada','Hugo','Mei','Kofi','Ingrid','Pablo','Noor','Theo','Anika','Bruno','Celia','Dev','Esme','Farid','Gita','Hector','Iris','Jonas','Kavya','Luca','Mira','Nils','Odile','Pranav','Rhea','Soren','Tara','Umar','Vera','Wes','Xena','Yusuf','Zainab','Aditi','Bastien','Carmen','Dario','Eitan'];
+const LN=['Hart','Sandoval','Brennan','Iyer','Kowalski','Lindqvist','Okafor','Tanaka','Moreau','Castellano','Whitfield','Raman','Novak','Haddad','Fischer','Delgado','Achebe','Sorensen','Kapoor','Bianchi','Mendez','Laurent','Quinn','Petrov','Varga','Nakamura','Ellison','Duarte','Aziz','Holloway','Rao','Becker','Silva','Nair','Olsen','Prakash','Ferreira','Grant','Ishikawa','Kruger','Marsh','Ortega','Pillai','Reyes','Strand','Thorne','Usman','Vance','Weller','Yilmaz'];
+// 32 invented accounts, sized like the live book
+const ACC=['Northwind Chemicals','Bluestone Glass','Riverbend Materials','Halcyon Energy','Aster Packaging','Kestrel Water','Orion Polymers','Summit Minerals','Tidewater Coatings','Granite Peak Industrial','Cobalt Ridge Pharma','Meridian Fibres','Lumen Solar','Harbor Paper Co','Silverline Logistics','Redwood Agro','Pioneer Catalysts','Crestview Foods','Ironclad Steel','Vantage Plastics','Ember Batteries','Atlas Cement','Nimbus Semiconductors','Sable Lubricants','Juniper Textiles','Falcon Aerospace Materials','Quarry Lane Mining','Brightwater Utilities','Coral Bay Chemicals','Evergreen Biofuels','Polaris Gases','Zenith Adhesives'];
+const SIZE=[302,283,163,116,97,91,85,41,28,20,19,18,17,9,8,4,4,4,3,3,2,2,2,1,1,1,1,1,1,1,1,1];
+const dom=a=>a.toLowerCase().replace(/[^a-z]+/g,'')+'.example';
+const LOC=['Houston, Texas','Chicago, Illinois','Charlotte, North Carolina','Boston, Massachusetts','Wilmington, Delaware','St. Paul, Minnesota','San Francisco, California','Denver, Colorado','Atlanta, Georgia','London, United Kingdom','Frankfurt, Germany','Zurich, Switzerland','Paris, France','Pune, India','Chennai, India','Mumbai, India','Singapore','Shanghai, China','Tokyo, Japan','Seoul, Korea','São Paulo, Brazil','Mexico City, Mexico','Dubai, UAE','Sydney, Australia','Remote','Washington',''];
+const TIT=['Chief Strategy Officer','VP Corporate Strategy','Director, Market Intelligence','Head of Business Development','Senior Manager, Strategy','Manager, Commercial Excellence','VP Sales','Director of Procurement','Strategy Analyst','Head of Growth','Senior Director, M&A','Marketing Manager','Global Category Manager','Director, Corporate Development','Product Manager','Plant Manager','VP Operations','Chief Commercial Officer','Insights Lead','R&D Director'];
+const TZ=['America/New_York','America/Chicago','America/Los_Angeles','Europe/London','Europe/Berlin','Asia/Kolkata','Asia/Singapore'];
+const seen=new Set();let ph=0;
+function person(acc){let nm;do{nm=pick(FN)+' '+pick(LN)}while(seen.has(nm+acc));seen.add(nm+acc);
+ const p={name:nm,account:acc,title:pick(TIT),location:pick(LOC)};
+ if(chance(.69))p.email=nm.toLowerCase().replace(/[^a-z ]/g,'').replace(' ','.')+'@'+dom(acc);
+ if(chance(.72))p.phone='+1 555 '+String(1000+(ph++)).padStart(4,'0');
+ return p}
+const idOf=p=>p.email||('n:'+(p.name+'-'+p.account).toLowerCase().replace(/[^a-z0-9]+/g,'-'));
+// ---------- BI sheet layer: 1,330 contacts with the live stage mix
+const people=[];ACC.forEach((a,i)=>{for(let k=0;k<SIZE[i];k++)people.push(person(a))});
+for(let i=people.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[people[i],people[j]]=[people[j],people[i]]}
+const MIX=[['Emailed',787],['Contacted',348],['Nurture',79],['Meeting conducted',42],['Called',16],['Not interested',16],['Bounced',15],['Left company',14],['Do not contact',10],['Meeting scheduled',2],['Follow-up',1]];
+const STAT={Nurture:[['Not Contacted',28],['Different Pitch',13],['Phish Reported',2],['Left Company',1],['Rejected',1]],'Meeting conducted':[['Conducted',19],['Meeting log',17]],Called:[['did not pick up',7],['Wrong number',3]],
+ 'Not interested':[['Not ICP',7],['not right icp',2]],Bounced:[['Bounced',11],['No More in the Company',1],['Retired',1]],'Left company':[['Retired',2],['Retired & moved to another group',1],['not working',1]],
+ 'Do not contact':[['DNC',6],['Opted out (DNC)',4]],'Meeting scheduled':[['Scheduled',2]]};
+const sheet=[];let pi=0;
+for(const [st,n] of MIX){const stats=[];for(const [x,k] of (STAT[st]||[]))for(let q=0;q<k;q++)stats.push(x);
+ for(let k=0;k<n;k++){const p=people[pi++];const c={id:idOf(p),...p,stage:st,sheetTab:'Account List'};if(stats[k])c.sheetStatus=stats[k];
+  if(st==='Called')c.callOutcome=pick(['No answer','Voicemail','Gatekeeper']);
+  if(st==='Meeting conducted'&&k<19)c.sheetMeeting=pick(['2026-05','2026-06','2026-07','2026-08','2026-09','2026-10']);
+  if(chance(.12))c.tz=pick(TZ);
+  sheet.push(c)}}
+// live-like extras: synced email history on 50, sheet follow-up dates on 93, saved LinkedIn URLs on 46
+const emailedWithMail=sheet.filter(c=>c.stage==='Emailed'&&c.email);
+emailedWithMail.slice(0,50).forEach((c,i)=>{c.emails=1+(i%3);c.lastEmail=ago(3+(i%40));c.firstEmail=ago(3+(i%40)+(c.emails-1)*6)});
+sheet.filter(c=>['Emailed','Contacted','Called'].includes(c.stage)).slice(60,153).forEach((c,i)=>{c.sheetNext=i%3?ahead(i%15):ago(i%10)});
+sheet.filter(c=>c.stage!=='Do not contact').slice(200,246).forEach(c=>{c.linkedin='https://www.linkedin.com/in/'+c.name.toLowerCase().replace(/[^a-z]+/g,'-')+'-'+Math.floor(rnd()*9000+1000)});
+// two people entered twice at one account (possible duplicates)
+for(const c of sheet.filter(c=>c.stage==='Contacted'&&c.email).slice(0,2)){const d={...c,email:c.email.replace('@','.2@')};d.id=d.email;sheet.push(d)}
+// ---------- CRM layer: touches, meetings, deals and warm connects on top of sheet contacts
+const C={},daily={},meetings={};
+const item=(d,c,ch,k,sub,h)=>{(daily[d]=daily[d]||{date:d,items:[]}).items.push({c:c.id,n:c.name,a:c.account,ch,k,s:sub,t:stamp(d,h||20)})};
+const hist=(c,cnt,lastAgo,gap)=>{const ds=[];for(let k=cnt-1;k>=0;k--)ds.push(ago(lastAgo+k*(gap||7)));ds.forEach((d,i)=>item(d,c,'Email',i?'Follow-up':'Cold',(i?'Following up: ':'')+c.account+' growth insight we prepared for you'));return{emails:cnt,firstEmail:ds[0],lastEmail:ds[ds.length-1],lastSubject:c.account+' growth insight we prepared for you'}};
+const put=(c,x)=>{C[c.id]={...(C[c.id]||{}),...x};return c};
+const pool=st=>sheet.filter(c=>c.stage===st&&c.email&&!C[c.id]&&!c.emails);
+const take=(st,n)=>pool(st).slice(0,n);
+take('Emailed',60).forEach((c,k)=>put(c,{stage:k%3?'Emailed':'Follow-up',...hist(c,1+(k%2),3+(k%10))}));
+take('Emailed',15).forEach((c,k)=>put(c,{stage:'Follow-up',...hist(c,3,6+(k%6))}));
+take('Emailed',10).forEach((c,k)=>put(c,{stage:'Follow-up',...hist(c,4,k<5?12:34,6)}));
+take('Emailed',8).forEach((c,k)=>put(c,{stage:'Bounced',bounced:true,...hist(c,1,9+k)}));
+const OUTS=['No answer','Voicemail','Gatekeeper','Call back later','No answer','Voicemail'];
+take('Emailed',12).filter(c=>c.phone).forEach((c,k)=>{const h=hist(c,2,8+k),cd=ago(2+(k%5));item(cd,c,'Call','Call',OUTS[k%6],21);put(c,{stage:'Called',...h,calls:1+(k%5),myReachOut:cd,callOutcome:OUTS[k%6],lastChannel:'Call'})});
+take('Emailed',6).forEach((c,k)=>put(c,{stage:k%2?'Replied':'Connected',stageLocked:true,replied:k%2===1,lastReply:ago(1+k),...hist(c,2,3+k)}));
+[[1,'Scheduled'],[3,'Scheduled'],[7,'Rescheduled'],[12,'Scheduled'],[-2,'Scheduled']].forEach(([d,st],k)=>{const c=take('Emailed',1)[0];put(c,{stage:'Meeting scheduled',stageLocked:true,mtgStatus:st,meetingNext:ahead(d),...hist(c,2,10),comments:[{t:stamp(ago(9)),x:'Meeting scheduled for '+ahead(d)+'.'}]})});
+// deals: the 42 sheet-conducted meetings plus 8 with full CRM history, spread across every stage
+const conducted=sheet.filter(c=>c.stage==='Meeting conducted');
+const DSTG=['Discovery','Discovery','Discovery','Next meeting','Proposal','Negotiation','On hold','Discovery','Won','Proposal'];
+conducted.forEach((c,k)=>{const md=ago(5+(k*3)%120),st=DSTG[k%DSTG.length];const x={stage:['Proposal','Negotiation','Won'].includes(st)?'Proposal':'Meeting conducted',stageLocked:true,mtgStatus:'Conducted',meetingDate:md,dealStage:st,dealStageAt:ago(2+(k%20))};
+ if(k%5!==3)x.dealValue=[15000,25000,40000,60000,85000,120000,32000,48000][k%8];
+ put(c,x);meetings[(c.id+'_'+md).replace(/[^A-Za-z0-9_\-.~:@+]/g,'-')]={c:c.id,name:c.name,account:c.account,date:md,month:md.slice(0,7),auto:false,at:stamp(md,19)}});
+const MC=['Sent proposal and pricing after the call.','Waiting on PO from procurement.','They asked us to call back in March.','Will introduce me to a colleague in corporate development.','Promised to send the deck and two case studies.','Budget is not a priority this year.','Signed the order form today.','Good discussion, no clear next step yet.'];
+const MS=['Proposal','Negotiation','Discovery','Next meeting','Discovery','On hold','Won','Discovery'],MV=[48000,120000,null,35000,null,60000,85000,null];
+take('Emailed',8).forEach((c,k)=>{const md=ago(3+k*4);put(c,{stage:['Proposal','Negotiation','Won'].includes(MS[k])?'Proposal':'Meeting conducted',dealStage:MS[k],dealStageAt:ago(1+k),...(MV[k]?{dealValue:MV[k]}:{}),stageLocked:true,mtgStatus:'Conducted',meetingDate:md,...hist(c,2,md<ago(10)?20:12),comments:[{t:stamp(md,18),x:'Meeting conducted on '+md+'.'},{t:stamp(md,19),x:MC[k]}]});
+ meetings[(c.id+'_'+md).replace(/[^A-Za-z0-9_\-.~:@+]/g,'-')]={c:c.id,name:c.name,account:c.account,date:md,month:md.slice(0,7),auto:false,at:stamp(md,19)}});
+// lost deals: warm connect due today, warm connect later, and one held for the cool-off
+[['Deal lost: they asked us to reach out next month.',32],['Deal lost: circle back in Q2, budget resets then.',6],['Deal lost: went with a competitor.',12],['Deal lost: try again after the holidays.',20]].forEach(([x,ag])=>{const c=take('Emailed',1)[0];const md=ago(ag+10),la=ago(ag);
+ put(c,{stage:'Meeting conducted',stageLocked:true,mtgStatus:'Conducted',meetingDate:md,dealStage:'Lost',dealStageAt:la,lostAt:la,dealValue:40000,...hist(c,2,ag+20),comments:[{t:stamp(md,18),x:'Meeting conducted on '+md+'.'},{t:stamp(la,12),x}]});
+ meetings[(c.id+'_'+md).replace(/[^A-Za-z0-9_\-.~:@+]/g,'-')]={c:c.id,name:c.name,account:c.account,date:md,month:md.slice(0,7),auto:false,at:stamp(md,19)}});
+// cancelled by the client: recurring check-ins, one with a warm connect
+take('Emailed',2).forEach((c,k)=>{const nd=k?ahead(20):T,ca=ago(k?10:30);put(c,{stage:'Nurture',stageLocked:true,mtgStatus:'Cancelled by client',cancelledAt:ca,lostAt:ca,recur:{every:30,left:3-k},nextStep:'Check in: is there an open opportunity?',nextStepDate:nd,snoozeUntil:nd,snoozeWhy:'Meeting cancelled: recurring check-in',...hist(c,2,25),comments:[{t:stamp(ca,12),x:'Meeting cancelled by the client. Recurring check-ins every 30 days, 3 times.'},...(k?[{t:stamp(ca,13),x:'Client said: reach out in Q2 after the budget reset'}]:[])]})});
+// not interested in the CRM (in cool-off), snoozes, out of office, CRM-marked DNC, stale
+take('Emailed',3).forEach((c,k)=>{const d=ago([10,40,80][k]);put(c,{stage:'Not interested',stageLocked:true,niDate:d,snoozeUntil:ahead(90-[10,40,80][k]),snoozeWhy:'Not interested: cool-off',lastOutcome:'Not interested',lastOutcomeDate:d,...hist(c,2,[12,42,82][k])})});
+take('Emailed',4).forEach((c,k)=>{const d=ahead([5,25,60,95][k]);put(c,{stage:'Nurture',stageLocked:true,snoozeUntil:d,nextCallManual:d,snoozeWhy:k%2?'Asked to reach out later':'Different pitch later',lastOutcome:k%2?'Reach out later':'Different pitch at a different time',lastOutcomeDate:ago(3),...hist(c,3,4)})});
+take('Emailed',2).forEach((c,k)=>put(c,{stage:'Emailed',oooUntil:ahead(4+k*6),ooo:'Auto-reply: back '+ahead(4+k*6),...hist(c,1,7)}));
+take('Emailed',2).forEach((c,k)=>put(c,{stage:'Do not contact',stageLocked:true,dnc:true,dncReason:k?'Asked to unsubscribe':'Said do not contact',dncDate:ago(5+k*9),...hist(c,2,20)}));
+take('Emailed',6).forEach((c,k)=>put(c,{stage:'Follow-up',...hist(c,2,40+k*3)}));
+// a few LinkedIn touches already logged, counted in the new LinkedIn field
+sheet.filter(c=>c.linkedin&&c.email&&!C[c.id]).slice(0,3).forEach((c,k)=>{const d=ago(4+k);item(d,c,'LinkedIn','LinkedIn','Message sent',16);put(c,{stage:'Follow-up',...hist(c,2,12),liTouches:1,lastLinkedIn:d,lastChannel:'LinkedIn'})});
+// meetings log from the BI sheet (37 rows, May to December)
+const LOGM=[['2026-05',3],['2026-06',6],['2026-07',6],['2026-08',6],['2026-09',5],['2026-10',6],['2026-11',4],['2026-12',1]];
+const slog=[];let li=0;const lp=sheet.filter(c=>c.stage==='Meeting conducted'||c.sheetStatus==='Meeting log');
+for(const [mo,n] of LOGM)for(let k=0;k<n;k++){const c=lp[li++%lp.length];slog.push({name:c.name,account:c.account,location:c.location,role:c.title,month:mo,attendees:k%4?'':'with a colleague'})}
+const accounts={'northwind-chemicals':{name:'Northwind Chemicals',nextStep:'Send the sustainability benchmark to the strategy team',nextStepDate:T,comments:[{t:stamp(ago(6)),x:'New CFO from March. Strategy team owns the market-sizing budget.'}]},
+ 'bluestone-glass':{name:'Bluestone Glass',nextStep:'Ask for an intro to the APAC growth lead',nextStepDate:ahead(4),comments:[{t:stamp(ago(12)),x:'Two business units, separate budgets. Start with flat glass.'}]}};
+return{contacts:C,daily,meetings,plan:{},accounts,
+ meta:{run:{backfillDone:false,lastRunIST:'Sandbox data · generated for '+T},config:{}},
+ sheet:{generated:T,source:'Sandbox dummy BI sheet (invented people and companies)',contacts:sheet,meetings:slog}}};
+
+</script>
+<script>
+/* Outreach CRM SANDBOX runtime.
+   Replaces the live database with an in-memory store seeded with dummy data,
+   adds a movable clock, and captures clipboard copies and flash messages.
+   Nothing here can reach the live CRM's data. */
+(function(){
+'use strict';
+const RealDate=Date;
+let LS=null;try{LS=window.localStorage;LS.getItem('x')}catch(e){LS=null}
+const lsGet=k=>{try{return LS?LS.getItem(k):null}catch(e){return null}};
+const lsSet=(k,v)=>{try{LS&&LS.setItem(k,v)}catch(e){}};
+const lsDel=k=>{try{LS&&LS.removeItem(k)}catch(e){}};
+const INIT=window.__SBX_INIT||null;            // set by the automated tests
+let cfg=INIT?INIT.cfg||{}:(()=>{try{return JSON.parse(lsGet('sbx.cfg')||'{}')}catch(e){return{}}})();
+const persist=!INIT;const SEEDV='live-2026-11-26-v2';
+
+// ---------- clock
+let OFF=0;
+if(cfg.now){const t=RealDate.parse(cfg.now);if(!isNaN(t))OFF=t-RealDate.now()}
+class SDate extends RealDate{constructor(...a){if(a.length===0)super(RealDate.now()+OFF);else super(...a)}static now(){return RealDate.now()+OFF}}
+window.Date=SDate;
+
+// ---------- store
+const clone=x=>x===undefined?undefined:JSON.parse(JSON.stringify(x));
+const store=new Map();let saveT=0;
+const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
+function deepMerge(t,p){for(const [k,v] of Object.entries(p)){if(isObj(v)&&isObj(t[k]))deepMerge(t[k],v);else t[k]=clone(v)}return t}
+function loadSeed(seed){store.clear();if(!seed)return;
+ const put=(col,obj)=>{for(const [id,d] of Object.entries(obj||{}))store.set(col+'/'+id,clone(d))};
+ put('contacts',seed.contacts);put('daily',seed.daily);put('meetings',seed.meetings);put('plan',seed.plan);put('accounts',seed.accounts);put('meta',seed.meta)}
+let SHEET=null;
+if(INIT){loadSeed(INIT.seed);SHEET=INIT.seed&&INIT.seed.sheet||{contacts:[],meetings:[]}}
+else{let ok=false;try{const j=lsGet('sbx.store');if(j){const o=JSON.parse(j);if(o.v===SEEDV){for(const [k,v] of Object.entries(o.store||{}))store.set(k,v);SHEET=o.sheet;ok=true}}}catch(e){}
+ if(!ok){const seed=window.SBX_SEED(new SDate());loadSeed(seed);SHEET=seed.sheet;save()}}
+function save(){if(!persist)return;clearTimeout(saveT);saveT=setTimeout(()=>{const o={};for(const [k,v] of store)o[k]=v;lsSet('sbx.store',JSON.stringify({v:SEEDV,store:o,sheet:SHEET}))},150)}
+
+// ---------- listeners
+const docL=new Map(),colL=new Map();const errs=new Set();let dead=false;
+const parent=p=>p.split('/').slice(0,-1).join('/');
+const snapDoc=p=>({id:p.split('/').pop(),exists:store.has(p),data:()=>clone(store.get(p))});
+const snapCol=c=>({docs:[...store.keys()].filter(k=>parent(k)===c).sort().map(k=>({id:k.split('/').pop(),data:()=>clone(store.get(k))}))});
+const delayFor=c=>(cfg.slow&&cfg.slow[c])||0;
+function notify(p){if(dead)return;setTimeout(()=>{for(const f of docL.get(p)||[])f(snapDoc(p));const c=parent(p);for(const f of colL.get(c)||[])f(snapCol(c))},5)}
+const log=[];
+function canWrite(){if(cfg.viewOnly){const e=new Error('Write refused: view access only');e.code='invalid_argument';throw e}if(dead){const e=new Error('Connection lost');e.code='unavailable';throw e}}
+function docRef(p){return{id:p.split('/').pop(),path:p,
+ async get(){return snapDoc(p)},
+ async set(d){canWrite();store.set(p,clone(d));log.push({op:'set',p,d:clone(d)});save();notify(p)},
+ async update(d){canWrite();if(!store.has(p)){const e=new Error('No document to update: '+p);e.code='not-found';throw e}
+  const cur=store.get(p);if(cfg.updateMode==='shallow')Object.assign(cur,clone(d));else deepMerge(cur,d);log.push({op:'update',p,d:clone(d)});save();notify(p)},
+ async delete(){canWrite();store.delete(p);log.push({op:'delete',p});save();notify(p)},
+ onSnapshot(fn,err){if(!docL.has(p))docL.set(p,new Set());docL.get(p).add(fn);if(err)errs.add(err);setTimeout(()=>fn(snapDoc(p)),5+delayFor(parent(p)));return()=>docL.get(p).delete(fn)}}}
+function colRef(c){return{id:c,doc:id=>docRef(c+'/'+id),
+ async get(){return snapCol(c)},
+ onSnapshot(fn,err){if(!colL.has(c))colL.set(c,new Set());colL.get(c).add(fn);if(err)errs.add(err);setTimeout(()=>fn(snapCol(c)),5+delayFor(c));return()=>colL.get(c).delete(fn)}}}
+const db=Object.freeze({doc:docRef,collection:colRef});
+const user=Object.freeze({can:async()=>!cfg.viewOnly,id:async()=>'sandbox-user'});
+
+// ---------- sheet.json fetch
+const realFetch=window.fetch.bind(window);
+window.fetch=async(u,o)=>{if(String(u).endsWith('data/sheet.json'))return new Response(JSON.stringify(SHEET||{contacts:[],meetings:[]}),{status:200,headers:{'content-type':'application/json'}});return realFetch(u,o)};
+
+// ---------- clipboard and flash capture
+const copies=[],flashes=[];
+try{Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async t=>{copies.push(String(t))},readText:async()=>copies[copies.length-1]||''}})}catch(e){}
+
+window.SBX={
+ use:async name=>{await new Promise(r=>setTimeout(r,0));if(name==='db')return cfg.signedOut?null:db;if(name==='user')return cfg.signedOut?null:user;return null},
+ get:p=>clone(store.get(p)),keys:pre=>[...store.keys()].filter(k=>k.startsWith(pre)),
+ put:(p,d)=>{store.set(p,clone(d));save();notify(p)},
+ log,copies,flashes,cfg,
+ kill(){dead=true;for(const e of errs)try{e({code:'unavailable',message:'sandbox disconnect'})}catch(x){}},
+ setClock(iso){cfg.now=iso||'';lsSet('sbx.cfg',JSON.stringify(cfg));location.reload()},
+ setViewOnly(v){cfg.viewOnly=!!v;lsSet('sbx.cfg',JSON.stringify(cfg));location.reload()},
+ reset(){lsDel('sbx.store');location.reload()},
+ isSandbox:true};
+})();
+
+</script>
+</head>
+<body>
+<style>
+#sbx-bar{background:#121212;color:#F4F4F6;font:13px/1.4 Inter,system-ui,sans-serif;padding:8px clamp(16px,3vw,36px);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;border-bottom:3px solid #F0533A}
+#sbx-bar b{background:#F0533A;color:#121212;border-radius:999px;padding:2px 10px;font:700 12px "Space Grotesk",Inter,sans-serif;letter-spacing:.04em}
+#sbx-bar input,#sbx-bar button{font:inherit;font-size:13px;min-height:30px;padding:3px 9px;border-radius:9px;border:1px solid #3A3A40;background:#1E1E22;color:#F4F4F6}
+#sbx-bar input{color-scheme:dark}
+#sbx-bar button:hover{border-color:#F0533A}
+#sbx-bar label{display:flex;gap:5px;align-items:center;cursor:pointer}
+#sbx-bar .g{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#sbx-bar .m{color:#B3B3BD}
+</style>
+<div id="sbx-bar" role="region" aria-label="Sandbox controls">
+ <b>SANDBOX</b><span class="m">Invented people and companies. Nothing here touches your live CRM.</span>
+ <span class="g"><span id="sbx-clock"></span>
+  <input type="datetime-local" id="sbx-dt" aria-label="Sandbox date and time (IST)">
+  <button id="sbx-set">Set clock</button><button id="sbx-real">Real time</button>
+  <button data-sbxq="2026-11-30T11:00">Mon</button><button data-sbxq="2026-12-01T11:00">Tue</button><button data-sbxq="2026-12-04T11:00">Fri</button><button data-sbxq="2026-11-26T11:00">Thanksgiving</button></span>
+ <span class="g"><label><input type="checkbox" id="sbx-sync"> Mail history synced</label><label><input type="checkbox" id="sbx-ro"> View-only</label><button id="sbx-reset">Reset dummy data</button></span>
+</div>
+<script>
+(function(){const S=window.SBX;if(!S)return;const IST=330*60000;
+ const now=new Date(),ist=new Date(now.getTime()+IST).toISOString();
+ document.getElementById('sbx-clock').textContent='Clock: '+new Date(now.getTime()+IST).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'UTC'})+' IST'+(S.cfg.now?'':' (real time)');
+ const dt=document.getElementById('sbx-dt');dt.value=ist.slice(0,16);
+ const go=v=>{if(v)S.setClock(v+':00+05:30')};
+ document.getElementById('sbx-set').onclick=()=>go(dt.value);
+ document.getElementById('sbx-real').onclick=()=>S.setClock('');
+ for(const b of document.querySelectorAll('[data-sbxq]'))b.onclick=()=>go(b.dataset.sbxq);
+ const ro=document.getElementById('sbx-ro');ro.checked=!!S.cfg.viewOnly;ro.onchange=()=>S.setViewOnly(ro.checked);
+ const sy=document.getElementById('sbx-sync');const run=S.get('meta/run')||{};sy.checked=!!run.backfillDone;
+ sy.onchange=()=>{const r=S.get('meta/run')||{};r.backfillDone=sy.checked;S.put('meta/run',r)};
+ document.getElementById('sbx-reset').onclick=()=>S.reset();})();
+</script>
+
+<div class="shell">
+<aside class="side">
+  <div class="brand"><div class="logo">VV</div><div><b>Outreach CRM</b><small>Sandbox · invented data</small></div></div>
+  <nav id="tabs" aria-label="CRM pages">
+    <a href="#today" data-v="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v15H4zM4 10h16M9 3v4M15 3v4"/></svg>Today</a>
+    <a href="#meetings" data-v="meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M3 21c1-4 5-6 9-6s8 2 9 6"/></svg>Meetings</a>
+    <a href="#deals" data-v="deals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v10h-4zM16 4h4v6h-4z"/></svg>Deals</a>
+    <a href="#dashboard" data-v="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg>Dashboard</a>
+    <a href="#calls" data-v="calls"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Calls to make<span id="dueN" hidden></span></a>
+    <a href="#contacts" data-v="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11a4 4 0 1 0 0-8a4 4 0 1 0 0 8M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M17 3.5a4 4 0 0 1 0 7M22 21v-2a4 4 0 0 0-3-3.8"/></svg>Contacts</a>
+    <a href="#daily" data-v="daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg>Daily log</a>
+    <a href="#accounts" data-v="accounts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>Accounts</a>
+    <a href="#rules" data-v="rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9c-4.5-1-8-4-8-9V7z"/></svg>Rules</a>
+  </nav>
+  <div id="fresh">Loading data…</div>
+</aside>
+<div class="content"><main id="main"></main></div>
+</div>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Contact details"></aside>
+<script>
+{
+const S={c:new Map(),daily:new Map(),meet:new Map(),meta:{},cfg:{},db:null,w:true,ready:false,f:{q:'',acc:'',st:'',show:'',sort:'next'},day:'',sel:null,sheet:null,merged:null,limit:200,pend:{},mpend:{},dpend:{},acc:new Map()};
+const STAGES=['New','Contacted','Emailed','Follow-up','Called','Connected','Replied','Meeting scheduled','Meeting conducted','Proposal','Nurture','Not interested','Bounced','Left company','Do not contact'];
+const ENG=['Connected','Replied','Meeting scheduled','Meeting conducted','Proposal'];
+const OUT=['No answer','Voicemail','Gatekeeper','Spoke','Call back later','Not interested'];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const IST=330*60000;const pl=(n,s,p)=>n+' '+(n===1?s:(p||s+'s'));
+const istDay=ts=>new Date(new Date(ts).getTime()+IST).toISOString().slice(0,10);
+const istTime=ts=>ts?new Date(new Date(ts).getTime()+IST).toISOString().slice(11,16):'';
+const SHIFT=4*3600e3;const today=()=>istDay(Date.now()-SHIFT);const shiftDay=ts=>istDay(new Date(ts).getTime()-SHIFT);
+const D=s=>new Date(s+'T00:00:00Z');
+const iso=d=>d.toISOString().slice(0,10);
+const USHOL={'2026-01-01':"New Year's Day",'2026-01-19':'Martin Luther King Jr. Day','2026-02-16':"Presidents' Day",'2026-05-25':'Memorial Day','2026-06-19':'Juneteenth','2026-07-03':'Independence Day (observed)','2026-09-07':'Labor Day','2026-11-26':'Thanksgiving','2026-11-27':'Day after Thanksgiving','2026-12-24':'Christmas Eve','2026-12-25':'Christmas Day','2027-01-01':"New Year's Day",'2027-01-18':'Martin Luther King Jr. Day','2027-02-15':"Presidents' Day",'2027-05-31':'Memorial Day','2027-06-18':'Juneteenth (observed)','2027-07-05':'Independence Day (observed)','2027-09-06':'Labor Day','2027-11-25':'Thanksgiving','2027-11-26':'Day after Thanksgiving','2027-12-24':'Christmas Eve','2027-12-24':'Christmas Eve','2027-12-31':"New Year's Day (observed)"};
+const INHOL={'2026-12-25':'Christmas','2027-01-01':"New Year's Day",'2027-01-15':'Pongal','2027-01-26':'Republic Day','2027-03-10':'Id-ul-Fitr (moon-dependent)','2027-03-23':'Holi','2027-03-26':'Good Friday','2027-08-15':'Independence Day','2027-10-02':'Gandhi Jayanti','2027-10-09':'Dussehra','2027-10-28':'Deepavali (Tamil Nadu)','2027-10-29':'Diwali','2027-12-25':'Christmas'};
+const HOL=new Set([...Object.keys(USHOL),...Object.keys(INHOL)]);
+const holName=t=>{const r=R(),u=r.usHolidays&&USHOL[t],i=r.inHolidays&&INHOL[t];return u&&i?(u===i?u+' (US and India)':'US: '+u+' · India: '+i):u?'US holiday: '+u:i?'Indian holiday: '+i:''};
+const isBD=s=>{const w=D(s).getUTCDay();if(typeof S!=='undefined'&&S.cfg&&S.cfg.rules&&S.cfg.rules.skipHolidays===false)return true;const ru=(typeof S!=='undefined'&&S.cfg&&S.cfg.rules)||{};const hol=(ru.usHolidays!==false&&!!USHOL[s])||(ru.inHolidays!==false&&!!INHOL[s]);return w>0&&w<6&&!hol};
+const addBD=(s,n)=>{let d=D(s);while(n>0){d=new Date(d.getTime()+864e5);if(isBD(iso(d)))n--}return iso(d)};
+const mx=(...a)=>a.filter(Boolean).sort().pop()||'';
+const fmt=s=>s?D(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'}):'';
+const monL=m=>D(m+'-01').toLocaleDateString('en-GB',{month:'short',year:'2-digit',timeZone:'UTC'});
+const WIN={USE:'8–10 PM IST · 9:30–11:30 AM ET',USC:'9–11 PM IST · 9:30–11:30 AM CT',USW:'11 PM–1 AM IST · 9:30–11:30 AM PT',LATAM:'6:30–8:30 PM IST · 10 AM–12 PM BRT',EU:'2:30–4:30 PM IST · 10 AM–12 PM CET',UK:'3:30–5:30 PM IST · 10 AM–12 PM GMT',ME:'11:30 AM–1:30 PM IST · 10 AM–12 PM GST',IN:'11 AM–1 PM IST',SEA:'7:30–9:30 AM IST · 10 AM–12 PM SGT',NEA:'6:30–8:30 AM IST · 10 AM–12 PM JST/KST'};
+const TZS=[['America/New_York','Eastern (ET)'],['America/Chicago','Central (CT)'],['America/Denver','Mountain (MT)'],['America/Phoenix','Arizona (MST)'],['America/Los_Angeles','Pacific (PT)'],['America/Mexico_City','Mexico City'],['America/Bogota','Colombia'],['America/Lima','Peru'],['America/Santiago','Chile'],['America/Argentina/Buenos_Aires','Argentina'],['America/Montevideo','Uruguay'],['America/Sao_Paulo','Brazil (BRT)'],['Europe/London','UK (GMT)'],['Europe/Berlin','Central Europe (CET)'],['Europe/Istanbul','Türkiye'],['Europe/Moscow','Moscow'],['Asia/Dubai','Gulf (GST)'],['Asia/Kolkata','India (IST)'],['Asia/Jakarta','Indonesia, Thailand'],['Asia/Singapore','Singapore, China, Taiwan'],['Asia/Tokyo','Japan, Korea'],['Australia/Sydney','Sydney']];
+const LOCTZ=[[/india|mumbai|pune|chennai|bengaluru|bangalore|delhi|hyderabad|gurgaon/,'Asia/Kolkata'],[/indonesia|jakarta|thailand|vietnam/,'Asia/Jakarta'],[/singapore|china|taiwan|malaysia|philippines|hong kong|shanghai/,'Asia/Singapore'],[/japan|korea|tokyo|seoul/,'Asia/Tokyo'],[/australia|sydney|melbourne/,'Australia/Sydney'],[/brazil|paulo|brasil/,'America/Sao_Paulo'],[/argentina/,'America/Argentina/Buenos_Aires'],[/chile/,'America/Santiago'],[/colombia/,'America/Bogota'],[/peru/,'America/Lima'],[/mexico/,'America/Mexico_City'],[/uae|dubai|saudi|qatar|oman|bahrain|kuwait/,'Asia/Dubai'],[/türkiye|turkey|istanbul/,'Europe/Istanbul'],[/united kingdom|\buk\b|london|england|scotland|ireland/,'Europe/London'],[/germany|france|spain|italy|switzerland|netherlands|belgium|sweden|norway|denmark|finland|poland|austria|zurich|geneva|basel|europe|czech|hungary/,'Europe/Berlin'],[/arizona/,'America/Phoenix'],[/colorado|denver|utah|montana|idaho|wyoming|new mexico/,'America/Denver'],[/california|washington state|oregon|nevada|seattle|san francisco|los angeles/,'America/Los_Angeles'],[/texas|minnesota|illinois|wisconsin|missouri|tennessee|kansas|iowa|oklahoma|alabama|louisiana|arkansas|mississippi|nebraska|houston|chicago|dallas|st\. paul|eden prairie/,'America/Chicago'],[/new york|north carolina|south carolina|ohio|pennsylvania|massachusetts|michigan|georgia|florida|virginia|maryland|delaware|new jersey|connecticut|indiana|kentucky|maine|vermont|new hampshire|rhode island|washington, dc|boston|atlanta|charlotte|philadelphia|wilmington|rochester|elmira|painted post|steuben|horseheads/,'America/New_York']];
+function tzOf(c){if(c.tz)return c.tz;if(c.account==='Milliken')return'America/New_York';const l=(c.location||'').toLowerCase();for(const [rx,z] of LOCTZ)if(rx.test(l))return z;return''}
+const tzSrc=c=>c.tz?'':(c.account==='Milliken'&&!(c.location||'').trim()?' (assumed Eastern)':' (from location)');
+function offMin(tz,d){try{const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return Math.round((Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute)-Math.floor(d.getTime()/6e4)*6e4)/9e5)*15}catch{return null}}
+const hm=m=>{m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mi=m%60;return((h%12)||12)+(mi?':'+String(mi).padStart(2,'0'):'')+(h<12?' AM':' PM')};
+function winIST(tz){const o=offMin(tz,new Date());if(o===null)return null;const d=330-o;return{s:((570+d)%1440+1440)%1440,txt:hm(570+d)+'–'+hm(690+d)+' IST'}}
+const localNow=tz=>{try{return new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',weekday:'short'}).format(new Date())}catch{return''}};
+const tzLabel=tz=>(TZS.find(x=>x[0]===tz)||[tz,tz])[1];
+function winText(c){const z=tzOf(c);if(!z)return'Time zone missing: fill it in';const w=winIST(z);return`${tzLabel(z)}${tzSrc(c)} · their time ${localNow(z)}${w?' · call '+w.txt:''}`}
+const tzSel=c=>{const z=tzOf(c);return`<select data-f="tz" aria-label="Time zone" ${z?'':'style="border-color:var(--warn)"'}><option value="">${z?'Clear':'Fill in time zone'}</option>${TZS.map(([v,l])=>`<option value="${v}" ${v===z?'selected':''}>${esc(l)}</option>`).join('')}</select>${z&&!c.tz?`<span class="t">${esc(tzSrc(c).replace(/[()]/g,'').trim())}</span>`:''}`};
+const liN=c=>(Number.isFinite(c.linkedin)?c.linkedin:0)+(c.liTouches||0);function manualN(c){if(S._mnAt!==S.daily){const man={},syn={};for(const [d,v] of S.daily)for(const x of (v.items||[])){if((x.ch||'Email')!=='Email')continue;const k=x.c+'|'+d;if(x.k==='Manual')man[k]=1;else syn[k]=1}const n={};for(const k of Object.keys(man))if(!syn[k]){const id=k.split('|')[0];n[id]=(n[id]||0)+1}S._mn=n;S._mnAt=S.daily}return [c.id,...(c.prevIds||[])].reduce((s,i)=>s+(S._mn[i]||0),0)}const eCnt=c=>(c.emails||0)+liN(c)+manualN(c);const lastE=c=>mx(c.lastEmail,c.lastLinkedIn);
+const liUrl=c=>typeof c.linkedin==='string'&&/^https:\/\//.test(c.linkedin)?c.linkedin:'https://www.linkedin.com/search/results/people/?keywords='+encodeURIComponent((c.name||'')+' '+(c.account||''));
+function region(c){const l=(c.location||'').toLowerCase();
+ if(/india|mumbai|pune|chennai|bengaluru|bangalore|delhi|hyderabad|gurgaon/.test(l))return'IN';
+ if(/singapore|china|taiwan|indonesia|malaysia|thailand|vietnam|philippines|sri lanka|hong kong|shanghai|australia/.test(l))return'SEA';
+ if(/japan|korea|tokyo|seoul/.test(l))return'NEA';
+ if(/brazil|paulo|mexico|argentina|chile|colombia|peru|latam/.test(l))return'LATAM';
+ if(/uae|dubai|saudi|qatar|oman|bahrain|kuwait|israel|türkiye|turkey|egypt|africa/.test(l))return'ME';
+ if(/united kingdom|\buk\b|london|england|scotland|ireland/.test(l))return'UK';
+ if(/germany|france|spain|italy|switzerland|netherlands|belgium|sweden|norway|denmark|finland|poland|austria|europe|zurich|geneva|basel|emea/.test(l))return'EU';
+ if(/texas|minnesota|illinois|wisconsin|missouri|tennessee|kansas|iowa|oklahoma|alabama|louisiana|houston|chicago|dallas|st\. paul|eden prairie/.test(l))return'USC';
+ if(/california|washington|oregon|arizona|utah|colorado|nevada|seattle|san francisco/.test(l))return'USW';
+ return'USE'}
+const reached=c=>!!c._sheet||(c.emails||0)>0||!!c.lastEmail||!!c.myReachOut||ENG.includes(c.stage)||c.stage==='Bounced';
+const synced=c=>(c.emails||0)>0||!!c.lastEmail||!!c.myReachOut||!!c.lastLinkedIn;
+const slug=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const nkey=n=>String(n||'').toLowerCase().replace(/[^a-z]/g,'');
+const AUTO=['New','Contacted','Emailed'];
+const RDEF={usHolidays:true,inHolidays:true,friCalls:100,emailCap:40,domainCap:25,liCap:20,emailGap:5,seqMax:4,seqPause:30,niCool:90,callMax:6,staleDays:30,oneTouch:true,oooPause:true,bounceBlocks:true,accountPause:false,skipHolidays:true,warmRule:true,warmGap:30};
+const RINFO=[['DNC suppression','Anyone marked Do not contact (by you, your sheet, or a reply asking to stop) drops off every list, and calls, emails and LinkedIn touches cannot be logged for them until you lift it.',null],
+ ['Weekly channel plan','Monday: email and LinkedIn only, no calls. Tuesday to Thursday: email, LinkedIn and calls. Friday: the same plus a call blitz. Weekends: no plan. Your day runs until 4 AM IST, so a late US shift counts as the same day.',null],
+ ['Outcomes and snoozes','Record an outcome on any Today row. “Reached out, no reply” logs the touch and the sequence continues. “Not interested” holds the lead for the cool-off below. “Different pitch” and “Reach out later” take a date or month (or a 3, 4 or 5-month snooze) and keep the lead off every list until then. “Do not contact” suppresses them on every channel.',null],
+ ['LinkedIn counts as email','A LinkedIn touch is treated as an email touch: it uses the daily email cap, the gap between touches, the per-company cap, the sequence limit and the one-touch-per-day rule.',null],
+ ['friCalls','Friday call target','On Fridays the calling list tops up with your highest-scored callable leads (with a phone, not called in 3+ days) until it reaches this many.'],
+ ['usHolidays','Skip suggestions on major US holidays','On New Year’s Day, MLK Day, Presidents’ Day, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving and the day after, Christmas Eve and Christmas Day, the Today page shows no lists. Next-call dates skip these days too.'],
+ ['inHolidays','Skip suggestions on major Indian holidays','On Pongal, Republic Day, Id-ul-Fitr, Holi, Good Friday, Independence Day, Gandhi Jayanti, Dussehra, Diwali (Tamil Nadu and national dates) and Christmas, the Today page shows no lists and next-call dates skip the day. Id-ul-Fitr can move a day with the moon sighting.'],
+ ['emailCap','Daily email cap (all accounts)','Most emails plus LinkedIn touches planned per day across all accounts.'],
+ ['domainCap','Per-account daily cap','Most emails plus LinkedIn touches to one account per day, so no single company mail server sees a burst.'],
+ ['liCap','LinkedIn daily cap','Most LinkedIn touches suggested per day.'],
+ ['emailGap','Working days between emails','A follow-up email is due only after this many working days.'],
+ ['seqMax','Emails per sequence','After this many emails without a reply the lead leaves the email list.'],
+ ['seqPause','Pause after a finished sequence (days)','Then the lead moves to Nurture and becomes eligible again.'],
+ ['niCool','Not-interested cool-off (days)','Leads who said not now are held back this long before any touch.'],
+ ['callMax','Call attempts before nurture','After this many logged calls without a conversation, calls stop and the lead goes to nurture.'],
+ ['staleDays','Stale after (days)','Leads with no touch for this long are flagged as stale.'],
+ ['oneTouch','One touch per lead per day','A lead emailed or touched today does not also appear in the call or LinkedIn list.'],
+ ['oooPause','Pause during out-of-office','When an auto-reply gives a return date, outreach waits until then.'],
+ ['bounceBlocks','Bounced address blocks email','A bounced lead stays reachable by phone and LinkedIn only.'],
+ ['accountPause','Pause cold email at accounts with an active deal','When anyone at a company is at Meeting scheduled or Proposal, cold emails to others there pause.'],
+ ['skipHolidays','Skip weekends and holidays','Next-call dates skip Saturdays, Sundays, US Thanksgiving and year-end holidays.'],
+ ['Deals','Every conducted meeting is a deal on the Deals page, moved through Discovery, Next meeting, Proposal, Negotiation, On hold, Won or Lost. Deal value takes whole US dollars only: no cents, decimals or minus signs, up to $1,000,000,000. A lost deal leaves cold outreach and comes back only as a warm connect (below) or after the not-interested cool-off.',null],
+ ['warmRule','Warm connect after a lost meeting or deal','When a meeting is cancelled by the client or a deal is marked Lost, and your comment says to reach out later (for example “reach out at a later time”, “circle back in Q2”, “try again after the holidays”), the lead returns to the Today page as a warm connect: on the month, quarter or date you wrote, otherwise after the gap below. Until then it stays off cold lists. Do-not-contact and left-company leads never come back.'],
+ ['warmGap','Warm connect gap when no date is written (days)','Days after the loss before the warm connect is due, when the comment says later but names no month, quarter or date. Kept between 7 and 365.']];
+const R=()=>({...RDEF,...(S.cfg.rules||{})});
+const DNCRX=/\b(dnc|do not contact|don't contact|opted out|opt out|unsubscribe|remove me|stop emailing|phish(ing)?( reported)?|reported (as )?(spam|phish))\b/i;const LEFTRX=/\b(left( the)? company|no more (in|with) the company|not in the company anymore|does not work for the company|no longer (at|with) the company|retired)\b/i;
+const isDNC=c=>(c.dnc===false&&c.dncLifted)?false:!!c.dnc||c.stage==='Do not contact'||DNCRX.test(c.sheetStatus||'');
+const daysAgo=d=>d?Math.round((D(today())-D(d))/864e5):9999;
+function activeDeal(acc){if(!S._deal||S._dealAt!==S.merged){S._deal=new Set(contacts().filter(c=>['Meeting scheduled','Proposal'].includes(c.stage)).map(c=>c.account));S._dealAt=S.merged}return S._deal.has(acc)}
+function blockReason(c,ch){const r=R();if(isDNC(c))return'Do not contact'+(c.dncReason?': '+c.dncReason:'');
+ if(c.stage==='Left company')return'Left the company';
+ if(c.stage==='Not interested'&&daysAgo(mx(c.lastReply,c.myReachOut,c.lastEmail,c.niDate))<r.niCool)return'Said not interested: cool-off until '+fmt(iso(new Date(D(mx(c.lastReply,c.myReachOut,c.lastEmail,c.niDate)||today()).getTime()+r.niCool*864e5)));
+ if(r.oooPause&&c.oooUntil&&c.oooUntil>today())return'Out of office until '+fmt(c.oooUntil);
+ if(snoozed(c)&&!c.nextCallManual)return(c.snoozeWhy||'Snoozed')+' until '+fmt(c.snoozeUntil);
+ {const h=dealHold(c);if(h)return h}
+ if(ch==='Email'&&!c.email)return'No email address';
+ if(ch==='Email'&&r.bounceBlocks&&(c.bounced||c.stage==='Bounced'))return'Email bounced: use phone or LinkedIn';
+ return''}
+function score(c){const t=(c.title||'').toLowerCase();let f=/chief|\bc[eotfm]o\b|president|founder|owner/.test(t)?35:/\b(svp|evp|senior vice|executive vice)/.test(t)?30:/\bvp\b|vice president/.test(t)?25:/director|head/.test(t)?18:/manager|lead/.test(t)?10:5;
+ if(/strategy|market|intelligence|business development|insight|growth|corporate development|m&a|commercial/.test(t))f+=10;
+ let e=0;if(c.replied)e+=15;if(['Connected','Replied'].includes(c.stage))e+=15;if(['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage))e+=30;if(c.prev)e+=5;if(c.bounced||c.stage==='Bounced')e-=10;
+ return Math.max(0,Math.min(100,f+e))}
+const OUTC=[['mtg','Meeting scheduled (pick the date)'],['noreply','Reached out, no reply'],['ni','Not interested: try again after the cool-off'],['pitch','Different pitch at a different time'],['later','Reach out later (pick a date or snooze 3–5 months)'],['dnc','Do not contact']];
+const snoozed=c=>!!c.snoozeUntil&&c.snoozeUntil>today();
+const nextBD=x=>isBD(x)?x:addBD(x,1);
+const addMonths=(t,n)=>{const d=D(t);d.setUTCMonth(d.getUTCMonth()+n);return nextBD(iso(d))};
+const needsEmail=c=>!isDNC(c)&&!c.emailFixedOn&&(c.stage==='Bounced'||!!c.bounced||/new email/i.test(c.note||''));
+const isStale=c=>!['Do not contact','Left company','Not interested'].includes(c.stage)&&synced(c)&&daysAgo(lastTouch(c))>=R().staleDays;
+const lastTouch=c=>mx(c.lastEmail,c.myReachOut,c.lastLinkedIn);
+function plan(c){const st=c.stage||'Emailed',t=today(),r=R();const mk=(d,why)=>({d,why,over:d<t,due:d<=t});
+ if(blockReason(c,'Call'))return null;if(isDeal(c)&&dStage(c)==='Won')return null;if((c.calls||0)>=r.callMax&&!['Connected','Replied','Meeting conducted','Proposal'].includes(st))return null;
+ if(c.nextCallManual)return mk(c.nextCallManual,'Date you set');
+ if(c.sheetNext&&!c.lastEmail&&!c.myReachOut)return mk(c.sheetNext,'Follow-up date from your sheet');
+ if(st==='Not interested'){const l=mx(c.lastReply,c.myReachOut,c.lastEmail,c.niDate);return mk(l?nextBD(iso(new Date(D(l).getTime()+r.niCool*864e5))):t,'Not-interested cool-off ended: try again')}
+ if(['Left company','Meeting scheduled','New'].includes(st))return null;
+ const lE=lastE(c),lC=c.myReachOut||'';
+ if(st==='Meeting conducted'||st==='Proposal')return mk(addBD(mx(c.meetingDate,lE,lC)||t,5),'5 working days after the meeting or last touch');
+ if(st==='Replied'||st==='Connected')return mk(addBD(mx(lE,lC,c.lastReply)||t,1),'They engaged: call while it is warm');
+ if(st==='Nurture')return mk(addBD(mx(lE,lC)||t,15),'Nurture: about 3 weeks after the last touch');
+ if(lC&&lC>=lE){const n=c.calls||0,g={'No answer':2,'Voicemail':2,'Gatekeeper':3,'Call back later':1,'Spoke':5}[c.callOutcome]||2;return mk(addBD(lC,n>=4?10:g),n>=4?'4+ calls without a reply: space them out':'After your last call ('+(c.callOutcome||'logged')+')')}
+ if(lE)return mk(addBD(lE,2),st==='Bounced'?'Email bounced: call instead':'2 working days after the last email');
+ if(c.sheetNext)return mk(c.sheetNext,'Follow-up date from your sheet');
+ return null}
+function merge(id,sh,db){const o2=merge0(id,sh,db);if(o2&&!(db&&db.stageLocked)&&!isDNC(o2)&&LEFTRX.test(o2.sheetStatus||'')&&!['Meeting scheduled','Meeting conducted','Proposal','Replied','Connected'].includes(o2.stage))o2.stage='Left company';return o2}
+function merge0(id,sh,db){if(db&&db.movedTo)return null;if(!db)return{id,...sh,_sheet:true};if(!sh)return{id,...db};const o={...sh,_sheet:true,_db:true};
+ for(const [k,v] of Object.entries(db))if(v!==''&&v!==null&&v!==undefined)o[k]=v;o.id=id;o.name=sh.name||db.name;
+ const HARD=['Meeting scheduled','Meeting conducted','Proposal','Replied','Connected','Bounced','Do not contact','Left company','Not interested'];o.stage=db.stageLocked||HARD.includes(db.stage)?db.stage:(!AUTO.includes(sh.stage)?sh.stage:(db.stage||sh.stage));
+ o.emails=Math.max(db.emails||0,sh.emails||0);o.firstEmail=[db.firstEmail,sh.firstEmail].filter(Boolean).sort()[0]||'';o.lastEmail=mx(db.lastEmail,sh.lastEmail);
+ if(!db.nextCallManual&&sh.sheetNext)o.sheetNext=sh.sheetNext;return o}
+function contacts(){if(S.merged)return S.merged;const sh=S.sheet?S.sheet.byId:new Map();const ids=new Set([...sh.keys(),...S.c.keys()]);
+ S.merged=[...ids].map(id=>merge(id,sh.get(id),S.c.get(id))).filter(Boolean);S.byId=new Map(S.merged.map(c=>[c.id,c]));return S.merged}
+const getC=id=>{contacts();return S.byId.get(id)};
+function allMeet(){const out=[],seen=new Set();for(const [k,m] of S.meet){const mo=(m.date||'').slice(0,7);seen.add(nkey(m.name)+mo);out.push({key:k,name:m.name,account:m.account,c:m.c,date:m.date,month:mo,src:m.auto?'mail':'crm'})}
+ for(const m of (S.sheet?S.sheet.meetings:[])){const k=nkey(m.name)+m.month;if(seen.has(k))continue;seen.add(k);const c=contacts().find(x=>nkey(x.name)===nkey(m.name));out.push({name:m.name,account:m.account,c:c&&c.id,month:m.month,role:m.role,att:m.attendees,src:'log'})}
+ return out}
+const items=()=>{const a=[];for(const [d,v] of S.daily)for(const it of (v.items||[]))a.push({...it,day:d});return a};
+let raf=0;const render=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})};
+function view(){const h=location.hash.slice(1);if(h.startsWith('acct-'))return'acct';return['today','meetings','deals','dashboard','calls','contacts','daily','accounts','rules'].includes(h)?h:'today'}
+function draw(){const v=view();for(const a of document.querySelectorAll('nav a'))a.classList.toggle('on',a.dataset.v===v||(v==='acct'&&a.dataset.v==='accounts'));
+ const due=contacts().filter(c=>{const p=plan(c);return p&&p.due}).length;const dn=document.getElementById('dueN');dn.hidden=!due;dn.textContent=due;
+ const m=S.meta.run||{};document.getElementById('fresh').textContent=S.ready?('Refreshed '+(m.lastRunIST||'not yet')+(m.backfillDone?' · full email history loaded':(m.backfillThrough?' · email history loaded back to '+fmt(istDay(m.backfillThrough)):''))):'Loading data…';
+ const el=document.getElementById('main');document.body.classList.toggle('ro',!S.w);
+ if(!S.ready){el.innerHTML='<div class="band empty" id="ld">Loading your CRM…</div>';return}
+ const html=({today:vToday,meetings:vMeetings,deals:vDeals,dashboard:vDash,calls:vCalls,contacts:()=>vContacts(''),daily:vDaily,accounts:vAcc,acct:vAccount,rules:vRules})[v]();
+ el.innerHTML=(/<h1[\s>]/.test(html)?'':`<section class="band" style="padding-bottom:0"><h1>${({dashboard:'Dashboard',calls:'Calls to make',contacts:'Contacts',daily:'Daily log',accounts:'Accounts'})[v]||''}</h1></section>`)+html;
+ if(S._lv!==v+location.hash){S._lv=v+location.hash;el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');countUp(el)}
+ if(v==='dashboard')charts();if(v==='acct')acctCharts();if(v==='today')freezePlan();if(S.sel)drawer()}
+function countUp(el){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(const n of el.querySelectorAll('.kpi .num')){const m=n.textContent.trim().match(/^(\$?)([\d,]+)$/);if(!m)continue;const to=+m[2].replace(/,/g,''),comma=m[2].includes(',')||m[1]==='$';if(!to||to>1e10)continue;const t0=performance.now(),d=650;
+ const step=now=>{const k=Math.min(1,(now-t0)/d),v=Math.round(to*(1-Math.pow(1-k,3)));n.textContent=m[1]+(comma?v.toLocaleString('en-US'):String(v));if(k<1&&n.isConnected)requestAnimationFrame(step)};requestAnimationFrame(step)}}
+function chip(st,c){if(c&&isDNC(c))return'<span class="chip dnc">Do not contact</span>';if(c&&needsEmail(c))return'<span class="chip bad">Email update needed</span>';if(c&&isDeal(c)&&dStage(c)==='Won')return'<span class="chip hot">Deal won</span>';if(c&&dealLost(c))return'<span class="chip bad">Deal lost</span>';const k=st==='Do not contact'?'dnc':ENG.includes(st)?(st.startsWith('Meeting')||st==='Proposal'?'mt':'hot'):(['Bounced','Not interested','Left company'].includes(st)?'bad':'');return`<span class="chip ${k}">${esc(st||'Emailed')}</span>`}
+function nextCell(c){const p=plan(c);if(!p)return c.stage==='Meeting scheduled'&&c.meetingNext?`<span class="t">Meeting ${esc(fmt(c.meetingNext))}</span>`:['Not interested','Left company','Meeting scheduled'].includes(c.stage)?'<span class="t">No call needed</span>':!synced(c)?`<span class="t">${c.email?'Waiting for email history (daily sync)':'Log your first touch to start the clock'}</span>`:'<span class="t">No call needed</span>';
+ return`<span class="due ${p.over?'over':''}">${p.over?'Overdue · ':''}${esc(fmt(p.d))}</span><span class="win">${esc(winText(c))}</span><span class="t">${esc(p.why)}</span>`}
+// ---------- dashboard
+function mList(acc){const m=S.selMonth;if(!m)return'<div class="sub">Click a bar to see that month\'s meetings.</div>';const ms=allMeet().filter(x=>x.month===m&&(!acc||x.account===acc));
+ return`<div class="note"><b>${esc(monL(m))}: ${pl(ms.length,'meeting')}</b><br>${ms.map(x=>x.c?`<button class="nm" data-open="${esc(x.c)}">${esc(x.name)}</button> <span class="t" style="display:inline">${esc(x.account)}</span>`:`${esc(x.name)} <span class="t" style="display:inline">${esc(x.account)}</span>`).join(' · ')||'None'}</div>`}
+function meetSeries(acc){const ms=allMeet().filter(x=>!acc||x.account===acc);const t=today().slice(0,7);let m='2026-05';const L=[],log=[],crm=[];
+ while(m<=t){L.push(m);log.push(ms.filter(x=>x.month===m&&x.src==='log').length);crm.push(ms.filter(x=>x.month===m&&x.src!=='log').length);const d=D(m+'-01');d.setUTCMonth(d.getUTCMonth()+1);m=iso(d).slice(0,7)}return{L,log,crm,up:ms.filter(x=>x.month>t)}}
+function vDash(){const cs=contacts(),R=cs.filter(reached),t=today(),it=items();
+ const accs=new Set(R.map(c=>c.account||'Other'));const bounced=R.filter(c=>c.stage==='Bounced').length;
+ const eng=R.filter(c=>ENG.includes(c.stage)).length;const ms=allMeet().filter(x=>x.month<=t.slice(0,7));const up=allMeet().filter(x=>x.month>t.slice(0,7));
+ const thisM=ms.filter(x=>x.month===t.slice(0,7)).length;const mTot=ms.length;const syn=R.filter(synced).length;
+ const wk=(()=>{const d=D(t),w=(d.getUTCDay()+6)%7;return iso(new Date(d.getTime()-w*864e5))})();
+ const tw=it.filter(x=>x.day>=wk&&x.day<=t).length;const due=cs.filter(c=>{const p=plan(c);return p&&p.due}).length;
+ const sched=cs.filter(c=>c.stage==='Meeting scheduled').length;
+ const fun=[['Reached',R.length],['Engaged (spoke or replied)',eng],['Meeting scheduled or later',R.filter(c=>['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage)).length],['Meeting conducted',R.filter(c=>['Meeting conducted','Proposal'].includes(c.stage)).length],['Proposal',R.filter(c=>c.stage==='Proposal').length]];
+ const byA={};for(const c of R){const a=c.account||'Other';byA[a]=byA[a]||{n:0,e:0,m:0};byA[a].n++;if(ENG.includes(c.stage))byA[a].e++}for(const x of ms){const a=x.account||'Other';byA[a]=byA[a]||{n:0,e:0,m:0};byA[a].m++}
+ const accRows=Object.entries(byA).sort((a,b)=>b[1].n-a[1].n);const amax=Math.max(1,...accRows.map(a=>a[1].n));
+ const stC={};for(const c of R)stC[c.stage||'Emailed']=(stC[c.stage||'Emailed']||0)+1;const smax=Math.max(1,...Object.values(stC));
+ return`<section class="band green"><div class="kpis">
+ <div class="kpi big" data-go="contacts"><div class="num">${R.length}</div><div>leads reached across ${accs.size} accounts${bounced?` · ${bounced} bounced`:''} · ${syn} matched to your sent mail so far</div></div>
+ <div class="kpi big" data-go="contacts|st=Meeting conducted"><div class="num">${mTot}</div><div>meetings conducted since May · ${thisM} this month</div></div>
+ <div class="kpi" data-go="contacts|st=Meeting scheduled"><div class="num">${sched+up.length}</div><div>meetings scheduled</div></div>
+ ${(()=>{const pp=pipe(cs);return`<div class="kpi" data-go="deals"><div class="num">${usd(pp.openV)}</div><div>open pipeline · ${pl(pp.open,'deal')}${pp.won?' · won '+usd(pp.wonV):''}</div></div>`})()}
+ <div class="kpi" data-go="contacts|show=eng"><div class="num">${R.length?Math.round(eng/R.length*100):0}%</div><div>engaged (${eng} spoke, replied or met)</div></div>
+ <div class="kpi" data-go="daily"><div class="num">${tw}</div><div>touches this week</div></div>
+ <div class="kpi" data-go="calls"><div class="num">${due}</div><div>calls due today or overdue</div></div>
+ <div class="kpi" data-go="contacts|show=stale"><div class="num">${R.filter(isStale).length}</div><div>stale leads</div></div>
+ <div class="kpi" data-go="rules"><div class="num">${cs.filter(isDNC).length}</div><div>on the do-not-contact list</div></div>
+ <div class="kpi" data-go="contacts|show=fix"><div class="num">${cs.filter(needsEmail).length}</div><div>email updates needed</div></div>
+ </div></section>
+ <section class="band grid2">
+ <div class="panel"><h2>Meetings conducted per month</h2><div class="legend"><span><i style="background:var(--mute)"></i>Meetings Conducted Log (your sheet)</span><span><i style="background:var(--g)"></i>Marked in this CRM or found in sent mail</span></div><div class="fig" id="cMeet"></div>
+ <div id="mList">${mList()}</div>
+ ${up.length?`<div class="sub">Upcoming, not counted yet: ${up.map(x=>esc(x.name)+' ('+esc(x.account)+', '+esc(monL(x.month))+')').join(', ')}</div>`:''}</div>
+ <div class="panel"><h2>Outreach per day, last 30 days</h2><div class="legend"><span><i style="background:var(--g)"></i>Email</span><span><i style="background:var(--ink)"></i>Call</span><span><i style="background:var(--amber)"></i>LinkedIn</span></div><div class="fig" id="cDay"></div></div>
+ <div class="panel"><h2>Pipeline funnel</h2>${fun.map(([l,v],i)=>`<div class="hb" data-go="${['contacts','contacts|show=eng','contacts|st=Meeting scheduled','contacts|st=Meeting conducted','contacts|st=Proposal'][i]}"><span>${esc(l)}</span><div class="bar"><b style="width:${R.length?v/R.length*100:0}%"></b></div><span class="v">${v}</span></div>`).join('')}</div>
+ <div class="panel"><h2>Stage mix</h2>${STAGES.filter(s=>stC[s]).map(s=>`<div class="hb" data-st="${esc(s)}"><span>${esc(s)}</span><div class="bar"><b style="width:${stC[s]/smax*100}%" class="${s.startsWith('Meeting')||s==='Proposal'?'m':''}"></b></div><span class="v">${stC[s]}</span></div>`).join('')||'<div class="empty">No leads yet.</div>'}</div>
+ <div class="panel" style="grid-column:1/-1"><h2>Leads reached by account</h2><div class="legend"><span><i style="background:var(--g)"></i>Leads reached</span><span>Engaged and meetings logged on the right</span></div>
+ ${accRows.map(([a,v])=>`<div class="hb" style="grid-template-columns:minmax(90px,170px) 1fr 120px"><a href="#acct-${esc(slug(a))}">${esc(a)}</a><div class="bar"><b style="width:${v.n/amax*100}%"></b></div><span class="v">${v.n} · ${v.e} eng · ${v.m} mtg</span></div>`).join('')||'<div class="empty">No leads yet.</div>'}</div>
+ </section>`}
+function colChart(id,labels,series,lab){const el=document.getElementById(id);if(!el)return;
+ const go=()=>{const W=el.clientWidth,H=el.clientHeight;if(!W)return;const p={l:28,r:6,t:18,b:24},n=labels.length,tot=labels.map((_,i)=>series.reduce((s,x)=>s+(x.v[i]||0),0)),mx2=Math.max(2,...tot),bw=(W-p.l-p.r)/n,y=v=>p.t+(H-p.t-p.b)*(1-v/mx2);
+  let g='';[0,Math.round(mx2/2),mx2].forEach(t=>{g+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(t)}" y2="${y(t)}" class="grid"/><text x="${p.l-6}" y="${y(t)+4}" class="tk" text-anchor="end">${t}</text>`});
+  const every=Math.ceil(n/(W<520?5:10));
+  labels.forEach((L,i)=>{let b=0;const w=Math.max(2,bw*.7),x=p.l+i*bw+(bw-w)/2;for(const s of series){const v=s.v[i]||0;if(v){g+=`<rect x="${x}" y="${y(b+v)}" width="${w}" height="${y(b)-y(b+v)}" fill="${s.c}" rx="2" data-ml="${esc(id+'|'+L)}"><title>${esc(lab(L))}: ${v} ${esc(s.n)}</title></rect>`;b+=v}}
+   if(tot[i]&&bw>16)g+=`<text x="${x+w/2}" y="${y(tot[i])-5}" class="vl" text-anchor="middle">${tot[i]}</text>`;
+   if(i%every===0||i===n-1)g+=`<text x="${x+w/2}" y="${H-6}" class="tk" text-anchor="middle">${esc(lab(L))}</text>`});
+  el.innerHTML=`<svg width="${W}" height="${H}" role="img" aria-label="${esc(id==='cMeet'?'Meetings per month':'Outreach per day')}">${g}</svg>`};
+ const ro=new ResizeObserver(go);ro.observe(el);go()}
+function charts(acc,ids){const m=meetSeries(acc);colChart(acc?'aMeet':'cMeet',m.L,[{n:'from your log',v:m.log,c:'var(--mute)'},{n:'marked here or in mail',v:m.crm,c:'var(--g)'}],monL);
+ const t=today(),L=[];for(let i=(acc?59:29);i>=0;i--)L.push(iso(new Date(D(t).getTime()-i*864e5)));const it=items().filter(x=>!acc||x.a===acc),cnt=ch=>L.map(d=>it.filter(x=>x.day===d&&(x.ch||'Email')===ch).length);
+ colChart(acc?'aDay':'cDay',L,[{n:'emails',v:cnt('Email'),c:'var(--g)'},{n:'calls',v:cnt('Call'),c:'var(--ink)'},{n:'LinkedIn',v:cnt('LinkedIn'),c:'var(--amber)'}],fmt)}
+function curAcc(){const s=location.hash.slice(6);return[...new Set(contacts().map(c=>c.account||'Other'))].find(a=>slug(a)===s)}
+function acctCharts(){const a=curAcc();if(a)charts(a)}
+function vAccount(){const a=curAcc();if(!a)return'<section class="band"><div class="empty">Account not found. <a href="#accounts">Back to accounts</a></div></section>';
+ const cs=contacts().filter(c=>(c.account||'Other')===a),t=today(),R=cs.filter(reached),syn=cs.filter(synced).length,eng=cs.filter(c=>ENG.includes(c.stage)).length;
+ const ms=allMeet().filter(x=>x.account===a);for(const c of cs)if(inMtg(c)&&!ms.some(m=>nkey(m.name)===nkey(c.name))){const md=mDate(c);ms.push({name:c.name,account:a,c:c.id,date:c.meetingDate||c.meetingNext||'',month:(md||t).slice(0,7),role:c.title,src:'crm'})}
+ const done=ms.filter(x=>x.month<=t.slice(0,7)),up=ms.filter(x=>x.month>t.slice(0,7));const ad=S.acc.get(slug(a))||{};
+ const due=cs.filter(c=>{const p=plan(c);return p&&p.due}).length,lost=cs.filter(c=>['Bounced','Left company','Not interested'].includes(c.stage)).length;
+ const em=cs.reduce((s,c)=>s+(c.emails||0),0),last=cs.reduce((m,c)=>mx(m,lastTouch(c)),'');
+ const stC={};for(const c of cs)stC[c.stage||'Emailed']=(stC[c.stage||'Emailed']||0)+1;const smax=Math.max(1,...Object.values(stC));
+ const fun=[['On your list',cs.length],['Matched to sent mail or logged touch',syn],['Engaged (spoke or replied)',eng],['Meeting scheduled or later',cs.filter(c=>['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage)).length],['Meeting conducted',cs.filter(c=>['Meeting conducted','Proposal'].includes(c.stage)).length]];
+ const accs=[...new Set(contacts().map(c=>c.account||'Other'))].sort();
+ return`<section class="band" style="padding-bottom:8px"><div class="bar-tools"><a href="#accounts">‹ All accounts</a><select id="accJump" aria-label="Switch account">${accs.map(x=>`<option value="${esc(slug(x))}" ${x===a?'selected':''}>${esc(x)}</option>`).join('')}</select></div><h1>${esc(a)}</h1><div class="sub">Lead reach-out review · last touch ${esc(fmt(last)||'not synced yet')}</div></section>
+ <section class="band green"><div class="kpis">
+ <div class="kpi big"><div class="num">${cs.length}</div><div>leads on your list · ${syn} matched to sent mail or logged touches</div></div>
+ <div class="kpi big"><div class="num">${done.length}</div><div>${done.length===1?'meeting':'meetings'} conducted${up.length?` · ${up.length} upcoming`:''}</div></div>
+ ${(()=>{const pp=pipe(cs);return`<div class="kpi"><div class="num">${usd(pp.openV)}</div><div>open pipeline · ${pl(pp.open,'deal')}${pp.won?' · won '+usd(pp.wonV):''}</div></div>`})()}
+ <div class="kpi"><div class="num">${em}</div><div>emails sent (synced so far)</div></div>
+ <div class="kpi"><div class="num">${cs.length?Math.round(eng/cs.length*100):0}%</div><div>engaged (${eng})</div></div>
+ <div class="kpi"><div class="num">${due}</div><div>calls due now</div></div>
+ <div class="kpi"><div class="num">${lost}</div><div>bounced, left or not a fit</div></div></div></section>
+ <section class="band grid2">
+ <div class="panel"><h2>Meetings per month</h2><div class="legend"><span><i style="background:var(--mute)"></i>Your meetings log</span><span><i style="background:var(--g)"></i>Marked here or in mail</span></div><div class="fig" id="aMeet"></div></div>
+ <div class="panel"><h2>Outreach per day, last 60 days</h2><div class="legend"><span><i style="background:var(--g)"></i>Email</span><span><i style="background:var(--ink)"></i>Call</span><span><i style="background:var(--amber)"></i>LinkedIn</span></div><div class="fig" id="aDay"></div></div>
+ <div class="panel"><h2>Funnel</h2>${fun.map(([l,v])=>`<div class="hb"><span>${esc(l)}</span><div class="bar"><b style="width:${cs.length?v/cs.length*100:0}%"></b></div><span class="v">${v}</span></div>`).join('')}</div>
+ <div class="panel"><h2>Stage mix</h2><div class="sub">Click a stage to filter the leads below.</div>${STAGES.filter(s=>stC[s]).map(s=>`<div class="hb" data-st="${esc(s)}"><span>${esc(s)}</span><div class="bar"><b style="width:${stC[s]/smax*100}%" class="${s.startsWith('Meeting')||s==='Proposal'?'m':''}"></b></div><span class="v">${stC[s]}</span></div>`).join('')}</div>
+ <div class="panel" style="grid-column:1/-1"><h2>Meetings</h2>${ms.length?`<table class="stack"><thead><tr><th>Who</th><th>Role</th><th>Month</th><th>Source</th><th>Deal</th></tr></thead><tbody>${ms.sort((x,y)=>y.month.localeCompare(x.month)).map(m=>`<tr class="row"><td>${m.c?`<button class="nm" data-open="${esc(m.c)}">${esc(m.name)}</button>`:esc(m.name)}${m.att?`<span class="t">with ${esc(m.att)}</span>`:''}</td><td>${esc(m.role||'')}</td><td>${esc(m.date?fmt(m.date):monL(m.month))}${m.month>t.slice(0,7)?' (upcoming)':''}</td><td>${esc({log:'Meetings log',mail:'Sent mail',crm:'Marked in CRM'}[m.src])}</td><td>${(()=>{const dc=m.c&&getC(m.c);return dc&&isDeal(dc)?esc(dStage(dc))+(Number.isInteger(dc.dealValue)?' · '+usd(dc.dealValue):''):''})()}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No meetings yet.</div>'}</div></section>
+ <section class="band"><div class="panel"><h2>Account comments and next steps</h2><div class="sub">What you know about ${esc(a)}: priorities, people, timing, open opportunities. The account's next step shows on the Today page when it is due.</div>
+ <div class="row2"><input id="anS" value="${esc(ad.nextStep||'')}" placeholder="Next step for this account" aria-label="Account next step"><div class="mf" style="margin:0"><input type="date" id="anD" value="${esc(ad.nextStepDate||'')}" aria-label="Account next step date"><button class="w" id="anSave">Save next step</button></div></div>
+ <div class="fl"><textarea id="anIn" rows="3" placeholder="Add a note about the account…" aria-label="Account comment"></textarea></div><button class="p w" id="anAdd">Add comment</button>
+ <ul class="tl">${(ad.comments||[]).slice().reverse().map(x=>`<li><b>${esc(fmt(istDay(x.t)))}</b> ${esc(istTime(x.t))} IST<span class="t" style="color:var(--ink)">${esc(x.x)}</span></li>`).join('')||'<li class="empty">No account comments yet.</li>'}</ul></div></section>
+ ${vContacts(a)}`}
+function dupSet(){if(S._dup&&S._dupAt===S.merged)return S._dup;const g={};for(const c of contacts()){const k=nkey(c.name)+'|'+(c.account||'');(g[k]=g[k]||[]).push(c.id)}
+ S._dup=new Set(Object.values(g).filter(a=>a.length>1).flat());S._dupAt=S.merged;return S._dup}
+function vRules(){const r=R(),cs=contacts(),dnc=cs.filter(isDNC),dup=[...dupSet()].map(getC).filter(Boolean),noE=cs.filter(c=>!c.email).length,noP=cs.filter(c=>!c.phone).length,bo=cs.filter(needsEmail).length,st=cs.filter(isStale).length;
+ const inp=k=>typeof RDEF[k]==='boolean'?`<input type="checkbox" data-rule="${k}" ${r[k]?'checked':''} aria-label="${esc(k)}">`:`<input type="number" min="0" data-rule="${k}" value="${esc(r[k])}" style="width:90px" aria-label="${esc(k)}">`;
+ return`<section class="band"><h1>Rules</h1><div class="sub">These rules drive the Today list, next-call dates and what you can log, the way HubSpot sequences, Salesforce cadences and Zoho workflows do. Changes apply at once for everyone viewing.</div>
+ <div class="scroll"><table class="stack"><thead><tr><th>Rule</th><th>What it does</th><th>Setting</th></tr></thead><tbody>
+ ${RINFO.map(([k,lab,txt])=>txt===null?`<tr class="row"><td><b>${esc(k)}</b></td><td>${esc(lab)}</td><td><span class="chip ${k.startsWith('DNC')?'dnc':''}">Always on</span></td></tr>`:`<tr class="row"><td><b>${esc(lab)}</b></td><td>${esc(txt)}</td><td>${inp(k)}</td></tr>`).join('')}
+ <tr class="row"><td><b>Engaged leads leave email sequences</b></td><td>A reply, a conversation or a booked meeting takes the lead out of the cold email list and into personal follow-up calls.</td><td><span class="chip">Always on</span></td></tr>
+ <tr class="row"><td><b>Lead score</b></td><td>0–100: seniority and a strategy or market-intelligence remit for fit, plus replies, conversations and meetings for engagement; bounces subtract. Today's lists put higher scores first.</td><td><span class="chip">Always on</span></td></tr>
+ </tbody></table></div></section>
+ <section class="band grid2"><div class="panel"><h2>Suppression list · ${dnc.length}</h2><div class="sub">Do not contact on every channel. Replies asking to unsubscribe or stop are added by the daily sync.</div>
+ ${dnc.length?`<table class="stack"><thead><tr><th>Lead</th><th>Account</th><th>Reason</th></tr></thead><tbody>${dnc.map(c=>`<tr class="row"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name)}</button></td><td>${esc(c.account||'')}</td><td>${esc(c.dncReason||c.sheetStatus||'')}${c.dncDate?' · '+esc(fmt(c.dncDate)):''}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nobody on the list.</div>'}</div>
+ <div class="panel"><h2>Data quality</h2>
+ <div class="hb" data-go="contacts|show=dup"><span>Possible duplicates</span><div class="bar"><b style="width:${Math.min(100,dup.length)}%"></b></div><span class="v">${dup.length}</span></div>
+ <div class="hb" data-go="contacts|show=stale"><span>Stale leads (${r.staleDays}+ days)</span><div class="bar"><b style="width:${cs.length?st/cs.length*100:0}%"></b></div><span class="v">${st}</span></div>
+ <div class="hb" data-go="contacts|show=fix"><span>Email update needed</span><div class="bar"><b style="width:${cs.length?bo/cs.length*100:0}%"></b></div><span class="v">${bo}</span></div>
+ <div class="hb"><span>No email on file</span><div class="bar"><b style="width:${cs.length?noE/cs.length*100:0}%"></b></div><span class="v">${noE}</span></div>
+ <div class="hb"><span>No phone on file</span><div class="bar"><b style="width:${cs.length?noP/cs.length*100:0}%"></b></div><span class="v">${noP}</span></div>
+ ${dup.length?`<div class="sub" style="margin-top:8px">Duplicates: ${dup.slice(0,12).map(c=>esc(c.name)+' ('+esc(c.account)+')').join(', ')}${dup.length>12?'…':''}</div>`:''}</div></section>`}
+// ---------- meetings
+const MSTAT=['Scheduled','Conducted','Rescheduled','Cancelled by client'];
+const inMtg=c=>!isDNC(c)&&c.stage!=='Left company'&&(['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage)||!!c.mtgStatus);
+const mStat=c=>c.mtgStatus||(c.stage==='Meeting scheduled'?'Scheduled':['Meeting conducted','Proposal'].includes(c.stage)?'Conducted':'');
+const mDate=c=>{const st=mStat(c);return st==='Scheduled'||st==='Rescheduled'?(c.meetingNext||''):st==='Cancelled by client'?(c.nextStepDate||''):(c.meetingDate||(c.sheetMeeting?c.sheetMeeting+'-15':''))};
+const mDateTxt=c=>{const st=mStat(c);if(st==='Conducted'&&!c.meetingDate&&c.sheetMeeting)return D(c.sheetMeeting+'-01').toLocaleDateString('en-GB',{month:'short',year:'numeric',timeZone:'UTC'});return mDate(c)?fmt(mDate(c)):'Not set'};
+const prevBD=x=>{let d=D(x);do{d=new Date(d.getTime()-864e5)}while(!isBD(iso(d)));return iso(d)};
+const MON=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function monthDate(lx,t){const m=lx.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/);if(!m)return'';const mi=MON.indexOf(m[1]);let y=+t.slice(0,4);if(mi<+t.slice(5,7)-1)y++;const d=nextBD(y+'-'+String(mi+1).padStart(2,'0')+'-01');return d>t?d:''}
+function suggest(c){const t=today(),st=mStat(c),cm=c.comments||[],last=cm[cm.length-1],lx=((last?last.x:'')+' '+(c.nextStep||'')).toLowerCase();
+ const base=last?istDay(last.t):(mDate(c)&&mDate(c)<=t?mDate(c):(lastTouch(c)||t)),why=last?'From your comment “'+last.x.slice(0,70)+(last.x.length>70?'…':'')+'”':'',o=(d,txt,kind)=>({d,txt,kind,why});
+ {const w=warmOf(c);if(w)return{d:w.d,txt:'Warm connect: they asked you to reach out later',kind:'warm',why:'From your comment “'+w.why.slice(0,70)+(w.why.length>70?'…':'')+'”'}}
+ if(dealLost(c))return o(c.lostAt?nextBD(iso(new Date(D(c.lostAt).getTime()+R().niCool*864e5))):addBD(t,60),'Deal lost: check again for an open opportunity','reopen');
+ if(isDeal(c)&&dStage(c)==='Won')return o(addBD(base,20),'Deal won: plan the kickoff and an upsell check-in','won');
+ if(st==='Cancelled by client')return o(c.nextStepDate||addBD(t,20),'Check in: is there an open opportunity?','checkin');
+ if(st==='Scheduled'||st==='Rescheduled'){const md=c.meetingNext;if(!md)return o(t,'Add the meeting date','schedule');if(md<t)return o(t,'Meeting date has passed: mark it conducted, rescheduled or cancelled','update');const pb=prevBD(md);return o(pb<t?t:pb,'Confirm the meeting and send the agenda (meeting '+fmt(md)+')','confirm')}
+ if(/\b(won|signed|po received|closed won)\b/.test(lx))return o(addBD(base,20),'Deal closed: plan the kickoff and an upsell check-in','won');
+ if(/approv|sign|\bpo\b|purchase order|contract|procure|legal|negotiat/.test(lx))return o(addBD(base,2),'Push to close: check approval and PO status','close');
+ if(/proposal|quote|pricing|price|\bsow\b|scope|estimate/.test(lx))return o(addBD(base,3),'Follow up on the proposal','proposal');
+ if(/not interested|no need|no budget|not a priority|declin|no opportunity/.test(lx))return o(addBD(base,60),'Check again for an open opportunity','reopen');
+ const md=monthDate(lx,t);if(md)return o(md,'Reconnect when their timing opens ('+D(md).toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'})+')','timing');
+ if(/next quarter|next year|later|on hold|freeze|after the holidays|budget cycle/.test(lx))return o(addBD(base,40),'Reconnect when their timing opens','timing');
+ if(/refer|introduc|connect (me|you|us)|colleague|loop in/.test(lx))return o(addBD(base,1),'Follow the referral and ask for the intro','referral');
+ if(/send|share|deck|material|case stud|sample|brochure|one[- ]pager|report/.test(lx))return o(base<t?t:base,'Send what you promised, then follow up in 2 working days','send');
+ if(/next (meeting|call)|follow[- ]?up (meeting|call)|demo|workshop|deep dive|second call|schedule/.test(lx))return o(addBD(base,1),'Schedule the next meeting','schedule');
+ if(st==='Conducted'){if(!last&&daysAgo(base)>10)return o(t,'Follow up on next steps from the meeting','recap');return o(addBD(base,last?3:1),last?'Follow up on next steps':'Send a recap and propose next steps','recap')}
+ return o(addBD(base,3),'Follow up','follow')}
+const nsOf=c=>warmOf(c)?suggest(c):c.nextStepDate?{d:c.nextStepDate,txt:c.nextStep||'Your next step',kind:'you',why:'Next step you set'}:suggest(c);
+function mStatCell(c){const id=c.id,p=S.mpend[id],v=p?p.st:mStat(c);
+ let h=`<select data-ms="${esc(id)}" aria-label="Meeting status">${MSTAT.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('')}</select>`;
+ if(p){if(p.st==='Cancelled by client')h+=`<div class="mf"><label><input type="radio" name="cx-${esc(id)}" value="recur" checked>Check in every <input type="number" data-every value="30" min="7" style="width:70px"> days, <input type="number" data-times value="3" min="1" style="width:56px"> times</label><label><input type="radio" name="cx-${esc(id)}" value="back">Back to the outreach list</label><input data-cxwhy placeholder="What did they say? e.g. reach out in Q2" aria-label="What the client said" style="min-width:210px"><button class="p w" data-msave="${esc(id)}">Save</button></div>`;
+  else h+=`<div class="mf"><input type="date" data-mdate value="${esc(p.st==='Conducted'?(c.meetingNext&&c.meetingNext<=today()?c.meetingNext:today()):'')}" aria-label="${p.st==='Conducted'?'Date conducted':'New meeting date'}"><button class="p w" data-msave="${esc(id)}">Save</button></div>`}
+ return h}
+function nsCell(c){const sg=suggest(c);return`<div class="mf" style="margin:0"><input data-nst="${esc(c.id)}" value="${esc(c.nextStep||'')}" placeholder="${esc(sg.txt)}" aria-label="Next step" style="min-width:170px"><input type="date" data-nsd="${esc(c.id)}" value="${esc(c.nextStepDate||'')}" aria-label="Next step date"></div>${c.nextStepDate?'':`<span class="t">Suggested: ${esc(sg.txt)} · ${esc(fmt(sg.d))}${sg.why?' · '+esc(sg.why):''}</span><button class="w" data-nsuse="${esc(c.id)}">Use suggestion</button>`}`}
+const cmCell=c=>{const cm=c.comments||[],l=cm[cm.length-1];return`<button class="w" data-open="${esc(c.id)}">Comments (${cm.length})</button>${l?`<span class="t">${esc(fmt(istDay(l.t)))}: ${esc(l.x.slice(0,70))}${l.x.length>70?'…':''}</span>`:''}`};
+function mTable(arr,lab){return arr.length?`<div class="scroll"><table class="stack"><thead><tr><th>Lead</th><th>${lab}</th><th>Status</th><th>Next step</th><th>Comments</th></tr></thead><tbody>${arr.map(c=>`<tr class="row" data-id="${esc(c.id)}"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}<a href="#acct-${esc(slug(c.account))}">${esc(c.account||'')}</a></span></td><td class="n">${esc(mDateTxt(c))}${mStat(c)==='Rescheduled'?'<span class="t">rescheduled</span>':''}${c.recur?`<span class="t">${c.recur.left} check-ins left, every ${c.recur.every} days</span>`:''}</td><td>${mStatCell(c)}</td><td>${nsCell(c)}</td><td>${cmCell(c)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">None yet.</div>'}
+function vMeetings(){const cs=contacts().filter(inMtg);const sch=cs.filter(c=>['Scheduled','Rescheduled'].includes(mStat(c))).sort((a,b)=>(a.meetingNext||'9').localeCompare(b.meetingNext||'9'));
+ const con=cs.filter(c=>mStat(c)==='Conducted').sort((a,b)=>(mDate(b)||'').localeCompare(mDate(a)||'')),can=cs.filter(c=>mStat(c)==='Cancelled by client').sort((a,b)=>(a.nextStepDate||'').localeCompare(b.nextStepDate||''));
+ return`<section class="band" style="padding-bottom:6px"><h1>Meetings</h1><div class="sub">A lead appears here once you mark a meeting scheduled (Outcome on the Today page, or the contact's stage), and once a meeting is conducted it moves to the Deals page. Update the status, set the next step, and add comments: the suggested next touch follows your latest comment.</div></section>
+ <section class="band"><div class="panel"><h2>Scheduled · ${sch.length}</h2>${mTable(sch,'Meeting on')}</div></section>
+ <section class="band"><div class="note">Conducted meetings now live on the <a href="#deals">Deals page</a> · ${pl(con.length,'deal')}.</div></section>
+ <section class="band"><div class="panel"><h2>Cancelled by client: recurring check-ins · ${can.length}</h2>${mTable(can,'Next check-in')}</div></section>`}
+function vNext(){const t=today(),tm=addBD(t,1);const L=contacts().filter(c=>inMtg(c)&&!warmOf(c)&&!dealLost(c)).map(c=>({...c,n:nsOf(c)})).filter(c=>(c.n.d&&c.n.d<=t)||(['Scheduled','Rescheduled'].includes(mStat(c))&&c.meetingNext&&c.meetingNext<=tm))
+  .sort((a,b)=>((b.n.kind==='you')-(a.n.kind==='you'))||(mDate(b)||'').localeCompare(mDate(a)||''));
+ const AN=[...S.acc.entries()].filter(([,v])=>v.nextStepDate&&v.nextStepDate<=t);const show=L.slice(0,20);
+ return`<section class="band"><div class="panel"><h2>Meeting next steps · ${L.length} due</h2><div class="sub">From your scheduled and conducted meetings: next steps you set come first, then suggestions from your latest comments. Change the status or add a comment to move each one on.</div>
+ ${AN.length?`<div class="note"><b>Account next steps due:</b> ${AN.map(([k,v])=>`<a href="#acct-${esc(k)}">${esc(v.name||k)}</a>: ${esc(v.nextStep||'next step')} (${esc(fmt(v.nextStepDate))})`).join(' · ')}</div>`:''}
+ ${show.length?`<div class="scroll"><table class="stack"><thead><tr><th>Lead</th><th>Meeting</th><th>Next step</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>${show.map(c=>`<tr class="row" data-id="${esc(c.id)}"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}</span></td><td class="n">${esc(mStat(c))}<span class="t">${esc(mDateTxt(c))}</span></td><td>${esc(c.n.txt)}<span class="t">${esc(c.n.why||'')}</span></td><td class="n ${c.n.d<t?'over':''}">${esc(fmt(c.n.d))}</td><td>${mStatCell(c)}</td><td>${mStat(c)==='Cancelled by client'?`<button class="w" data-cki="${esc(c.id)}">No opportunity yet</button>`:''}<button class="w" data-open="${esc(c.id)}">Comment</button></td></tr>`).join('')}</tbody></table></div>${L.length>20?`<p><a href="#meetings">See all ${L.length} in Meetings</a></p>`:''}`:'<div class="empty">No meeting next steps due today.</div>'}</div></section>`}
+async function saveStatus(id,cell){const p=S.mpend[id],c=getC(id);if(!p||!c)return;const t=today(),now=new Date().toISOString(),cm=[...(c.comments||[])];let patch;
+ if(p.st==='Cancelled by client'){const mode=(cell.querySelector('input[type=radio]:checked')||{}).value,why=((cell.querySelector('[data-cxwhy]')||{}).value||'').trim(),said=why?[{t:new Date(Date.now()+1).toISOString(),x:'Client said: '+why}]:[];
+  if(mode==='recur'){const ev=Math.max(7,+cell.querySelector('[data-every]').value||30),k=Math.max(1,+cell.querySelector('[data-times]').value||3),nd=nextBD(iso(new Date(D(t).getTime()+ev*864e5)));cm.push({t:now,x:`Meeting cancelled by the client. Recurring check-ins every ${ev} days, ${k} times.`},...said);
+   patch={cancelledAt:t,lostAt:t,warmDoneAt:'',mtgStatus:'Cancelled by client',stage:'Nurture',stageLocked:true,recur:{every:ev,left:k},nextStep:'Check in: is there an open opportunity?',nextStepDate:nd,snoozeUntil:nd,snoozeWhy:'Meeting cancelled: recurring check-in',meetingNext:'',comments:cm}}
+  else{cm.push({t:now,x:'Meeting cancelled by the client. Moved back to the outreach list.'},...said);patch={cancelledAt:t,lostAt:t,warmDoneAt:'',mtgStatus:'',stage:'Follow-up',stageLocked:false,recur:null,nextStep:'',nextStepDate:'',meetingNext:'',snoozeUntil:'',comments:cm}}}
+ else{const d=cell.querySelector('[data-mdate]').value;if(!d){flash('Pick a date.');return}
+  if(p.st==='Conducted'){if(d>t){flash('A conducted meeting needs a date on or before today.');return}cm.push({t:now,x:'Meeting conducted on '+fmt(d)+'.'});
+   await upd(id,{mtgStatus:'Conducted',stage:c.stage==='Proposal'?'Proposal':'Meeting conducted',stageLocked:true,meetingDate:d,meetingNext:'',nextStep:'',nextStepDate:'',comments:cm});
+   if(![...S.meet.values()].some(m=>m.c===id&&m.date===d))await setMeeting(id,c,d);delete S.mpend[id];S.sel=id;flash('Marked conducted. Add a comment on how it went to get the next-step suggestion.');render();return}
+  if(d<t){flash('Pick today or a future date.');return}cm.push({t:now,x:(p.st==='Rescheduled'?'Meeting rescheduled to ':'Meeting scheduled for ')+fmt(d)+'.'});
+  patch={mtgStatus:p.st,stage:'Meeting scheduled',stageLocked:true,meetingNext:d,snoozeUntil:'',comments:cm}}
+ await upd(id,patch);delete S.mpend[id];flash('Meeting status saved.')}
+async function checkinDone(id){const c=getC(id),t=today(),now=new Date().toISOString(),r=c.recur||{every:30,left:1},left=(r.left||1)-1;
+ const cm=[...(c.comments||[]),{t:now,x:'Check-in done: no open opportunity yet.'+(left>0?'':' Recurring check-ins finished; back on the outreach list as Nurture.')}];
+ if(left>0){const nd=nextBD(iso(new Date(D(t).getTime()+r.every*864e5)));await upd(id,{recur:{every:r.every,left},nextStepDate:nd,snoozeUntil:nd,comments:cm,lastOutcome:'Check-in: no opportunity yet',lastOutcomeDate:t})}
+ else await upd(id,{recur:null,mtgStatus:'',stage:'Nurture',stageLocked:false,nextStep:'',nextStepDate:'',snoozeUntil:'',comments:cm});
+ await addItem(t,{c:id,n:c.name||'',a:c.account||'',ch:'Outcome',k:'Check-in',s:'No open opportunity yet',t:now});flash('Check-in logged.')}
+
+// ---------- deals and warm connects
+const DSTAGE=['Discovery','Next meeting','Proposal','Negotiation','On hold','Won','Lost'];
+const DOPEN=['Discovery','Next meeting','Proposal','Negotiation','On hold'];
+const DSTG={Discovery:'Meeting conducted','Next meeting':'Meeting conducted','On hold':'Meeting conducted',Lost:'Meeting conducted',Proposal:'Proposal',Negotiation:'Proposal',Won:'Proposal'};
+const dStage=c=>DSTAGE.includes(c.dealStage)?c.dealStage:(c.stage==='Proposal'?'Proposal':'Discovery');
+const isDeal=c=>inMtg(c)&&mStat(c)==='Conducted';
+const dealLost=c=>isDeal(c)&&dStage(c)==='Lost';
+const lostMeet=c=>dealLost(c)||mStat(c)==='Cancelled by client'||(!!c.cancelledAt&&!c.mtgStatus&&!['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage));
+const dv=c=>Number.isInteger(c.dealValue)?c.dealValue:0;
+const usd=n=>Number.isInteger(n)?'$'+n.toLocaleString('en-US'):'';
+function pipe(cs){const d=cs.filter(isDeal),o=d.filter(c=>DOPEN.includes(dStage(c))),w=d.filter(c=>dStage(c)==='Won');return{open:o.length,openV:o.reduce((s,c)=>s+dv(c),0),won:w.length,wonV:w.reduce((s,c)=>s+dv(c),0)}}
+function parseUSD(v){const x=String(v??'').trim().replace(/^\$\s*/,'').replace(/,/g,'').replace(/\s+/g,'');if(!x)return{ok:true,v:null};
+ if(/^\d*\.\d*$/.test(x))return{ok:false,msg:'Whole dollars only: no cents or decimals.'};
+ if(!/^\d+$/.test(x))return{ok:false,msg:'Enter the deal value as a whole number of US dollars, like 25000.'};
+ const n=parseInt(x,10);if(n>1e9)return{ok:false,msg:'That is over $1,000,000,000. Check the zeros.'};return{ok:true,v:n}}
+const LATERX=/(?:\b(?:reach(?:ing)?|get(?:ting)?|come|coming|circle|check|ping|follow(?:ing)?|touch(?:ing)?|talk|speak|call|email|try|revisit|reconnect|connect)\b[^.!?\n]{0,40}?\b(?:later(?! today| this week| tonight)|again (?:in|after|next|around)|in (?:\d+|a|one|two|three|four|five|six|few|a few|couple of|a couple of) (?:weeks?|months?|quarters?)|next (?:week|month|quarter|year|fy|fiscal)|after (?:the )?(?:holidays?|new year|budget|q[1-4]|fy|summer|merger|reorg|year[- ]end)|(?:in|by|after|from|around|early|mid|late|end of|until|till)[ -](?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*|(?:in|by|after|from) q[1-4])\b|\bat a later (?:date|time|point|stage)\b|\blater (?:date|time|in the year)\b|\b(?:not (?:now|right now|this (?:quarter|year))|maybe later|down the line|bad timing|timing (?:is not|isn't) right)\b)/i;
+const NUMW={a:1,one:1,two:2,three:3,four:4,five:5,six:6,few:3,'a few':3,'couple of':2,'a couple of':2};
+function warmWhen(x,base){const t=String(x||'').toLowerCase(),y=+base.slice(0,4),bm=+base.slice(5,7);
+ const on=(yy,mm,dd)=>{while(mm>12){mm-=12;yy++}return nextBD(yy+'-'+String(mm).padStart(2,'0')+'-'+String(dd).padStart(2,'0'))};
+ let m=t.match(/\b(early|mid|late|end of|in|by|after|from|around|until|till)[\s-]+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b(?:,?\s+(20\d\d))?/);
+ if(!m){const f=t.match(/\b(january|february|march|april|june|july|august|september|october|november|december)\b(?:,?\s+(20\d\d))?/);if(f)m=[f[0],'',f[1].slice(0,3),f[2]]}
+ if(m){let mi=MON.indexOf(m[2].slice(0,3))+1,yy=m[3]?+m[3]:(mi>=bm?y:y+1);if(m[1]==='after')mi++;const dd=on(yy,mi,m[1]==='mid'?15:(m[1]==='late'||m[1]==='end of')?20:1);return dd>base?dd:addBD(base,1)}
+ const q=t.match(/\b(in|by|after|from)\s+q([1-4])\b(?:\s*(?:fy)?\s*'?(20\d\d|\d\d))?/);
+ if(q){let sm=(+q[2]-1)*3+1;const yy=q[3]?(q[3].length===2?2000+ +q[3]:+q[3]):(sm>bm?y:y+1);if(q[1]==='after')sm+=3;return on(yy,sm,1)}
+ if(/\bnext quarter\b/.test(t)){const cq=Math.floor((bm-1)/3);return on(y,(cq+1)*3+1,1)}
+ if(/\b(next (year|fy|fiscal)|new year|after (the )?holidays?|year[- ]end)\b/.test(t))return on(y+1,1,1);
+ if(/\bnext month\b/.test(t))return on(y,bm+1,1);
+ if(/\bnext week\b/.test(t))return nextBD(iso(new Date(D(base).getTime()+7*864e5)));
+ const n=t.match(/\bin\s+(\d+|a couple of|couple of|a few|few|a|one|two|three|four|five|six)\s+(weeks?|months?|quarters?)\b/);
+ if(n){const k=/^\d+$/.test(n[1])?+n[1]:NUMW[n[1]];if(n[2].startsWith('week'))return nextBD(iso(new Date(D(base).getTime()+k*7*864e5)));return addMonths(base,n[2].startsWith('quarter')?k*3:k)}
+ return''}
+function warmOf(c){const r=R();if(!r.warmRule||!lostMeet(c)||isDNC(c)||c.stage==='Left company')return null;
+ const cm=c.comments||[];let since=c.lostAt||'';
+ if(!since)for(let i=cm.length-1;i>=0;i--)if(/^(Meeting cancelled by the client|Deal lost)/.test(cm[i].x||'')){since=istDay(cm[i].t);break}
+ const cand=since?cm.filter(x=>istDay(x.t)>=since):cm.slice(-1);
+ let hit=null;for(let i=cand.length-1;i>=0;i--)if(LATERX.test(cand[i].x||'')){hit=cand[i];break}
+ if(!hit||(c.warmDoneAt&&(hit.t||'')<=c.warmDoneAt))return null;
+ const base=istDay(hit.t)||since||today(),gap=Math.min(365,Math.max(7,+r.warmGap||30));
+ const d=warmWhen(hit.x,base)||nextBD(iso(new Date(D(base).getTime()+gap*864e5)));
+ return{d,why:String(hit.x||'').replace(/^(Deal lost: |Client said: )/,''),base,kind:dealLost(c)?'Deal lost':'Meeting cancelled by the client'}}
+function dealHold(c){if(!lostMeet(c))return'';const w=warmOf(c);if(w)return'Warm connect due '+fmt(w.d)+' (on the Today page)';
+ const r=R();if(dealLost(c)&&c.lostAt&&!c.warmDoneAt&&daysAgo(c.lostAt)<r.niCool)return'Deal lost: cool-off until '+fmt(iso(new Date(D(c.lostAt).getTime()+r.niCool*864e5)));return''}
+function dStageCell(c){const id=c.id,p=S.dpend[id],v=p?p.st:dStage(c);
+ let h=`<select data-dst="${esc(id)}" aria-label="Deal stage">${DSTAGE.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('')}</select>`;
+ if(p&&p.st==='Lost')h+=`<div class="mf"><input data-lostwhy placeholder="What did they say? e.g. reach out after Q1" aria-label="What the client said" style="min-width:210px"><button class="p w" data-dlost="${esc(id)}">Mark lost</button></div>`;
+ else if(dStage(c)==='Lost'){const w=warmOf(c);h+=`<span class="t">${w?'Warm connect '+(w.d<=today()?'due now':'on '+esc(fmt(w.d))):c.warmDoneAt?'Warm connect done':'No reach-out-later comment: held for the cool-off'}</span>`}
+ return h}
+const dValCell=c=>`<span class="usd"><span>$</span><input data-dval="${esc(c.id)}" inputmode="numeric" autocomplete="off" value="${Number.isInteger(c.dealValue)?c.dealValue.toLocaleString('en-US'):''}" placeholder="Whole dollars" aria-label="Deal value in whole US dollars"></span>`;
+function dealBoard(cs){const cols=DSTAGE.filter(x=>x!=='Lost'||S.dLost);
+ return`<div class="kb">${cols.map(x=>{const a=cs.filter(c=>dStage(c)===x).sort((p,q)=>dv(q)-dv(p)||(p.name||'').localeCompare(q.name||'')),tot=a.reduce((n,c)=>n+dv(c),0);
+  return`<section class="kcol" data-drop="${esc(x)}" aria-label="${esc(x)}"><header><b>${esc(x)}</b><span>${a.length}</span><em>${tot?usd(tot):''}</em></header>${a.map(c=>{const ds=c.dealStageAt||c.meetingDate||'',dd=ds?daysAgo(ds):null;
+   return`<article class="kcard" draggable="true" data-drag="${esc(c.id)}" data-open="${esc(c.id)}"><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}</span><span class="kv ${Number.isInteger(c.dealValue)?'':'no'}">${Number.isInteger(c.dealValue)?usd(c.dealValue):'Add a value'}${dd==null?'':`<span class="chip">${dd===0?'today':dd+'d in stage'}</span>`}</span></article>`}).join('')||'<div class="kempty">Drop a deal here</div>'}</section>`}).join('')}</div>`}
+function vDeals(){const cs=contacts().filter(isDeal),by=st=>cs.filter(c=>dStage(c)===st),sum=a=>a.reduce((x,c)=>x+dv(c),0),mode=S.dView||'board';
+ const open=cs.filter(c=>DOPEN.includes(dStage(c))),won=by('Won'),lost=by('Lost'),noV=open.filter(c=>!Number.isInteger(c.dealValue)).length,mx2=Math.max(1,...DSTAGE.map(x=>by(x).length));
+ const srt=a=>a.slice().sort((x,y)=>(DSTAGE.indexOf(dStage(x))-DSTAGE.indexOf(dStage(y)))||(mDate(y)||'').localeCompare(mDate(x)||''));
+ const tbl=a=>a.length?`<div class="scroll"><table class="stack"><thead><tr><th>Lead</th><th>Met on</th><th>Deal stage</th><th>Deal value (USD)</th><th>Next step</th><th>Comments</th></tr></thead><tbody>${srt(a).map(c=>{const n=nsOf(c);return`<tr class="row" data-id="${esc(c.id)}"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}<a href="#acct-${esc(slug(c.account))}">${esc(c.account||'')}</a></span></td><td class="n">${esc(mDateTxt(c))}</td><td>${dStageCell(c)}</td><td>${dValCell(c)}</td><td>${dStage(c)==='Lost'?`<span class="t">${esc(n.txt)}${n.d?' · '+esc(fmt(n.d)):''}</span>`:nsCell(c)}</td><td>${cmCell(c)}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">None yet.</div>';
+ return`<section class="band" style="padding-bottom:6px"><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between"><div style="flex:1 1 320px"><h1>Deals</h1><div class="sub">Every conducted meeting is a deal. ${mode==='board'?'Drag a card to another stage, or click it to set the value, next step and comments.':'Move each deal through the stages, enter the value in whole US dollars and keep the next step current.'} A lost deal whose comment says to reach out later comes back on the Today page as a warm connect.</div></div>
+ <div class="bar-tools" style="margin:0"><div class="seg" role="group" aria-label="Deals view"><button class="${mode==='board'?'on':''}" data-dview="board" aria-pressed="${mode==='board'}">Board</button><button class="${mode==='table'?'on':''}" data-dview="table" aria-pressed="${mode==='table'}">Table</button></div>${mode==='board'?`<button data-dlosttog="1">${S.dLost?'Hide lost deals':'Show lost deals'}</button>`:''}</div></div></section>
+ <section class="band green" style="padding-block:18px"><div class="kpis">
+ <div class="kpi big"><div class="num">${usd(sum(open))}</div><div>open pipeline · ${pl(open.length,'deal')}${noV?` · ${noV} without a value yet`:''}</div></div>
+ <div class="kpi"><div class="num">${usd(sum(won))}</div><div>won · ${won.length} ${won.length===1?'deal':'deals'}</div></div>
+ <div class="kpi"><div class="num">${lost.length}</div><div>lost${sum(lost)?' · '+usd(sum(lost)):''}</div></div>
+ <div class="kpi"><div class="num">${won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+'%':'–'}</div><div>win rate of closed deals</div></div></div></section>
+ ${mode==='board'?`<section class="band">${dealBoard(cs)}</section>`:`<section class="band"><div class="panel"><h2>Where the meetings are moving</h2>${DSTAGE.map(x=>`<div class="hb wide"><span>${esc(x)}</span><div class="bar"><b style="width:${by(x).length/mx2*100}%" class="${x==='Won'?'':'m'}"></b></div><span class="v">${by(x).length}${sum(by(x))?' · '+usd(sum(by(x))):''}</span></div>`).join('')}</div></section>
+ <section class="band"><div class="panel"><h2>Open deals · ${open.length}</h2>${tbl(open)}</div></section>
+ <section class="band"><div class="panel"><h2>Won · ${won.length}</h2>${tbl(won)}</div></section>
+ <section class="band"><div class="panel"><h2>Lost · ${lost.length}</h2>${tbl(lost)}</div></section>`}`}
+function vWarm(){const t=today(),r=R();if(!r.warmRule)return'';const mon=mode(t)==='mon';
+ const all=contacts().map(c=>({c,w:warmOf(c)})).filter(x=>x.w),L=all.filter(x=>x.w.d<=t).sort((a,b)=>a.w.d.localeCompare(b.w.d)),up=all.length-L.length;
+ return`<section class="band"><div class="panel"><h2>Warm connects · ${L.length} due</h2><div class="sub">Leads whose meeting was cancelled or whose deal was lost, where your comment said to reach out later. Reconnect on the relationship you already have, not with a cold pitch.${up?` ${up} more come back on later dates.`:''}${mon?' Monday rule: email or LinkedIn only.':''}</div>
+ ${L.length?`<div class="scroll"><table class="stack"><thead><tr><th>Lead</th><th>What happened</th><th>What they said</th><th>Due</th><th>Reach them</th><th>Done</th></tr></thead><tbody>${L.map(({c,w})=>{const chs=['Email','LinkedIn'].concat(mon?[]:['Call']).filter(ch=>ch==='Email'?!!c.email&&!(c.bounced||c.stage==='Bounced'):ch==='Call'?!!c.phone:true);
+ return`<tr class="row" data-id="${esc(c.id)}"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}</span></td><td>${esc(w.kind)}<span class="t">${esc(fmt(c.lostAt||w.base))}${dealLost(c)&&Number.isInteger(c.dealValue)?' · '+usd(c.dealValue):''}</span></td><td><span class="t" style="color:var(--ink)">“${esc(w.why.slice(0,120))}${w.why.length>120?'…':''}”</span></td><td class="n ${w.d<t?'over':''}">${esc(fmt(w.d))}</td><td><span class="t" style="color:var(--ink)">${!mon&&c.phone?esc(c.phone)+' · ':''}${esc(c.email||'')}</span>${!mon&&c.phone?`<span class="t">${esc(winText(c))}</span>`:''}</td><td>${chs.map(ch=>`<button class="w" data-warm="${esc(c.id)}" data-ch="${ch}">Done: ${ch==='Email'?'email':ch==='Call'?'call':'LinkedIn'}</button>`).join(' ')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">No warm connects due today.</div>'}</div></section>`}
+async function setDealStage(id,v,open){const c2=getC(id);if(!c2||!DSTAGE.includes(v))return;if(isDNC(c2)){flash('This lead is Do not contact.');render();return}
+ if(v==='Lost'){S.dpend[id]={st:'Lost'};if(open){S.sel=id;drawer();flash('Add what they said, then press Mark lost.')}else render();return}
+ delete S.dpend[id];if(v===dStage(c2)){render();return}
+ const patch={dealStage:v,dealStageAt:today(),mtgStatus:'Conducted',stage:DSTG[v],stageLocked:true,comments:[...(c2.comments||[]),{t:new Date().toISOString(),x:'Deal stage: '+v+'.'}]};if(dStage(c2)==='Lost'){patch.lostAt='';patch.warmDoneAt=''}
+ await upd(id,patch);flash('Deal moved to '+v+'.')}
+async function warmDone(id,ch){const c=getC(id);if(!c)return;if(isDNC(c)){flash('This lead is Do not contact.');return}const t=today(),now=new Date().toISOString(),lab=ch==='Email'?'email':ch==='Call'?'call':'LinkedIn';
+ const patch={warmDoneAt:now,lastChannel:ch,lastOutcome:'Warm connect',lastOutcomeDate:t,stage:'Follow-up',stageLocked:false,snoozeUntil:'',snoozeWhy:'',nextCallManual:'',recur:null,nextStep:'',nextStepDate:'',comments:[...(c.comments||[]),{t:now,x:'Warm connect done by '+lab+'.'}]};
+ if(ch==='Call'){patch.myReachOut=mx(c.myReachOut,t);patch.calls=(c.calls||0)+1;patch.callOutcome='Warm connect'}
+ if(ch==='LinkedIn'){patch.liTouches=(c.liTouches||0)+1;patch.lastLinkedIn=mx(c.lastLinkedIn,t)}
+ if(ch==='Email')patch.lastEmail=mx(c.lastEmail,t);
+ if(mStat(c)==='Cancelled by client')patch.mtgStatus='';
+ await upd(id,patch);await addItem(t,{c:id,n:c.name||'',a:c.account||'',ch,k:'Warm connect',s:'Warm connect after '+(dealLost(c)?'a lost deal':'a cancelled meeting'),t:now});flash('Warm connect logged. '+(c.name||'The lead')+' is back on your normal follow-up rules.')}
+// ---------- today
+const BLOCK=['Not interested','Left company','Bounced','Meeting scheduled','Meeting conducted','Proposal','Replied','Connected'];
+const byScore=(a,b)=>score(b)-score(a)||(a.name||'').localeCompare(b.name||'');
+function mode(t){const w=D(t).getUTCDay();if(holName(t))return'hol';return w===1?'mon':w===5?'fri':(w===0||w===6)?'wkd':'mid'}
+const dayItems=t=>items().filter(x=>(x.t?shiftDay(x.t):x.day)===t);
+function buildOut(t,room){const r=R(),cs=contacts(),run=S.meta.run||{};const tt=new Set(dayItems(t).map(x=>x.c));
+ const base=c=>!snoozed(c)&&!['Left company','Meeting scheduled','Meeting conducted','Proposal','Replied','Connected','Do not contact'].includes(c.stage)&&!c.replied&&!isDNC(c)&&!(r.accountPause&&activeDeal(c.account))&&!(r.oneTouch&&tt.has(c.id));
+ const open=c=>eCnt(c)<r.seqMax||daysAgo(lastE(c))>=r.seqPause,gap=c=>!lastE(c)||addBD(lastE(c),r.emailGap)<=t;
+ const okE=c=>c.email&&!blockReason(c,'Email')&&base(c)&&c.stage!=='Bounced'&&!c.bounced&&open(c)&&gap(c);
+ const okL=c=>!blockReason(c,'LinkedIn')&&base(c)&&open(c)&&gap(c)&&(c.stage==='Bounced'||c.bounced||!c.email||(eCnt(c)>=3&&eCnt(c)<r.seqMax));
+ const fu=cs.filter(c=>okE(c)&&lastE(c)&&eCnt(c)<3).sort(byScore),li=cs.filter(okL).sort(byScore),nu=cs.filter(c=>okE(c)&&lastE(c)&&eCnt(c)>=r.seqMax).sort(byScore);
+ const nw=cs.filter(c=>okE(c)&&!synced(c)&&(c.stage==='New'||(run.backfillDone&&c._sheet))).sort(byScore);
+ const per={},pick=[],ids=new Set();let nl=0;
+ const take=(arr,n,ch)=>{for(const c of arr){if(pick.length>=room||n<=0)break;if(ch==='LinkedIn'&&nl>=r.liCap)break;const a=c.account||'Other';if((per[a]||0)>=r.domainCap||ids.has(c.id))continue;per[a]=(per[a]||0)+1;ids.add(c.id);pick.push({id:c.id,ch});if(ch==='LinkedIn')nl++;n--}};
+ take(fu,15,'Email');take(li,8,'LinkedIn');take(nw,room,'Email');take(nu,room,'Email');take(fu,room,'Email');take(li,room,'LinkedIn');
+ return{items:pick,fu:fu.length,nw:nw.length,li:li.length,nu:nu.length}}
+function todayData(){const t=today(),md=mode(t),r=R(),it=dayItems(t);
+ const sentE=new Set(it.filter(x=>['Email','LinkedIn'].includes(x.ch||'Email')&&x.k!=='Invite').map(x=>x.c)),called=new Set(it.filter(x=>x.ch==='Call').map(x=>x.c));const done=new Set((S.plan&&S.plan.done)||[]);
+ let out=S.plan&&(S.plan.out||(S.plan.email||[]).map(id=>({id,ch:'Email'})));const b=buildOut(t,Math.max(0,r.emailCap-sentE.size));if(!out)out=(md==='wkd'||md==='hol')?[]:b.items;
+ const inPlan=new Set(out.map(x=>x.id)),one=c=>!(r.oneTouch&&(sentE.has(c.id)||inPlan.has(c.id)));let calls=[];
+ if(md==='mid'||md==='fri'){calls=contacts().map(c=>({...c,p:plan(c)})).filter(c=>c.p&&c.p.due&&one(c));
+  if(md==='fri'&&calls.length<r.friCalls){const have=new Set(calls.map(c=>c.id));calls=calls.concat(contacts().filter(c=>!have.has(c.id)&&c.phone&&!snoozed(c)&&!blockReason(c,'Call')&&one(c)&&!['Meeting scheduled','Meeting conducted','Proposal'].includes(c.stage)&&(c.calls||0)<r.callMax&&daysAgo(c.myReachOut)>=3).sort(byScore).slice(0,r.friCalls-calls.length).map(c=>({...c,p:{d:t,why:'Friday call blitz: high-scoring lead not called in 3+ days',over:false,due:true}})))}
+  const oc=(S.plan&&S.plan.outcomes)||{};for(const [id,v] of Object.entries(oc))if(v.ch==='Call'&&!calls.some(c=>c.id===id)){const c=getC(id);if(c)calls.push({...c,p:{d:t,why:'Outcome recorded today',over:false,due:true}})}
+  for(const c of calls){c.z=tzOf(c);const w=c.z?winIST(c.z):null;c.ws=w?w.s:9999;c.wt=w?w.txt:''}
+  calls.sort((a,b)=>(b.phone?1:0)-(a.phone?1:0)||a.ws-b.ws||score(b)-score(a))}
+ return{t,md,sentE,called,done,out,b,calls}}
+function freezePlan(){const t=today();if(!S.w||!S.db||S.plan||S.planFor===t||['wkd','hol'].includes(mode(t)))return;const d=todayData();if(!d.out.length)return;S.planFor=t;S.db.doc('plan/'+t).set({date:t,out:d.out,done:[],at:new Date().toISOString()}).catch(()=>{S.planFor=''})}
+function ocCell(c,ch,done){const rec=S.plan&&S.plan.outcomes&&S.plan.outcomes[c.id],pend=S.pend[c.id],v=pend?pend.o:rec?rec.o:'';
+ let h=`<select data-oc="${esc(c.id)}" data-ch="${esc(ch)}" aria-label="Outcome for ${esc(c.name||'')}" ${isDNC(c)&&!rec?'disabled':''}><option value="">${done&&!rec?'Sent · record outcome':'Record outcome'}</option>${OUTC.map(([k,l])=>`<option value="${k}" ${k===v?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
+ if(rec&&!pend)h+=`<span class="t">Recorded ${esc(istTime(rec.at))} IST${rec.until?' · back on '+esc(fmt(rec.until)):''}</span>`;
+ if(pend&&pend.o==='mtg')h+=`<div class="mf"><input type="date" data-ocd="${esc(c.id)}" min="${today()}" aria-label="Meeting date"><button class="p w" data-ocsave="${esc(c.id)}">Save</button></div>`;
+ else if(pend)h+=`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;align-items:center"><input type="date" data-ocd="${esc(c.id)}" min="${today()}" aria-label="Reach out again on"><span class="t" style="display:inline">or</span><input type="month" data-ocm="${esc(c.id)}" aria-label="Or a month"><span class="t" style="display:inline">or snooze</span><button class="w" data-ocq="${esc(c.id)}" data-n="3">3 mo</button><button class="w" data-ocq="${esc(c.id)}" data-n="4">4 mo</button><button class="w" data-ocq="${esc(c.id)}" data-n="5">5 mo</button><button class="p w" data-ocsave="${esc(c.id)}">Save</button></div>`;
+ return h}
+async function applyOutcome(id,ch,o,until){const c0=getC(id);if(!c0)return;const t=today(),now=new Date().toISOString(),r=R();
+ if(isDNC(c0)&&o!=='dnc'){flash('This lead is Do not contact.');return}
+ const prior=S.plan&&S.plan.outcomes&&S.plan.outcomes[id],again=!!(prior&&prior.ch===ch),pre=again&&prior.pre?prior.pre:{stage:c0.stage||'',stageLocked:!!c0.stageLocked,calls:c0.calls||0,liTouches:c0.liTouches||0,callOutcome:c0.callOutcome||'',nextCallManual:c0.nextCallManual||''};
+ const reset=again?{stage:pre.stage,stageLocked:pre.stageLocked,snoozeUntil:'',snoozeWhy:'',niDate:'',nextCallManual:pre.nextCallManual,...(prior.o==='mtg'?{mtgStatus:'',meetingNext:''}:{})}:{};
+ const c={...c0,...reset,calls:again?pre.calls:c0.calls,liTouches:again?pre.liTouches:c0.liTouches};
+ const lab=OUTC.find(x=>x[0]===o)[1].replace(/ \(.*\)$/,'').replace(': try again after the cool-off','');const patch={...reset,lastOutcome:lab,lastOutcomeDate:t,lastChannel:ch};
+ if(ch==='Call'){patch.myReachOut=mx(c.myReachOut,t);patch.calls=(c.calls||0)+1;patch.callOutcome=o==='noreply'?'No answer':o==='ni'?'Not interested':'Spoke';if(o==='noreply')patch.nextCallManual=''}
+ if(ch==='LinkedIn'){patch.liTouches=(c.liTouches||0)+1;patch.lastLinkedIn=mx(c.lastLinkedIn,t)}
+ if(o==='noreply'&&(!c.stageLocked||['New','Contacted','Emailed','Follow-up','Called','Bounced'].includes(c.stage)))patch.stage=ch==='Call'?'Called':(eCnt(c)>=1?'Follow-up':'Emailed');
+ if(o==='ni'){until=iso(new Date(D(t).getTime()+r.niCool*864e5));Object.assign(patch,{stage:'Not interested',niDate:t,stageLocked:true,snoozeUntil:until,snoozeWhy:'Not interested: cool-off',nextCallManual:''})}
+ if(o==='mtg')Object.assign(patch,{stage:'Meeting scheduled',mtgStatus:'Scheduled',meetingNext:until,stageLocked:true,snoozeUntil:'',nextCallManual:'',comments:[...(c.comments||[]),{t:now,x:'Meeting scheduled for '+fmt(until)+'.'}]});
+ if(o==='pitch'||o==='later')Object.assign(patch,{stage:'Nurture',stageLocked:true,snoozeUntil:until,nextCallManual:until,snoozeWhy:o==='pitch'?'Different pitch later':'Asked to reach out later'});
+ if(o==='dnc')Object.assign(patch,{dnc:true,dncReason:'Outcome '+fmt(t)+': asked not to be contacted',dncDate:t,dncLifted:'',stage:'Do not contact',stageLocked:true,nextCallManual:'',snoozeUntil:''});
+ if(!await upd(id,patch))return;
+ const it={c:id,n:c.name||'',a:c.account||'',ch:ch==='Email'?'Outcome':ch,k:'Outcome',s:lab+(until?' · back on '+fmt(until):''),t:now};
+ if(again){try{const dr=S.db.doc('daily/'+t),s0=await dr.get(),a0=s0.exists?[...(s0.data().items||[])]:[],i0=a0.findIndex(x=>x.c===id&&x.t===prior.at);if(i0>=0){a0[i0]={...it,s:it.s+' (changed from '+prior.lab+')'};await dr.set({date:t,items:a0})}else await addItem(t,it)}catch(e){denied(e)}}else await addItem(t,it);
+ const ref=S.db.doc('plan/'+t),oc={...((S.plan&&S.plan.outcomes)||{}),[id]:{o,lab,ch,until:until||'',at:now,pre}};
+ try{if(S.plan)await ref.update({outcomes:oc,done:[...new Set([...(S.plan.done||[]),id])]});else await ref.set({date:t,out:todayData().out,done:[id],outcomes:oc,at:now})}catch(e){denied(e)}
+ delete S.pend[id];flash((c.name||'Lead')+': '+lab+(until?' · back on '+fmt(until):'')+(o==='dnc'?'. Lift it from the contact panel if this was a mistake.':''))}
+function row(c,why,right){return`<div class="card" data-id="${esc(c.id)}"><div><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button> ${chip(c.stage,c)}<span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}${c.location?' · '+esc(c.location):''}</span><span class="t">${why}</span></div><div class="r">${right}</div></div>`}
+const HOLQ=["Today is a holiday. Take a break. The pipeline will still be there tomorrow, sadly.", "No calls today. Even voicemail is on vacation.", "Your prospects are out of office. You should be too.", "Inbox zero is a myth. A day off is not.", "The best follow-up today is a nap.", "Nobody signs a PO on a holiday. Go eat something.", "Your CRM is taking the day off. Take the hint.", "Out of office isn't just for them. Set yours.", "Today's quota: zero calls, one long lunch.", "Deals close faster when the closer is rested. Science, probably.", "Step away from the dialer. Slowly.", "The only thing worth prospecting today is dessert.", "Even the spam filter is on holiday. Don't test it.", "Rest is a strategy. Today it's the only one.", "Close the laptop. The leads will keep, and so will you."];
+const holQuote=t=>HOLQ[(+t.replace(/-/g,''))%HOLQ.length];
+function vToday(){const d=todayData(),r=R(),run=S.meta.run||{};const dn=D(d.t).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ if(d.md==='hol'){const HOLQ=["Today is a holiday. Take a break: your pipeline will still be here tomorrow.", "No calls today. Even the best closers take a day off.", "Inbox zero is overrated. Holiday zero is mandatory.", "Your prospects are out celebrating. You should be too.", "The CRM is closed for the day. Go touch grass, not LinkedIn.", "Rest is a growth strategy. Today, you are executing it flawlessly.", "Nobody signs a PO on a holiday. Put the phone down.", "Out of office is a state of mind. Try it today.", "The only follow-up allowed today is a second helping.", "Today's email target is zero. Go crush it.", "Your call blitz can wait. Your nap cannot.", "Spam filters respect holidays. So should you.", "Holiday mode is on. The leads will keep; the leftovers won't.", "Today's only KPI: hours spent not thinking about pipeline.", "Close your laptop. It's the only thing worth closing today."],q=HOLQ[Math.floor(D(d.t).getTime()/864e5)%HOLQ.length];
+  return`<section class="band"><h1>Today, ${esc(dn)}</h1><div class="sub">${esc(holName(d.t))}</div><p class="holq">“${esc(q)}”</p></section>`}
+ const MODE={mon:'Monday rule: email and LinkedIn only, no calls today.',mid:'Email and LinkedIn first, then your calling list.',fri:`Friday: email and LinkedIn, plus a call blitz of at least ${r.friCalls} calls.`,wkd:'Weekend: no outreach planned. Monday builds a fresh list.'}[d.md];
+ const ocT=(S.plan&&S.plan.outcomes)||{};const out=d.out.map(x=>{const c=getC(x.id);return c?{...c,ch:x.ch}:null}).filter(c=>c&&(!isDNC(c)||ocT[c.id]));const nE=out.filter(c=>c.ch==='Email').length,nL=out.length-nE;
+ const why=c=>c.ch==='LinkedIn'?(c.stage==='Bounced'||c.bounced?'Email bounced: LinkedIn is the open channel':!c.email?'No email on file':`${eCnt(c)} touches without a reply: switch to LinkedIn`):eCnt(c)>=r.seqMax?`Nurture touch · sequence finished ${esc(fmt(lastE(c)))}`:lastE(c)?`Follow-up #${eCnt(c)+1} · last touch ${esc(fmt(lastE(c)))}${c.lastSubject?' · “'+esc(c.lastSubject)+'”':''}`:'New contact: first email';
+ const eRows=out.map((c,i)=>{const ok=d.sentE.has(c.id)||d.done.has(c.id);return`<tr class="row" data-id="${esc(c.id)}"><td class="n">${i+1}</td><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}</span></td><td><span class="chip ${c.ch==='LinkedIn'?'st':''}">${c.ch}</span></td><td>${c.ch==='LinkedIn'?`<a href="${esc(liUrl(c))}">Open LinkedIn</a>`:`<span class="t" style="color:var(--ink)">${esc(c.email)}</span>`}</td><td><span class="t">${why(c)}</span></td><td class="n">${score(c)}</td><td>${ocCell(c,c.ch,ok)}</td></tr>`}).join('');
+ const cRows=d.calls.map((c,i)=>`<tr class="row" data-id="${esc(c.id)}"><td class="n">${i+1}</td><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}${c.title?' · ':''}${esc(c.account||'')}</span></td><td class="n">${esc(c.phone||'No phone')}</td><td>${tzSel(c)}</td><td class="n">${c.z?esc(localNow(c.z)):''}</td><td class="n">${esc(c.wt||'')}</td><td><span class="t">${c.p.over?'<b class="over">Overdue since '+esc(fmt(c.p.d))+'</b> · ':''}${esc(c.p.why)}</span></td><td>${ocCell(c,'Call',d.called.has(c.id))}<button class="w" data-open="${esc(c.id)}" style="margin-top:4px">Details</button></td></tr>`).join('');
+ const callSec=d.md==='mon'?'<div class="note">Monday rule: no calling list today. It returns tomorrow.</div>':d.md==='wkd'?'<div class="empty">No calls planned at the weekend.</div>':`<div class="bar-tools"><button id="cpC">Copy calling list as CSV</button></div>${d.md==='fri'?`<div class="hb"><span>Calls logged today</span><div class="bar"><b style="width:${Math.min(100,d.called.size/r.friCalls*100)}%"></b></div><span class="v">${d.called.size} / ${r.friCalls}</span></div>`:''}
+ ${d.calls.length?`<div class="scroll"><table class="stack"><thead><tr><th>#</th><th>Lead</th><th>Phone</th><th>Time zone</th><th>Their time now</th><th>Best window</th><th>Why</th><th>Outcome</th></tr></thead><tbody>${cRows}</tbody></table></div>`:'<div class="empty">No calls due today.</div>'}`;
+ return`<section class="band" style="padding-bottom:6px"><h1>Today, ${esc(dn)}</h1><div class="sub">${esc(MODE)} All lists follow your <a href="#rules">CRM rules</a>: do-not-contact leads never appear, one touch per lead per day, and LinkedIn counts as email.</div></section>
+ <section class="band green" style="padding-block:18px"><div class="kpis">
+ <div class="kpi"><div class="num">${Math.min(d.sentE.size,999)} / ${r.emailCap}</div><div class="prog"><b style="width:${r.emailCap?Math.min(100,d.sentE.size/r.emailCap*100):0}%"></b></div><div>emails and LinkedIn touches done today</div></div>
+ <div class="kpi"><div class="num">${nE}</div><div>on today's email list</div></div><div class="kpi"><div class="num">${nL}</div><div>on today's LinkedIn list</div></div>
+ <div class="kpi"><div class="num">${d.md==='mon'||d.md==='wkd'?'Off':d.calls.length}</div><div>on today's calling list${d.md==='fri'?` · target ${r.friCalls}`:''}</div></div>
+ <div class="kpi"><div class="num">${d.called.size}</div><div>calls logged today</div></div></div></section>
+ ${vWarm()}
+ ${vNext()}
+ <section class="band"><div class="panel"><h2>Email and LinkedIn list · ${out.length} of ${r.emailCap}</h2>
+ <div class="sub">${d.b.fu} follow-ups due · ${d.b.li} LinkedIn candidates · ${run.backfillDone?d.b.nw+' contacts never emailed':'new contacts from your sheet join once the email history sync finishes, so nobody gets a duplicate first email'} · at most ${r.domainCap} per account and ${r.liCap} LinkedIn a day.</div>
+ <div class="bar-tools"><button id="cpE">Copy email addresses</button><button id="cpEL">Copy list as CSV</button>${S.plan?`<span class="sub">Fixed at ${esc(istTime(S.plan.at))} IST</span><button class="w" id="rebuild">Rebuild list</button>`:''}</div>
+ ${out.length?`<div class="scroll"><table class="stack"><thead><tr><th>#</th><th>Lead</th><th>Channel</th><th>Email or profile</th><th>Why</th><th>Score</th><th>Outcome</th></tr></thead><tbody>${eRows}</tbody></table></div>`:`<div class="empty">${d.md==='wkd'?'Weekend: nothing planned.':r.emailCap===0?'Your daily email and LinkedIn cap is 0, so no list is built. Change it in Rules.':'Nothing due today.'}</div>`}</div></section>
+ <section class="band"><div class="panel"><h2>Calling list${d.md==='mon'||d.md==='wkd'?'':' · '+d.calls.length}</h2><div class="sub">Sorted by when their morning call window opens in IST, leads with a phone first. Fill in any missing time zone in the list; it is saved to the contact.</div>${callSec}</div></section>`}
+// ---------- calls
+function vCalls(){const t=today(),wkEnd=addBD(t,5);const L=contacts().map(c=>({...c,p:plan(c)})).filter(c=>c.p&&c.p.d<=wkEnd).sort((a,b)=>a.p.d.localeCompare(b.p.d));
+ const grp=[['Overdue',L.filter(c=>c.p.d<t)],['Today, '+fmt(t),L.filter(c=>c.p.d===t)],['Next 5 working days',L.filter(c=>c.p.d>t)]];
+ const card=c=>`<div class="card" data-id="${esc(c.id)}"><div><button class="nm" data-open="${esc(c.id)}">${esc(c.name)}</button> ${chip(c.stage,c)}<span class="t">${esc(c.title||'')} · ${esc(c.account||'')}${c.location?' · '+esc(c.location):''}</span><span class="t">${c.phone?'Phone '+esc(c.phone)+' · ':''}${esc(c.email||'')}</span><span class="t">Last email ${esc(fmt(c.lastEmail)||'none')}${c.myReachOut?' · last call/LinkedIn '+esc(fmt(c.myReachOut)):''}${c.lastSubject?' · “'+esc(c.lastSubject)+'”':''}</span></div>
+ <div class="r"><span class="due ${c.p.over?'over':''}">${esc(fmt(c.p.d))}</span><span class="win">${esc(winText(c))}</span><span class="t">${esc(c.p.why)}</span><button class="w" data-open="${esc(c.id)}">Log call</button></div></div>`;
+ return`<section class="band" style="padding-top:6px"><div class="sub">Next best call date for each lead: 2 working days after an email, sooner if they engaged, spaced out after repeated no-answers. Call windows are your IST time for their morning. US Thanksgiving (26–27 Nov) and year-end holidays are skipped.</div>
+ ${grp.map(([h,a])=>`<div class="callgrp"><h2>${esc(h)} <span class="sub">${a.length}</span></h2>${a.length?a.map(card).join(''):'<div class="empty">Nothing here.</div>'}</div>`).join('')}</section>`}
+// ---------- contacts
+function filtered(fa){const f=S.f,q=f.q.toLowerCase(),t=today();let a=contacts();if(fa)a=a.filter(c=>(c.account||'Other')===fa);
+ if(q)a=a.filter(c=>[c.name,c.email,c.title,c.account,c.notes].join(' ').toLowerCase().includes(q));
+ if(f.acc&&!fa)a=a.filter(c=>(c.account||'Other')===f.acc);if(f.st)a=a.filter(c=>(c.stage||'Emailed')===f.st);
+ if(f.show==='due')a=a.filter(c=>{const p=plan(c);return p&&p.due});if(f.show==='eng')a=a.filter(c=>ENG.includes(c.stage));if(f.show==='nosync')a=a.filter(c=>!synced(c));if(f.show==='stale')a=a.filter(isStale);if(f.show==='dnc')a=a.filter(isDNC);if(f.show==='dup')a=a.filter(c=>dupSet().has(c.id));if(f.show==='fix')a=a.filter(needsEmail);if(f.show==='snz')a=a.filter(snoozed);
+ if(f.sort==='score')return a.sort((x,y)=>score(y)-score(x));
+ const k={next:c=>{const p=plan(c);return p?p.d:'9999'},last:c=>lastTouch(c),name:c=>c.name||'',acc:c=>(c.account||'')+(c.name||'')}[f.sort];
+ a.sort((x,y)=>f.sort==='last'?k(y).localeCompare(k(x)):k(x).localeCompare(k(y)));return a}
+function vContacts(fa){const f=S.f,accs=[...new Set(contacts().map(c=>c.account||'Other'))].sort(),a=filtered(fa),shown=a.slice(0,S.limit);
+ return`<section class="band"><div class="bar-tools">
+ <input type="search" id="q" placeholder="Search name, title, email, notes" value="${esc(f.q)}" aria-label="Search">
+ ${fa?'':`<select id="fAcc" aria-label="Account"><option value="">All accounts</option>${accs.map(x=>`<option ${x===f.acc?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
+ <select id="fSt" aria-label="Stage"><option value="">All stages</option>${STAGES.map(x=>`<option ${x===f.st?'selected':''}>${esc(x)}</option>`).join('')}</select>
+ <select id="fShow" aria-label="Show"><option value="">Everyone</option><option value="due" ${f.show==='due'?'selected':''}>Call due now</option><option value="eng" ${f.show==='eng'?'selected':''}>Engaged</option><option value="nosync" ${f.show==='nosync'?'selected':''}>Not matched to mail yet</option><option value="stale" ${f.show==='stale'?'selected':''}>Stale</option><option value="dnc" ${f.show==='dnc'?'selected':''}>Do not contact</option><option value="dup" ${f.show==='dup'?'selected':''}>Possible duplicates</option><option value="fix" ${f.show==='fix'?'selected':''}>Email update needed</option><option value="snz" ${f.show==='snz'?'selected':''}>Snoozed or cooling off</option></select>
+ <select id="fSort" aria-label="Sort"><option value="next" ${f.sort==='next'?'selected':''}>Sort: next call</option><option value="last" ${f.sort==='last'?'selected':''}>Sort: latest touch</option><option value="name" ${f.sort==='name'?'selected':''}>Sort: name</option><option value="acc" ${f.sort==='acc'?'selected':''}>Sort: account</option><option value="score" ${f.sort==='score'?'selected':''}>Sort: lead score</option></select>
+ <button id="csv">Copy as CSV</button><button class="w" id="addBtn">Add contact</button></div>
+ <div id="addForm" hidden class="note"><div class="row2"><input id="aN" placeholder="Full name"><input id="aE" placeholder="Email (optional)"><input id="aA" placeholder="Account" list="accL"><input id="aT" placeholder="Title"><input id="aL" placeholder="Location (city, country)"><input id="aP" placeholder="Phone"></div><datalist id="accL">${accs.map(x=>`<option>${esc(x)}</option>`).join('')}</datalist><p><button class="p w" id="aSave">Save contact</button></p></div>
+ ${fa?`<h2>Leads at ${esc(fa)}</h2>`:''}<div class="sub">${a.length} of ${fa?contacts().filter(c=>(c.account||'Other')===fa).length:contacts().length} contacts${a.length>shown.length?` · showing first ${shown.length}`:''}</div>
+ <div class="scroll"><table class="stack"><thead><tr><th>Contact</th><th>Account</th><th>Email</th><th>Phone</th><th>Time zone</th><th>Stage</th><th>Emails</th><th>Called on</th><th>Next best call</th><th>Notes</th></tr></thead><tbody>
+ ${shown.map(c=>`<tr class="row" data-id="${esc(c.id)}"><td><button class="nm" data-open="${esc(c.id)}">${esc(c.name||c.email)}</button><span class="t">${esc(c.title||'')}</span><span class="t">Score ${score(c)}${isStale(c)?' · <b class="over">Stale</b>':''}${dupSet().has(c.id)?' · <b class="over">Possible duplicate</b>':''}</span></td><td>${esc(c.account||'')}</td><td>${needsEmail(c)?`<span class="t">${esc(c.email||'No email')}</span><span style="display:flex;gap:4px;flex-wrap:wrap"><input data-fix="${esc(c.id)}" type="email" placeholder="Correct email" aria-label="Correct email for ${esc(c.name)}" style="max-width:180px"><button class="w" data-fixsave="${esc(c.id)}">Save</button></span>`:`<span class="t" style="color:var(--ink)">${esc(c.email||'')}</span>`}</td><td class="n">${esc(c.phone||'')}</td><td>${tzSel(c)}</td>
+ <td><select data-f="stage" aria-label="Stage">${STAGES.map(s=>`<option ${s===(c.stage||'Emailed')?'selected':''}>${esc(s)}</option>`).join('')}</select>${c.sheetStatus?`<span class="t">Sheet: ${esc(c.sheetStatus)}</span>`:''}</td>
+ <td class="n">${eCnt(c)}<span class="t">${esc(fmt(lastE(c)))}</span></td>
+ <td><input type="date" data-f="reach" value="${esc(c.myReachOut||'')}" aria-label="Date you reached out" ${isDNC(c)?'disabled title="Do not contact"':''}></td>
+ <td>${nextCell(c)}</td><td><span class="t">${c.lastOutcome?esc(c.lastOutcome)+(snoozed(c)?' · back '+esc(fmt(c.snoozeUntil)):'')+'<br>':''}${esc((c.notes||c.sheetStatus||c.note||'').slice(0,90))}</span></td></tr>`).join('')}
+ </tbody></table></div>${a.length>shown.length?`<p><button id="more">Show ${Math.min(200,a.length-shown.length)} more</button></p>`:''}${a.length?'':'<div class="empty">No contacts match.</div>'}</section>`}
+// ---------- daily
+function vDaily(){const d=S.day||today();const it=items().filter(x=>x.day===d).sort((a,b)=>(a.t||'').localeCompare(b.t||''));const by={};for(const x of it)(by[x.a||'Other']=by[x.a||'Other']||[]).push(x);
+ const n=ch=>it.filter(x=>(x.ch||'Email')===ch).length;const ppl=new Set(it.map(x=>x.c)).size;
+ return`<section class="band"><div class="bar-tools"><button id="dPrev" aria-label="Previous day">‹</button><input type="date" id="dPick" value="${esc(d)}" aria-label="Day"><button id="dNext" aria-label="Next day">›</button><button id="dToday">Today</button></div>
+ <h2>${esc(D(d).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'}))}</h2>
+ <div class="sub">${pl(ppl,'person','people')} · ${pl(n('Email'),'email')} · ${pl(n('Call'),'call')} · ${pl(n('LinkedIn'),'LinkedIn touch','LinkedIn touches')} (IST day)</div>
+ ${Object.keys(by).length?Object.entries(by).map(([a,xs])=>`<h2 style="margin-top:18px">${esc(a)} <span class="sub">${xs.length}</span></h2><table class="stack"><thead><tr><th>Time IST</th><th>Who</th><th>Channel</th><th>Type</th><th>Subject or outcome</th></tr></thead><tbody>${xs.map(x=>`<tr class="row"><td class="n">${esc(istTime(x.t))}</td><td><button class="nm" data-open="${esc(x.c)}">${esc(x.n||x.c)}</button></td><td>${esc(x.ch||'Email')}</td><td>${esc(x.k||'')}</td><td>${esc(x.s||'')}</td></tr>`).join('')}</tbody></table>`).join(''):'<div class="empty">No outreach logged for this day.</div>'}</section>`}
+// ---------- accounts
+function vAcc(){const cs=contacts(),t=today().slice(0,7),ms=allMeet().filter(x=>x.month<=t);const A={};
+ for(const c of cs){const a=c.account||'Other';const r=A[a]=A[a]||{r:0,s:0,e:0,em:0,b:0,last:'',due:0};if(reached(c))r.r++;if(synced(c))r.s++;if(ENG.includes(c.stage))r.e++;if(c.stage==='Bounced')r.b++;r.em+=c.emails||0;r.last=mx(r.last,lastTouch(c));const p=plan(c);if(p&&p.due)r.due++}
+ const rows=Object.entries(A).sort((a,b)=>b[1].r-a[1].r);
+ return`<section class="band"><h2>Accounts</h2><div class="sub">Open an account for its lead reach-out review page. Meetings come from your Meetings Conducted Log plus any you mark here.</div><div class="scroll"><table class="stack"><thead><tr><th>Account</th><th>Leads</th><th>Matched to mail</th><th>Emails sent</th><th>Engaged</th><th>Bounced</th><th>Meetings</th><th>Last touch</th><th>Calls due</th></tr></thead><tbody>
+ ${rows.map(([a,r])=>`<tr class="row"><td><a class="nm" href="#acct-${esc(slug(a))}">${esc(a)}</a></td><td class="n">${r.r}</td><td class="n">${r.s}</td><td class="n">${r.em}</td><td class="n">${r.e}</td><td class="n">${r.b}</td><td class="n">${ms.filter(x=>x.account===a).length}</td><td class="n">${esc(fmt(r.last))}</td><td class="n">${r.due||''}</td></tr>`).join('')}</tbody></table></div></section>`}
+// ---------- drawer
+function drawer(){const id=S.sel,c=getC(id),el=document.getElementById('drawer');if(!c){close();return}
+ const p=plan(c),t=today();const tl=items().filter(x=>x.c===id||(c.prevIds||[]).includes(x.c)).sort((a,b)=>(b.day+(b.t||'')).localeCompare(a.day+(a.t||'')));const ms=allMeet().filter(m=>m.c===id||nkey(m.name)===nkey(c.name));
+ el.innerHTML=`<div data-id="${esc(id)}"><button id="dClose" style="float:right">Close</button><h2 style="font-size:24px">${esc(c.name||c.email)}</h2>${isDeal(c)?chip(c.stage,c):''}<div class="sub">${esc(c.title||'')}</div><div class="sub">${esc(c.account||'')}${c.location?' · '+esc(c.location):''}</div><div class="sub">${esc(c.email||'')}${c.linkedin&&/^https:\/\//.test(c.linkedin)?` · <a href="${esc(c.linkedin)}">LinkedIn</a>`:''}</div>${c.sheetStatus?`<div class="note">Your sheet: ${esc(c.sheetStatus)}${c.prev?' · previous exposure: '+esc(c.prev):''}</div>`:''}${c.sheetRemarks?`<div class="sub">${esc(c.sheetRemarks)}</div>`:''}
+ ${needsEmail(c)?`<div class="note"><b>Email update needed.</b> ${esc(c.email||'No email on file')} ${c.email?'bounced':''}. Enter the correct address: it replaces the old one, keeps this lead's history and puts them back on the email list.<div class="row2" style="margin-top:8px"><input id="fixIn" type="email" placeholder="Correct email address" aria-label="Correct email address"><button class="p w" id="fixSave">Save email</button></div></div>`:''}${c.prevEmails&&c.prevEmails.length?`<div class="sub">Previous email: ${esc(c.prevEmails.join(', '))}</div>`:''}
+ ${isDNC(c)?`<div class="block"><b>Do not contact.</b> ${esc(c.dncReason||'Marked do not contact')}${c.dncDate?' · '+esc(fmt(c.dncDate)):''}. Every channel is blocked: this lead is off all lists and touches cannot be logged.<div style="margin-top:8px"><label><input type="checkbox" id="liftOk"> They asked to be contacted again</label> <button class="w" id="liftDnc">Lift DNC</button></div></div>`:(blockReason(c,'Call')?`<div class="note"><b>Paused:</b> ${esc(blockReason(c,'Call'))}</div>`:'')}
+ ${snoozed(c)?`<div class="note"><b>${esc(c.snoozeWhy||'Snoozed')}</b> until ${esc(fmt(c.snoozeUntil))}: off every list until then. <button class="w" id="wake">Bring back now</button></div>`:''}${c.lastOutcome?`<div class="sub">Last outcome: ${esc(c.lastOutcome)} · ${esc(fmt(c.lastOutcomeDate))}</div>`:''}
+ <div class="sub">Lead score ${score(c)} / 100${isStale(c)?' · <b>stale</b>: no touch in '+daysAgo(lastTouch(c))+' days':''}${c.ooo?' · out of office: '+esc(c.ooo):''}</div>
+ <div class="row2"><div class="fl"><label for="dTi">Title</label><input id="dTi" data-f="title" value="${esc(c.title||'')}"></div><div class="fl"><label for="dLo">Location</label><input id="dLo" data-f="location" value="${esc(c.location||'')}"></div></div>
+ <div class="row2"><div class="fl"><label>Time zone</label>${tzSel(c)}</div><div class="fl"><label for="dLi">LinkedIn URL</label><input id="dLi" data-f="linkedin" value="${esc(typeof c.linkedin==='string'?c.linkedin:'')}" placeholder="https://www.linkedin.com/in/…"></div></div>
+ <div class="row2"><div class="fl"><label for="dSt">Stage</label><select id="dSt" data-f="stage">${STAGES.map(s=>`<option ${s===(c.stage||'Emailed')?'selected':''}>${esc(s)}</option>`).join('')}</select></div><div class="fl"><label for="dPh">Phone</label><input id="dPh" data-f="phone" value="${esc(c.phone||'')}"></div></div>
+ <div class="note"><b>Next best call:</b> ${p?`${esc(fmt(p.d))}${p.over?' (overdue, call today)':''} · ${esc(winText(c))}<br><span class="t">${esc(p.why)}</span>`:'none needed at this stage'}</div>
+ <div class="row2"><div class="fl"><label for="dNC">Set your own next call date</label><input type="date" id="dNC" data-f="nextCallManual" value="${esc(c.nextCallManual||'')}"></div><div class="fl"><label>&nbsp;</label><button class="w" id="dNCx">Use suggested date</button></div></div>
+ <h2 style="margin-top:16px">Comments</h2>${(()=>{const sg=inMtg(c)?nsOf(c):null;return sg?`<div class="note"><b>Suggested next touch:</b> ${esc(sg.txt)} · ${esc(fmt(sg.d))}${sg.why?'<br><span class="t">'+esc(sg.why)+'</span>':''}</div>`:''})()}
+ ${inMtg(c)?`<div class="fl"><label>Meeting status</label>${mStatCell(c)}</div><div class="fl"><label>Next step</label>${nsCell(c)}</div>`:''}${isDeal(c)?`<div class="row2"><div class="fl"><label>Deal stage</label>${dStageCell(c)}</div><div class="fl"><label>Deal value (USD)</label>${dValCell(c)}</div></div>`:''}
+ <div class="fl"><textarea id="cmIn" rows="3" placeholder="What happened, what they said, what you agreed…" aria-label="New comment"></textarea></div><button class="p w" id="cmAdd">Add comment</button>
+ <ul class="tl">${(c.comments||[]).slice().reverse().map(x=>`<li><b>${esc(fmt(istDay(x.t)))}</b> ${esc(istTime(x.t))} IST<span class="t" style="color:var(--ink)">${esc(x.x)}</span></li>`).join('')||'<li class="empty">No comments yet.</li>'}</ul>
+ <h2 style="margin-top:16px">Log a touch</h2><div class="row2"><div class="fl"><label for="lD">Date reached out</label><input type="date" id="lD" value="${esc(t)}"></div><div class="fl"><label for="lC">Channel</label><select id="lC"><option>Call</option><option>LinkedIn</option><option>Email</option></select></div></div>
+ <div class="fl"><label for="lO">Outcome</label><select id="lO">${OUT.map(o=>`<option>${esc(o)}</option>`).join('')}<option>Message sent</option></select></div><button class="p w" id="lSave" ${isDNC(c)?'disabled':''}>Log touch</button>
+ ${isDNC(c)?'':`<details><summary>Mark as Do not contact</summary><div class="row2"><select id="dncR"><option>Asked to unsubscribe</option><option>Said do not contact</option><option>Wrong person, asked not to be contacted</option><option>Legal or compliance request</option><option>Company-wide request</option></select><button class="dn w" id="markDnc">Mark Do not contact</button></div></details>`}
+ <h2 style="margin-top:16px">Meeting</h2><div class="row2"><div class="fl"><label for="mD">Meeting date</label><input type="date" id="mD" value="${esc(c.meetingDate||c.meetingNext||t)}"></div><div class="fl"><label>&nbsp;</label><button class="p w" id="mDone">Mark meeting conducted</button></div></div><button class="w" id="mSch">Mark meeting scheduled for this date</button>
+ ${ms.length?`<ul class="tl">${ms.map(m=>`<li>Meeting ${esc(m.date?fmt(m.date):monL(m.month))} · ${esc({log:'from your meetings log',mail:'found in your sent mail',crm:'marked here'}[m.src])}${m.key?` <button class="w" data-delm="${esc(m.key)}">Remove</button>`:''}</li>`).join('')}</ul>`:''}
+ <div class="fl"><label for="dNo">Notes</label><textarea id="dNo" data-f="notes" rows="4">${esc(c.notes||'')}</textarea></div>
+ <h2 style="margin-top:16px">History</h2><div class="sub">${c.emails||0} emails · first ${esc(fmt(c.firstEmail)||'n/a')} · last ${esc(fmt(c.lastEmail)||'n/a')}${c.calls?` · ${c.calls} calls`:''}</div>
+ <ul class="tl">${tl.map(x=>`<li><b>${esc(fmt(x.day))}</b> ${esc(istTime(x.t))} · ${esc(x.ch||'Email')} · ${esc(x.k||'')}<span class="t">${esc(x.s||'')}</span></li>`).join('')||'<li class="empty">Touches show here as the daily refresh loads your mail.</li>'}</ul>
+ ${c.note?`<div class="note">${esc(c.note)}</div>`:''}</div>`;
+ el.classList.add('open');document.getElementById('scrim').classList.add('open')}
+function close(){S.sel=null;document.getElementById('drawer').classList.remove('open');document.getElementById('scrim').classList.remove('open')}
+// ---------- writes
+function denied(e){S.errAt=Date.now();if(e&&e.code==='invalid_argument'){S.w=false;render();flash('You have view access only, so changes are not saved.',1)}else flash('Could not save: '+(e&&e.message||'try again'),1)}
+function flash(m,err){if(!err&&S.errAt&&Date.now()-S.errAt<4000)return;try{SBX.flashes.push(m)}catch(_){}const n=document.createElement('div');n.className='note';n.style.cssText='position:fixed;bottom:16px;left:16px;right:16px;max-width:520px;z-index:30';n.textContent=m;document.body.appendChild(n);setTimeout(()=>n.remove(),3500)}
+const BASE=['name','account','title','email','location','phone','linkedin','sheetStatus','sheetTab','prev','stage','emails','firstEmail','lastEmail','callOutcome'];
+async function upd(id,patch){S.errAt=S.errAt||0;try{if(S.c.has(id))await S.db.doc('contacts/'+id).update(patch);else{const c=getC(id)||{};const o={source:'Your BI sheet'};for(const k of BASE)if(c[k]!==undefined&&c[k]!=='')o[k]=c[k];if(c.sheetNext&&!patch.nextCallManual)o.nextCallManual=c.sheetNext;await S.db.doc('contacts/'+id).set({...o,...patch})}return true}catch(e){denied(e);return false}}
+async function addItem(day,it){const ref=S.db.doc('daily/'+day);try{const s=await ref.get();const a=s.exists?[...(s.data().items||[])]:[];a.push(it);await ref.set({date:day,items:a})}catch(e){denied(e)}}
+const mid=(id,d)=>(id+'_'+d).replace(/[^A-Za-z0-9_\-.~:@+]/g,'-');
+async function setMeeting(id,c,date){const ref=S.db.doc('meetings/'+mid(id,date));try{await ref.set({c:id,name:c.name||'',account:c.account||'',date,month:date.slice(0,7),auto:false,at:new Date().toISOString()})}catch(e){denied(e)}}
+async function fixEmail(id,val){const ne=String(val||'').trim().toLowerCase();if(!/^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/.test(ne)){flash('That does not look like an email address.');return}
+ const c=getC(id);if(!c)return;const other=getC(ne);if(other&&ne!==id){flash('That email already belongs to '+(other.name||'another contact')+'.');return}
+ const db=S.c.get(id)||{},o={};for(const k of BASE)if(c[k]!==undefined&&c[k]!=='')o[k]=c[k];
+ const nd={...o,...db,email:ne,bounced:false,emailFixedOn:today(),prevEmails:[...new Set([...(c.prevEmails||[]),c.email].filter(Boolean))],prevIds:[...new Set([...(c.prevIds||[]),id])],note:String(c.note||'').replace(/(Sheet: )?needs a new email ID\.?/i,'').trim(),source:db.source||'Your BI sheet'};
+ delete nd.movedTo;if(c.stage==='Bounced'){nd.stage=eCnt(c)?'Follow-up':'Emailed';nd.stageLocked=false}
+ try{await S.db.doc('contacts/'+ne).set(nd);if(S.c.has(id))await S.db.doc('contacts/'+id).update({movedTo:ne});else await S.db.doc('contacts/'+id).set({movedTo:ne,name:c.name||'',account:c.account||''});if(S.sel===id)S.sel=ne;flash('Email updated for '+(c.name||'contact')+'. They are back on the email list.')}catch(e){denied(e)}}
+async function stageTo(id,st){const c=getC(id);if(!c)return;const patch={stage:st,stageLocked:true};if(!['Meeting scheduled','Meeting conducted','Proposal'].includes(st)&&['Conducted','Scheduled','Rescheduled'].includes(c.mtgStatus||mStat(c)))patch.mtgStatus='';
+ if(st==='Meeting conducted'){const d=c.meetingDate||today();patch.meetingDate=d;await upd(id,patch);if(![...S.meet.values()].some(m=>m.c===id&&m.date===d))await setMeeting(id,c,d);return}
+ if(['Meeting conducted','Proposal'].includes(c.stage)&&st!=='Proposal'&&c.meetingDate){for(const [k,m] of S.meet)if(m.c===id&&m.date===c.meetingDate&&!m.auto){try{await S.db.doc('meetings/'+k).delete()}catch(e){denied(e)}}}
+ await upd(id,patch)}
+// ---------- events
+document.addEventListener('click',async e=>{const g=e.target.closest('[data-go],[data-st],[data-ml]');
+ if(g&&!e.target.closest('button,a,select,input')){if(g.dataset.ml){const [id,l]=g.dataset.ml.split('|');if(/Meet/.test(id)){S.selMonth=l;render()}else{S.day=l;location.hash='daily'}return}
+  if(g.dataset.st){S.f.st=g.dataset.st;S.f.show='';S.limit=200;if(view()==='acct'){render();setTimeout(()=>document.getElementById('q')?.scrollIntoView({behavior:'smooth'}),60)}else location.hash='contacts';return}
+  const [v,q]=g.dataset.go.split('|');S.f={...S.f,q:'',acc:'',st:'',show:''};if(q){const [k,val]=q.split('=');S.f[k]=val}S.limit=200;if(location.hash==='#'+v)render();else location.hash=v;return}
+ const b=e.target.closest('button,[data-open]');if(!b)return;
+ if(b.dataset.open){S.sel=b.dataset.open;drawer();return}
+ if(b.id==='more'){S.limit+=200;render();return}
+ if(b.dataset.dview){S.dView=b.dataset.dview;render();return}
+ if(b.dataset.dlosttog){S.dLost=!S.dLost;render();return}
+ if(b.dataset.msave){await saveStatus(b.dataset.msave,b.closest('td')||b.closest('.fl'));return}
+ if(b.dataset.nsuse){const c2=getC(b.dataset.nsuse),sg=suggest(c2);await upd(c2.id,{nextStep:sg.txt,nextStepDate:sg.d});return}
+ if(b.dataset.cki){await checkinDone(b.dataset.cki);return}
+ if(b.dataset.warm){await warmDone(b.dataset.warm,b.dataset.ch);return}
+ if(b.dataset.dlost){const id2=b.dataset.dlost,c2=getC(id2);if(!c2)return;if(isDNC(c2)){flash('This lead is Do not contact.');return}const why=((b.parentElement.querySelector('[data-lostwhy]')||{}).value||'').trim(),t2=today(),now=new Date().toISOString(),cm2=[...(c2.comments||[]),{t:now,x:'Deal lost'+(why?': '+why:'.')}];
+  const patch={dealStage:'Lost',dealStageAt:t2,lostAt:t2,warmDoneAt:'',mtgStatus:'Conducted',stage:'Meeting conducted',stageLocked:true,nextStep:'',nextStepDate:'',comments:cm2};await upd(id2,patch);delete S.dpend[id2];
+  const w=warmOf({...c2,...patch});flash(w?'Deal marked lost. Warm connect on '+fmt(w.d)+', on your Today page.':'Deal marked lost and held for '+R().niCool+' days. Add a comment like “reach out in March” to plan a warm connect.');render();return}
+ if(b.id==='anAdd'||b.id==='anSave'){const a=curAcc();if(!a)return;const k=slug(a),cur=S.acc.get(k)||{},now=new Date().toISOString();const doc={...cur,name:a};
+  if(b.id==='anAdd'){const x=document.getElementById('anIn').value.trim();if(!x){flash('Write a note first.');return}doc.comments=[...(cur.comments||[]),{t:now,x}]}else{doc.nextStep=document.getElementById('anS').value.trim();doc.nextStepDate=document.getElementById('anD').value}
+  try{await S.db.doc('accounts/'+k).set(doc);flash(b.id==='anAdd'?'Account comment added.':'Account next step saved.')}catch(er){denied(er)}return}
+ if(b.dataset.ocq||b.dataset.ocsave){const id=b.dataset.ocq||b.dataset.ocsave,p=S.pend[id];if(!p)return;let until='';
+  if(b.dataset.ocq)until=addMonths(today(),+b.dataset.n);else{const cell=b.closest('td'),dv=cell.querySelector('[data-ocd]').value,mi=cell.querySelector('[data-ocm]'),mv=mi?mi.value:'';until=p.o==='mtg'?dv:dv?nextBD(dv):mv?nextBD(mv+'-01'):''}
+  if(!until){flash('Pick a date or a month, or use a snooze button.');return}if(p.o==='mtg'?until<today():until<=today()){flash(p.o==='mtg'?'Pick today or a future date.':'Pick a date after today.');return}await applyOutcome(id,p.ch,p.o,until);return}
+ if(b.dataset.fixsave){const inp=b.parentElement.querySelector('[data-fix]');await fixEmail(b.dataset.fixsave,inp&&inp.value);return}
+ if(b.dataset.sent){const t=today(),ref=S.db.doc('plan/'+t),sid=b.dataset.sent,sc=getC(sid);try{if(S.plan)await ref.update({done:[...new Set([...(S.plan.done||[]),sid])]});else await ref.set({date:t,out:todayData().out,done:[sid],at:new Date().toISOString()});
+  if(b.dataset.ch==='LinkedIn'&&sc){await upd(sid,{liTouches:(sc.liTouches||0)+1,lastLinkedIn:t,lastChannel:'LinkedIn'});await addItem(t,{c:sid,n:sc.name||'',a:sc.account||'',ch:'LinkedIn',k:'LinkedIn',s:'Marked done from Today',t:new Date().toISOString()})}}catch(er){denied(er)}return}
+ if(['cpE','cpEL','cpC'].includes(b.id)){const d=todayData(),q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const out=d.out.map(x=>({...getC(x.id),ch:x.ch})).filter(c=>c.id&&!isDNC(c));
+  const txt=b.id==='cpE'?out.filter(c=>c.ch==='Email').map(c=>c.email).join('; '):b.id==='cpEL'?[['Name','Title','Account','Channel','Email','LinkedIn'].map(q).join(',')].concat(out.map(c=>[c.name,c.title,c.account,c.ch,c.email,c.ch==='LinkedIn'?liUrl(c):''].map(q).join(','))).join('\n'):[['Name','Title','Account','Phone','Time zone','Their time now','Best window (IST)','Why'].map(q).join(',')].concat(d.calls.map(c=>[c.name,c.title,c.account,c.phone,c.z?tzLabel(c.z):'',c.z?localNow(c.z):'',c.wt,c.p.why].map(q).join(','))).join('\n');
+  try{await navigator.clipboard.writeText(txt);flash('Copied. Paste into Outlook, Excel or Sheets.')}catch{flash('Copy was blocked by the browser.')}return}
+ if(b.id==='rebuild'){const t=today(),d=todayData();const keep=d.out.filter(x=>d.sentE.has(x.id)||d.done.has(x.id));const nb=buildOut(t,Math.max(0,R().emailCap-Math.max(keep.length,d.sentE.size)));const ks=new Set(keep.map(x=>x.id));try{await S.db.doc('plan/'+t).set({date:t,out:[...keep,...nb.items.filter(x=>!ks.has(x.id))].slice(0,R().emailCap),done:S.plan.done||[],at:new Date().toISOString()})}catch(er){denied(er)}return}
+ if(b.dataset.delm){try{await S.db.doc('meetings/'+b.dataset.delm).delete()}catch(er){denied(er)}return}
+ const id=S.sel,c=id&&getC(id);
+ switch(b.id){
+ case'dClose':close();break;
+ case'cmAdd':{const x=document.getElementById('cmIn').value.trim();if(!x){flash('Write a comment first.');break}await upd(id,{comments:[...(c.comments||[]),{t:new Date().toISOString(),x}]});flash('Comment added. The suggested next touch is updated.');break}
+ case'wake':await upd(id,{snoozeUntil:'',nextCallManual:'',snoozeWhy:''});flash((c.name||'Lead')+' is back on your lists.');break;
+ case'fixSave':await fixEmail(id,document.getElementById('fixIn').value);break;
+ case'markDnc':await upd(id,{dnc:true,dncReason:document.getElementById('dncR').value,dncDate:today(),dncLifted:'',stage:'Do not contact',stageLocked:true,nextCallManual:''});flash((c.name||'Lead')+' is now Do not contact on every channel.');break;
+ case'liftDnc':if(!document.getElementById('liftOk').checked){flash('Tick the box to confirm they asked to be contacted again.');break}await upd(id,{dnc:false,dncLifted:today(),stage:'Nurture',stageLocked:true});flash('DNC lifted.');break;
+ case'dNCx':await upd(id,{nextCallManual:''});break;
+ case'lSave':{const d=document.getElementById('lD').value||today(),ch=document.getElementById('lC').value,o=document.getElementById('lO').value;if(d>today()){flash('That date is in the future. Log a touch on or before today.');break}const br=blockReason(c,ch),inbound=o==='Spoke'&&!isDNC(c)&&c.stage!=='Left company'&&(c.stage==='Not interested'||lostMeet(c));if(br&&!inbound){flash('Blocked by your CRM rules: '+br);break}const patch={lastChannel:ch,nextCallManual:''};if(ch==='Call')patch.myReachOut=mx(c.myReachOut,d);if(ch==='LinkedIn')patch.lastLinkedIn=mx(c.lastLinkedIn,d);if(ch==='Email')patch.lastEmail=mx(c.lastEmail,d);
+  if(ch==='Call'){patch.calls=(c.calls||0)+1;patch.callOutcome=o}if(ch==='LinkedIn')patch.liTouches=(c.liTouches||0)+1;
+  if(c.stage==='Not interested'&&o==='Spoke')Object.assign(patch,{stage:'Connected',stageLocked:false,niDate:'',snoozeUntil:'',snoozeWhy:''});
+  if(['New','Emailed','Follow-up','Called','Bounced'].includes(c.stage||'Emailed')){if(o==='Spoke')patch.stage='Connected';else if(o==='Not interested')patch.stage='Not interested';else if(ch==='Call')patch.stage='Called'}
+  if(!await upd(id,patch))break;await addItem(d,{c:id,n:c.name||'',a:c.account||'',ch,k:ch==='Email'?'Manual':ch,s:o,t:new Date().toISOString()});flash('Logged '+ch.toLowerCase()+' for '+(c.name||'')+(inbound&&dealLost(c)?'. The deal is still Lost: reopen it on the Deals page if it is back on.':''));break}
+ case'mDone':{const d=document.getElementById('mD').value||today();if(d>today()){flash('A conducted meeting needs a date on or before today.');break}if(!await upd(id,{stage:'Meeting conducted',stageLocked:true,mtgStatus:'Conducted',meetingDate:d,meetingNext:''}))break;if(![...S.meet.values()].some(m=>m.c===id&&m.date===d))await setMeeting(id,c,d);flash('Meeting logged for '+fmt(d));break}
+ case'mSch':{const d=document.getElementById('mD').value;if(!d||d<today()){flash('Pick today or a future date for the meeting.');break}if(await upd(id,{stage:'Meeting scheduled',stageLocked:true,mtgStatus:'Scheduled',meetingNext:d,snoozeUntil:'',nextCallManual:'',comments:[...(c.comments||[]),{t:new Date().toISOString(),x:'Meeting scheduled for '+fmt(d)+'.'}]}))flash('Meeting scheduled for '+fmt(d)+'.');break}
+ case'csv':{const a=filtered(),h=['Name','Title','Account','Email','Phone','Location','Stage','Emails','Last email','Reached out on','Next best call','Call window','Notes'];const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const txt=[h.map(q).join(',')].concat(a.map(c=>{const p=plan(c);return[c.name,c.title,c.account,c.email,c.phone,c.location,c.stage,c.emails||0,c.lastEmail,c.myReachOut,p?p.d:'',winText(c),c.notes].map(q).join(',')})).join('\n');
+  try{await navigator.clipboard.writeText(txt);flash('Copied '+a.length+' rows. Paste into Excel or Sheets.')}catch{flash('Copy was blocked by the browser.')}break}
+ case'addBtn':document.getElementById('addForm').hidden=false;break;
+ case'aSave':{const v=k=>document.getElementById(k).value.trim();const n=v('aN'),em=v('aE').toLowerCase(),acc=v('aA');if(!n||!acc){flash('Add at least a name and an account.');break}
+  let nid=em&&/^[a-z0-9_.~:@+\-]+$/.test(em)?em:('n:'+(n+'-'+acc).toLowerCase().replace(/[^a-z0-9]+/g,'-'));
+  if(em&&getC(nid)){const ex=getC(nid);flash('That email already belongs to '+(ex.name||'a contact')+'. Their record is open: update it there.');S.sel=nid;drawer();break}
+  let dupOf='';if(!em&&getC(nid)){dupOf=getC(nid).name||n;let k=2;while(getC(nid+'-'+k)||S.c.has(nid+'-'+k))k++;nid=nid+'-'+k}
+  try{await S.db.doc('contacts/'+nid).set({name:n,email:em,account:acc,title:v('aT'),location:v('aL'),phone:v('aP'),stage:'New',emails:0,source:'Added in CRM',stageLocked:false});flash(dupOf?'Added. Possible duplicate of '+dupOf+' at '+acc+': check Contacts > Possible duplicates.':'Contact added.')}catch(er){denied(er)}break}
+ case'dPrev':S.day=iso(new Date(D(S.day||today()).getTime()-864e5));render();break;
+ case'dNext':S.day=iso(new Date(D(S.day||today()).getTime()+864e5));render();break;
+ case'dToday':S.day=today();render();break}});
+document.addEventListener('change',async e=>{const el=e.target;
+ if(['fAcc','fSt','fShow','fSort'].includes(el.id)){S.f[{fAcc:'acc',fSt:'st',fShow:'show',fSort:'sort'}[el.id]]=el.value;S.limit=200;render();return}
+ if(el.id==='dPick'){S.day=el.value;render();return}
+ if(el.id==='accJump'){location.hash='acct-'+el.value;return}
+ if(el.dataset.ms!==undefined){const id=el.dataset.ms,c2=getC(id);if(c2&&el.value===mStat(c2)){delete S.mpend[id]}else S.mpend[id]={st:el.value};render();return}
+ if(el.dataset.nst!==undefined){await upd(el.dataset.nst,{nextStep:el.value.trim()});return}
+ if(el.dataset.nsd!==undefined){await upd(el.dataset.nsd,{nextStepDate:el.value});return}
+ if(el.dataset.dst!==undefined){await setDealStage(el.dataset.dst,el.value,false);return}
+ if(el.dataset.dval!==undefined){const id=el.dataset.dval,c2=getC(id);if(!c2)return;const r=parseUSD(el.value),cur=Number.isInteger(c2.dealValue)?c2.dealValue:null;
+  if(!r.ok){flash(r.msg);el.value=cur==null?'':cur.toLocaleString('en-US');el.classList.remove('bad');return}if(r.v===cur){el.value=cur==null?'':cur.toLocaleString('en-US');return}
+  await upd(id,{dealValue:r.v,dealValueAt:today()});flash(r.v==null?'Deal value cleared.':'Deal value saved: '+usd(r.v));return}
+ if(el.dataset.oc!==undefined){const id=el.dataset.oc,o=el.value,ch=el.dataset.ch;if(!o){delete S.pend[id];render();return}if(o==='later'||o==='pitch'||o==='mtg'){S.pend[id]={o,ch};render();return}delete S.pend[id];await applyOutcome(id,ch,o,'');return}
+ if(el.dataset.rule){const k=el.dataset.rule,v=typeof RDEF[k]==='boolean'?el.checked:Math.max(0,parseInt(el.value,10)||0);try{await S.db.doc('meta/config').update({rules:{[k]:v}});flash('Rule saved.')}catch(er){denied(er)}return}
+ const f=el.dataset.f;if(!f)return;const id=el.closest('[data-id]')?.dataset.id;const c=id&&getC(id);if(!c)return;
+ if(f==='stage'){if(isDNC(c)&&el.value!=='Do not contact'){flash('This lead is Do not contact. Lift DNC in the contact panel first.');render();return}
+  if(el.value==='Do not contact')return upd(id,{dnc:true,dncReason:'Set by you',dncDate:today(),dncLifted:'',stage:'Do not contact',stageLocked:true,nextCallManual:''});
+  if(el.value==='Not interested')await upd(id,{niDate:today()});return stageTo(id,el.value)}
+ if(f==='reach'){const br=blockReason(c,'Call');if(br&&el.value){flash('Blocked by your CRM rules: '+br);el.value=c.myReachOut||'';return}if(el.value&&el.value>today()){flash('That date is in the future. Log a call on or before today.');el.value=c.myReachOut||'';return}if(!el.value){const u=c.reachUndo;if(u&&u.d===c.myReachOut){if(!await upd(id,{myReachOut:u.prev||'',calls:u.calls,stage:u.stage,stageLocked:!!u.locked,reachUndo:null}))return;try{const dr=S.db.doc('daily/'+u.d),s0=await dr.get();if(s0.exists){const a0=(s0.data().items||[]).filter(x=>!(x.c===id&&x.t===u.t));await dr.set({date:u.d,items:a0})}}catch(e){denied(e)}flash('Call removed.');return}return upd(id,{myReachOut:''})}if(el.value!==c.myReachOut){const ts=new Date().toISOString();if(!await upd(id,{myReachOut:el.value,lastChannel:'Call',calls:(c.calls||0)+1,nextCallManual:'',reachUndo:{d:el.value,prev:c.myReachOut||'',calls:c.calls||0,stage:c.stage||'Emailed',locked:!!c.stageLocked,t:ts},...(['New','Emailed','Follow-up','Bounced'].includes(c.stage||'Emailed')?{stage:'Called'}:{})}))return;await addItem(el.value,{c:id,n:c.name||'',a:c.account||'',ch:'Call',k:'Call',s:'Logged from contacts table',t:ts})}return}
+ if(['nextCallManual','phone','tz','title','location','linkedin'].includes(f)){await upd(id,{[f]:el.value});if(f==='tz')flash(el.value?'Time zone saved: '+tzLabel(el.value):'Time zone cleared');return}
+ if(f==='notes')return upd(id,{notes:el.value})});
+let qt;document.addEventListener('input',e=>{if(e.target.matches&&e.target.matches('[data-dval]')){e.target.classList.toggle('bad',!parseUSD(e.target.value).ok);return}if(e.target.id==='q'){clearTimeout(qt);qt=setTimeout(()=>{S.f.q=e.target.value;render();requestAnimationFrame(()=>{const q=document.getElementById('q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}})},250)}});
+document.getElementById('scrim').addEventListener('click',close);
+document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('[data-drag]');if(!c)return;if(!S.w){e.preventDefault();return}e.dataTransfer.setData('text/plain',c.dataset.drag);e.dataTransfer.effectAllowed='move';c.classList.add('drag')});
+document.addEventListener('dragend',e=>{const c=e.target.closest&&e.target.closest('[data-drag]');if(c)c.classList.remove('drag');for(const k of document.querySelectorAll('.kcol.over'))k.classList.remove('over')});
+document.addEventListener('dragover',e=>{const k=e.target.closest&&e.target.closest('[data-drop]');if(!k)return;e.preventDefault();e.dataTransfer.dropEffect='move';for(const o of document.querySelectorAll('.kcol.over'))if(o!==k)o.classList.remove('over');k.classList.add('over')});
+document.addEventListener('drop',async e=>{const k=e.target.closest&&e.target.closest('[data-drop]');if(!k)return;e.preventDefault();k.classList.remove('over');const id=e.dataTransfer.getData('text/plain');if(id)await setDealStage(id,k.dataset.drop,true)});
+document.addEventListener('keydown',e=>{if(e.target.matches&&e.target.matches('[data-dval]')){if(['.','-','+','e','E'].includes(e.key)){e.preventDefault();flash('Whole dollars only: no cents, decimals or minus signs.');return}if(e.key==='Enter'){e.preventDefault();e.target.blur();return}}if(e.key==='Escape')close();if(e.key==='Enter'&&e.target.matches('[data-fix],#fixIn')){e.preventDefault();const b=e.target.id==='fixIn'?document.getElementById('fixSave'):e.target.parentElement.querySelector('[data-fixsave]');b&&b.click()}});
+addEventListener('hashchange',()=>{close();S.limit=200;scrollTo(0,0);render()});
+// ---------- data
+(async()=>{const db=await SBX.use('db');if(!db){S.ready=true;document.getElementById('main').innerHTML='<div class="band empty">Sign in to claude.ai to see this CRM. The data lives in the page\'s database.</div>';document.getElementById('fresh').textContent='';return}
+ S.db=db;try{const u=await SBX.use('user');if(u&&u.can){const w=await u.can('data.write');if(w===false)S.w=false}}catch{}
+ let got=0;const need=7,timer=setTimeout(()=>{if(!S.ready){S.ready=true;render();flash('Some data is slow to load; it may be out of date.')}},10000);
+ const done=()=>{if(++got>=need&&!S.ready){S.ready=true;clearTimeout(timer)}render()};
+ const once=fn=>{let first=true;return s=>{fn(s);S.merged=null;if(first){first=false;done()}else render()}};
+ fetch('data/sheet.json').then(r=>r.ok?r.json():null).then(j=>{if(j){S.sheet={byId:new Map(j.contacts.map(c=>[c.id,c])),meetings:j.meetings||[],src:j.source};S.merged=null}done()}).catch(()=>done());
+ const err=e=>{flash('Data connection ended ('+(e&&e.code||'error')+'). Reload to reconnect.')};
+ db.collection('contacts').onSnapshot(once(s=>{S.c=new Map(s.docs.map(d=>[d.id,d.data()]))}),err);
+ db.collection('daily').onSnapshot(once(s=>{S.daily=new Map(s.docs.map(d=>[d.id,d.data()]))}),err);
+ db.collection('meetings').onSnapshot(once(s=>{S.meet=new Map(s.docs.map(d=>[d.id,d.data()]))}),err);
+ db.doc('plan/'+today()).onSnapshot(s=>{S.plan=s.exists?s.data():null;if(!S._pl){S._pl=1;done()}else render()},()=>{if(!S._pl){S._pl=1;done()}});
+ db.collection('accounts').onSnapshot(once(s=>{S.acc=new Map(s.docs.map(d=>[d.id,d.data()]))}),err);
+ db.collection('meta').onSnapshot(once(s=>{for(const d of s.docs){if(d.id==='run')S.meta={run:d.data()};if(d.id==='config')S.cfg=d.data()}}),err)})();
+window.__T={S,plan,buildOut,todayData,score,blockReason,isDNC,tzOf,winIST,winText,suggest,nsOf,contacts,getC,today,addBD,isBD,R,mode,needsEmail,isStale,dupSet,allMeet,items,merge,render,draw,holName,reached,synced,lastTouch,mStat,inMtg,view,snoozed,filtered,eCnt,lastE,warmOf,warmWhen,dealHold,isDeal,dStage,dealLost,pipe,parseUSD,lostMeet,liN,manualN,setDealStage,dealBoard};
+render();
+}
+</script>
+</body>
+</html>

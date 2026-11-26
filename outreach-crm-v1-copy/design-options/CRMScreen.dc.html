@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Outreach CRM screen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;min-height:960px;background:{{t.bg}};color:{{t.ink}};font-family:{{t.body}};font-size:14px;line-height:1.4">
+  <nav aria-label="CRM pages" style="flex:1 1 210px;max-width:100%;box-sizing:border-box;padding:22px 14px;display:flex;flex-direction:column;gap:2px;background:{{t.side}};border-right:1px solid {{t.line}}">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 10px 18px">
+      <div style="width:34px;height:34px;border-radius:10px;background:{{t.acc}};color:{{t.accInk}};display:flex;align-items:center;justify-content:center;font-family:{{t.head}};font-weight:700;font-size:14px">VV</div>
+      <div><div style="font-family:{{t.head}};font-weight:700;color:{{t.sideInk}}">Outreach CRM</div><div style="font-size:12px;color:{{t.sideMute}}">{{t.name}}</div></div>
+    </div>
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="9">
+      <button onClick="{{n.go}}" style="{{n.style}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"></path></svg><span style="flex:1;text-align:left">{{n.label}}</span><sc-if value="{{n.badge}}" hint-placeholder-val="{{ false }}"><span style="{{badge}}">{{n.badge}}</span></sc-if></button>
+    </sc-for>
+  </nav>
+  <main style="flex:999 1 560px;min-width:0;box-sizing:border-box;padding:24px 28px 40px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+      <div style="flex:1 1 260px;min-width:0">
+        <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:{{t.mute}}">Tuesday, 1 December · sample data</div>
+        <h1 style="margin:2px 0 0;font-family:{{t.head}};font-size:28px;font-weight:700;letter-spacing:-.01em">{{title}}</h1>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;min-height:44px;box-sizing:border-box;padding:0 12px;border-radius:{{t.r}};background:{{t.surf}};border:1px solid {{t.line}};color:{{t.mute}};flex:0 1 300px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><input aria-label="Search leads and accounts" placeholder="Search leads, accounts… (Ctrl K)" style="border:0;outline:0;background:transparent;color:{{t.ink}};font:inherit;width:100%"></label>
+      <button style="{{btnPrimary}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Log touch</button>
+    </div>
+
+    <sc-if value="{{isDash}}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px">
+        <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+          <button onClick="{{k.pick}}" style="{{k.style}}">
+            <span style="font-size:13px;color:{{t.mute}}">{{k.label}}</span>
+            <span style="font-family:{{t.num}};font-size:30px;font-weight:700;letter-spacing:-.02em;color:{{t.ink}}">{{k.value}}</span>
+            <span style="display:block;height:6px;border-radius:3px;background:{{t.surf2}};overflow:hidden"><span style="{{k.bar}}"></span></span>
+            <span style="font-size:12.5px;color:{{t.mute}}">{{k.sub}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px">
+        <section style="{{panel}}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h2 style="{{h2}}">Meetings per month</h2><span style="font-size:12.5px;color:{{t.mute}}">Click a bar</span></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:170px">
+            <sc-for list="{{months}}" as="m" hint-placeholder-count="8">
+              <button onClick="{{m.pick}}" aria-label="{{m.aria}}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;background:transparent;border:0;padding:0;cursor:pointer;color:{{t.mute}};font:inherit;font-size:12px">
+                <span style="font-family:{{t.num}};font-size:12.5px;font-weight:700;color:{{t.ink}}">{{m.n}}</span>
+                <span style="{{m.bar}}"></span>
+                <span>{{m.label}}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="{{note}}">{{monthDetail}}</div>
+        </section>
+        <section style="{{panel}}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h2 style="{{h2}}">Outreach this week</h2>
+            <div style="display:flex;gap:12px;font-size:12px;color:{{t.mute}}"><span style="display:flex;align-items:center;gap:5px"><span style="{{dotE}}"></span>Email</span><span style="display:flex;align-items:center;gap:5px"><span style="{{dotL}}"></span>LinkedIn</span><span style="display:flex;align-items:center;gap:5px"><span style="{{dotC}}"></span>Calls</span></div></div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{week}}" as="d" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:40px 1fr 44px;align-items:center;gap:10px;font-size:12.5px">
+                <span style="color:{{t.mute}}">{{d.day}}</span>
+                <span style="display:flex;height:16px;border-radius:5px;overflow:hidden;background:{{t.surf2}}"><span style="{{d.e}}"></span><span style="{{d.l}}"></span><span style="{{d.c}}"></span></span>
+                <span style="text-align:right;font-family:{{t.num}};font-weight:700">{{d.total}}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{note}}">Friday blitz: 104 calls logged against your target of 100.</div>
+        </section>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px">
+        <section style="{{panel}}">
+          <h2 style="{{h2}}">Funnel</h2>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{funnel}}" as="f" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:130px 1fr 60px;align-items:center;gap:10px;font-size:13px">
+                <span style="color:{{t.mute}}">{{f.label}}</span>
+                <span style="display:block;height:12px;border-radius:4px;background:{{t.surf2}}"><span style="{{f.bar}}"></span></span>
+                <span style="text-align:right;font-family:{{t.num}};font-weight:700">{{f.n}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section style="{{panel}}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h2 style="{{h2}}">Pipeline by stage</h2><button onClick="{{goDeals}}" style="{{btnGhost}}">Open the Deals board</button></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{stageBars}}" as="b" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:110px 1fr 90px;align-items:center;gap:10px;font-size:13px">
+                <span style="color:{{t.mute}}">{{b.label}}</span>
+                <span style="display:block;height:12px;border-radius:4px;background:{{t.surf2}}"><span style="{{b.bar}}"></span></span>
+                <span style="text-align:right;font-family:{{t.num}};font-weight:700">{{b.v}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isDeals}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <div style="{{pill}}"><span style="color:{{t.mute}}">Open pipeline</span><b style="font-family:{{t.num}};font-size:18px">$485,000</b></div>
+        <div style="{{pill}}"><span style="color:{{t.mute}}">Won</span><b style="font-family:{{t.num}};font-size:18px">$60,000</b></div>
+        <div style="{{pill}}"><span style="color:{{t.mute}}">Win rate</span><b style="font-family:{{t.num}};font-size:18px">50%</b></div>
+        <button onClick="{{toggleLost}}" style="{{btnGhost}}">{{lostLabel}}</button>
+      </div>
+      <sc-if value="{{sel}}" hint-placeholder-val="{{ false }}">
+        <div style="{{selBox}}"><b>{{sel.role}} · {{sel.acc}}</b><span style="color:{{t.mute}}">{{sel.stage}} · {{sel.val}} · Next step: {{sel.next}}</span></div>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:start">
+        <sc-for list="{{cols}}" as="col" hint-placeholder-count="5">
+          <section style="{{colBox}}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><h2 style="margin:0;font-family:{{t.head}};font-size:14px;font-weight:700">{{col.name}} <span style="color:{{t.mute}};font-weight:500">{{col.count}}</span></h2><span style="font-family:{{t.num}};font-size:12.5px;color:{{t.mute}}">{{col.total}}</span></div>
+            <sc-for list="{{col.cards}}" as="c" hint-placeholder-count="2">
+              <button onClick="{{c.pick}}" style="{{c.style}}">
+                <span style="font-weight:600;color:{{t.ink}}">{{c.role}}</span>
+                <span style="font-size:12.5px;color:{{t.mute}}">{{c.acc}}</span>
+                <span style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:6px"><span style="font-family:{{t.num}};font-size:17px;font-weight:700;color:{{c.valColor}}">{{c.val}}</span><span style="{{chip}}">{{c.days}}</span></span>
+              </button>
+            </sc-for>
+          </section>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isToday}}" hint-placeholder-val="{{ false }}">
+      <section style="{{panel}}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><h2 style="{{h2}}">Today's progress</h2><span style="font-family:{{t.num}};font-weight:700">{{sent}} of 40 emails and LinkedIn touches</span></div>
+        <span style="display:block;height:10px;border-radius:5px;background:{{t.surf2}};overflow:hidden"><span style="{{sentBar}}"></span></span>
+      </section>
+      <section style="{{warmBox}}">
+        <div style="flex:1 1 280px;min-width:0"><div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:{{t.accText}};font-weight:700">Warm connect due</div><div style="font-weight:600;margin-top:2px">Manager, Insights · CCL Corporation</div><div style="font-size:13px;color:{{t.mute}}">Deal lost 2 Oct: “reach out after the Q4 budgets close”</div></div>
+        <button style="{{btnGhost}}">Done: email</button><button style="{{btnGhost}}">Done: call</button>
+      </section>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px;align-items:start">
+        <section style="{{panel}}">
+          <h2 style="{{h2}}">Email and LinkedIn list</h2>
+          <sc-for list="{{emails}}" as="e" hint-placeholder-count="5">
+            <div style="{{e.row}}">
+              <div style="flex:1 1 180px;min-width:0"><div style="font-weight:600">{{e.role}} · {{e.acc}}</div><div style="font-size:12.5px;color:{{t.mute}}">{{e.why}}</div></div>
+              <span style="{{e.chip}}">{{e.ch}}</span>
+              <button onClick="{{e.toggle}}" style="{{e.btn}}">{{e.btnLabel}}</button>
+            </div>
+          </sc-for>
+        </section>
+        <section style="{{panel}}">
+          <h2 style="{{h2}}">Calling list</h2>
+          <sc-for list="{{calls}}" as="c" hint-placeholder-count="4">
+            <div style="{{rowStatic}}">
+              <div style="flex:1 1 180px;min-width:0"><div style="font-weight:600">{{c.role}} · {{c.acc}}</div><div style="font-size:12.5px;color:{{t.mute}}">{{c.why}}</div></div>
+              <div style="text-align:right;font-size:12.5px"><div style="font-family:{{t.num}};font-weight:700">{{c.win}}</div><div style="color:{{t.mute}}">{{c.tz}} · their time {{c.now}}</div></div>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isOther}}" hint-placeholder-val="{{ false }}">
+      <section style="{{panel}}"><h2 style="{{h2}}">{{title}}</h2><p style="margin:0;color:{{t.mute}}">This preview covers Today, Deals and Dashboard. The other pages take the same colours, cards and controls.</p></section>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["midnight","crisp","coral","terminal"],"default":"midnight"},"$preview":{"width":1360,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { view: 'dash', kpi: 3, month: 5, deal: 'd6', lost: false, done: {} }; }
+  renderVals() {
+    const T = {
+      midnight: { name: 'Option 1 · Midnight Pulse', bg: '#0B1020', side: '#0E1430', sideInk: '#E8ECF8', sideMute: '#9AA6CA', navOn: '#222D63', navOnInk: '#FFFFFF', surf: '#141B3A', surf2: '#1E2850', line: '#27325E', ink: '#E8ECF8', mute: '#97A3C7', acc: '#7C8CFF', accText: '#9AA7FF', accInk: '#0B1020', acc2: '#3DD6D0', c3: '#F5B85C', idle: '#2E3A75', badgeBg: '#3DD6D0', badgeInk: '#0B1020', head: "'Space Grotesk',Inter,sans-serif", body: "Inter,system-ui,sans-serif", num: "'Space Grotesk',Inter,sans-serif", r: '14px', shadow: 'none' },
+      crisp: { name: 'Option 2 · Crisp SaaS', bg: '#F4F6FA', side: '#FFFFFF', sideInk: '#0F172A', sideMute: '#56657F', navOn: '#E8EFFE', navOnInk: '#1D4ED8', surf: '#FFFFFF', surf2: '#EDF1F8', line: '#E2E7F0', ink: '#0F172A', mute: '#56657F', acc: '#2563EB', accText: '#1D4ED8', accInk: '#FFFFFF', acc2: '#F59E42', c3: '#1E293B', idle: '#C9D7FB', badgeBg: '#FDE7D3', badgeInk: '#8A3A00', head: "Inter,system-ui,sans-serif", body: "Inter,system-ui,sans-serif", num: "Inter,system-ui,sans-serif", r: '12px', shadow: '0 1px 2px rgba(15,23,42,.06),0 6px 18px rgba(15,23,42,.06)' },
+      coral: { name: 'Option 3 · Ink & Coral', bg: '#F1F1F4', side: '#121212', sideInk: '#F4F4F6', sideMute: '#B3B3BD', navOn: '#F0533A', navOnInk: '#121212', surf: '#FFFFFF', surf2: '#F0F0F3', line: '#E3E3E8', ink: '#121212', mute: '#5A5A64', acc: '#F0533A', accText: '#B5321B', accInk: '#121212', acc2: '#3657FF', c3: '#121212', idle: '#F7C3B8', badgeBg: '#F0533A', badgeInk: '#121212', head: "'Space Grotesk',Inter,sans-serif", body: "Inter,system-ui,sans-serif", num: "'Space Grotesk',Inter,sans-serif", r: '18px', shadow: '0 2px 0 #121212' },
+      terminal: { name: 'Option 4 · Command Center', bg: '#07090A', side: '#0B0F0D', sideInk: '#D9F7E6', sideMute: '#86A897', navOn: '#16231C', navOnInk: '#B6FF3B', surf: '#0F1513', surf2: '#17201C', line: '#22302A', ink: '#D9F7E6', mute: '#86A897', acc: '#B6FF3B', accText: '#B6FF3B', accInk: '#07090A', acc2: '#3BC9FF', c3: '#F5B85C', idle: '#2A4433', badgeBg: '#B6FF3B', badgeInk: '#07090A', head: "'JetBrains Mono',ui-monospace,monospace", body: "Inter,system-ui,sans-serif", num: "'JetBrains Mono',ui-monospace,monospace", r: '6px', shadow: 'none' }
+    };
+    const t = T[this.props.theme] || T.midnight, s = this.state, set = (o) => this.setState(o);
+    const border = this.props.theme === 'coral' ? '1.5px solid #121212' : '1px solid ' + t.line;
+    const panel = `background:${t.surf};border:${border};border-radius:${t.r};box-shadow:${t.shadow};padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0`;
+    const h2 = `margin:0;font-family:${t.head};font-size:16px;font-weight:700;letter-spacing:-.005em`;
+    const btn = `display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:${t.r};font:inherit;font-weight:600;cursor:pointer;transition:transform .12s,background .2s`;
+    const btnPrimary = `${btn};border:0;background:${t.acc};color:${t.accInk}`;
+    const btnGhost = `${btn};min-height:40px;font-size:13px;background:transparent;color:${t.accText};border:1.5px solid ${t.acc}`;
+    const NAV = [['today', 'Today', 'M4 5h16v15H4zM4 10h16M9 3v4M15 3v4', ''], ['meet', 'Meetings', 'M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M3 21c1-4 5-6 9-6s8 2 9 6', ''], ['deals', 'Deals', 'M3 6h18M3 12h18M3 18h11', '7'], ['dash', 'Dashboard', 'M4 20V10M10 20V4M16 20v-7M2 20h20', ''], ['calls', 'Calls to make', 'M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2', '12'], ['contacts', 'Contacts', 'M9 11a4 4 0 1 0 0-8a4 4 0 1 0 0 8M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M17 3.5a4 4 0 0 1 0 7M22 21v-2a4 4 0 0 0-3-3.8', ''], ['log', 'Daily log', 'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5', ''], ['acc', 'Accounts', 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6', ''], ['rules', 'Rules', 'M12 3l8 4v5c0 5-3.5 8-8 9c-4.5-1-8-4-8-9V7z', '']];
+    const nav = NAV.map(([id, label, d, badge]) => { const on = s.view === id; return { label, d, badge, go: () => set({ view: id }), style: `display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;border:0;border-radius:10px;cursor:pointer;font:inherit;font-size:14px;font-weight:${on ? 700 : 500};background:${on ? t.navOn : 'transparent'};color:${on ? t.navOnInk : t.sideMute};transition:background .2s,color .2s` }; });
+    const sent = 18 + Object.values(s.done).filter(Boolean).length;
+    const K = [['Emails + LinkedIn today', sent + ' / 40', sent / 40, 'Per-account cap 25 · LinkedIn counts as email'], ['Calls today', '6 / 14', 6 / 14, 'Tuesday: email, LinkedIn and calls'], ['Meetings this month', '5', 5 / 7, '3 conducted · 2 scheduled'], ['Open pipeline', '$485,000', 0.62, '7 deals · 1 without a value yet']];
+    const kpis = K.map(([label, value, p, sub], i) => { const on = s.kpi === i; return { label, value, sub, pick: () => set({ kpi: i }), bar: `display:block;height:100%;width:${Math.round(Math.min(1, p) * 100)}%;background:${on ? t.acc : t.acc2};border-radius:3px;transition:width .5s,background .2s`, style: `display:flex;flex-direction:column;gap:8px;text-align:left;padding:16px 18px;border-radius:${t.r};background:${t.surf};border:${on ? '2px solid ' + t.acc : border};box-shadow:${on && this.props.theme === 'midnight' ? '0 0 0 4px rgba(124,140,255,.15)' : t.shadow};cursor:pointer;font:inherit;color:${t.ink};transition:border-color .2s,box-shadow .2s;min-height:44px` }; });
+    const M = [['May', 3, 'May: 3 meetings · Corning 2 · Ecolab 1'], ['Jun', 4, 'Jun: 4 meetings · Johns Manville 2 · Corning 1 · Chemours 1'], ['Jul', 5, 'Jul: 5 meetings · Ecolab 2 · Corning 2 · Saint-Gobain 1'], ['Aug', 4, 'Aug: 4 meetings · Corning 2 · Johns Manville 2'], ['Sep', 6, 'Sep: 6 meetings · Ecolab 3 · Corning 2 · Chemours 1'], ['Oct', 7, 'Oct: 7 meetings · Corning 3 · Ecolab 2 · Johns Manville 2'], ['Nov', 5, 'Nov: 5 meetings · Saint-Gobain 2 · Corning 2 · Ecolab 1'], ['Dec', 2, 'Dec: 2 meetings scheduled so far']];
+    const months = M.map(([label, n, txt], i) => { const on = s.month === i; return { label, n, aria: txt, pick: () => set({ month: i }), bar: `display:block;width:100%;max-width:40px;height:${Math.round(n / 7 * 112)}px;border-radius:8px 8px 3px 3px;background:${on ? t.acc : t.idle};transition:background .2s,height .3s` }; });
+    const W = [['Mon', 34, 6, 0], ['Tue', 31, 4, 22], ['Wed', 38, 5, 27], ['Thu', 36, 3, 19], ['Fri', 12, 2, 104]];
+    const seg = (n, c) => `display:block;width:${(n / 140 * 100).toFixed(1)}%;background:${c};transition:width .4s`;
+    const week = W.map(([day, e, l, c]) => ({ day, total: e + l + c, e: seg(e, t.acc), l: seg(l, t.acc2), c: seg(c, t.c3) }));
+    const dot = (c) => `display:inline-block;width:10px;height:10px;border-radius:3px;background:${c}`;
+    const F = [['Leads on your list', 1330], ['Reached', 1104], ['Engaged', 96], ['Meetings', 37], ['Open deals', 7], ['Won', 1]];
+    const funnel = F.map(([label, n], i) => ({ label, n: n.toLocaleString('en-US'), bar: `display:block;height:100%;border-radius:4px;width:${Math.max(3, n / 1330 * 100).toFixed(1)}%;background:${i < 2 ? t.idle : t.acc}` }));
+    const D = [
+      ['Discovery', [['d1', 'VP Strategy', 'Corning', 120000, '6 days', 'send the market sizing deck by 3 Dec'], ['d2', 'Director, Procurement', 'Ecolab', 45000, '12 days', 'confirm budget owner'], ['d3', 'Head of M&A', 'Chemours', 0, '2 days', 'book the follow-up call']]],
+      ['Next meeting', [['d4', 'Sr Manager, Market Intel', 'Johns Manville', 60000, '3 days', 'meeting on 4 Dec']]],
+      ['Proposal', [['d5', 'Director, R&D', 'Saint-Gobain', 85000, '9 days', 'chase proposal feedback']]],
+      ['Negotiation', [['d6', 'VP Business Development', 'Ecolab', 135000, '4 days', 'check PO status with procurement'], ['d7', 'GM, Specialty Materials', 'Corning', 40000, '15 days', 'agree the scope change']]],
+      ['Won', [['d8', 'Director, Strategy', 'Johns Manville', 60000, 'Closed 18 Nov', 'plan the kickoff']]],
+      ['Lost', [['d9', 'Manager, Insights', 'CCL Corporation', 25000, 'Warm connect today', 'reach out after the Q4 budgets close']]]
+    ];
+    const usd = (n) => n ? '$' + n.toLocaleString('en-US') : 'Add value';
+    let sel = null;
+    const cols = D.filter(([name]) => name !== 'Lost' || s.lost).map(([name, cards]) => ({ name, count: cards.length, total: usd(cards.reduce((a, c) => a + c[3], 0)), cards: cards.map(([id, role, acc, v, days, next]) => { const on = s.deal === id; if (on) sel = { role, acc, stage: name, val: usd(v), next }; return { role, acc, days, val: usd(v), valColor: v ? t.ink : t.mute, pick: () => set({ deal: id }), style: `display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;padding:12px 14px;border-radius:calc(${t.r} - 4px);background:${on ? t.navOn : t.surf};border:${on ? '2px solid ' + t.acc : border};cursor:pointer;font:inherit;color:${t.ink};transition:border-color .2s,background .2s;min-height:44px` }; }) }));
+    const SB = [['Discovery', 165000], ['Next meeting', 60000], ['Proposal', 85000], ['Negotiation', 175000], ['Won', 60000]];
+    const stageBars = SB.map(([label, v]) => ({ label, v: usd(v), bar: `display:block;height:100%;border-radius:4px;width:${(v / 175000 * 100).toFixed(1)}%;background:${label === 'Won' ? t.acc2 : t.acc}` }));
+    const E = [['e1', 'VP Strategy', 'Corning', 'Email', 'Follow-up #2 · last touch 24 Nov'], ['e2', 'Director, Procurement', 'Ecolab', 'LinkedIn', '3 emails without a reply: switch to LinkedIn'], ['e3', 'Head of Sustainability', 'Saint-Gobain', 'Email', 'New contact: first email'], ['e4', 'Sr Manager, Strategy', 'Chemours', 'Email', 'Follow-up #3 · last touch 23 Nov'], ['e5', 'Director, Market Intelligence', 'Johns Manville', 'Email', 'Nurture touch · sequence finished 2 Oct']];
+    const rowBase = `display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 0;border-top:1px solid ${t.line}`;
+    const chip = `display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:${t.surf2};color:${t.mute};white-space:nowrap`;
+    const emails = E.map(([id, role, acc, ch, why]) => { const done = !!s.done[id]; return { role, acc, ch, why, row: `${rowBase};opacity:${done ? 0.5 : 1};transition:opacity .25s`, chip: `${chip};background:${ch === 'LinkedIn' ? t.acc2 : t.surf2};color:${ch === 'LinkedIn' ? t.accInk : t.mute}`, btnLabel: done ? 'Sent' : 'Mark sent', toggle: () => set({ done: { ...s.done, [id]: !done } }), btn: done ? `${btn};min-height:40px;font-size:13px;border:0;background:${t.acc};color:${t.accInk}` : btnGhost }; });
+    const calls = [['VP Operations', 'Ecolab', 'Central', '8:40 AM', '8:00–10:00 PM IST', '2 working days after your email'], ['Director, Sourcing', 'Corning', 'Eastern', '9:40 AM', '7:30–9:30 PM IST', 'They replied: call while it is warm'], ['Head of Strategy', 'Equinor', 'Central Europe', '3:40 PM', '1:30–3:30 PM IST', 'Follow-up date from your sheet'], ['Sr Director, Insights', 'Johns Manville', 'Mountain', '7:40 AM', '9:00–11:00 PM IST', 'Overdue since 27 Nov']].map(([role, acc, tz, now, win, why]) => ({ role, acc, tz, now, win, why }));
+    const titles = { today: 'Today', meet: 'Meetings', deals: 'Deals', dash: 'Dashboard', calls: 'Calls to make', contacts: 'Contacts', log: 'Daily log', acc: 'Accounts', rules: 'Rules' };
+    return {
+      t, nav, kpis, months, week, funnel, cols, sel, stageBars, emails, calls, sent, panel, h2, btnPrimary, btnGhost, chip,
+      title: titles[s.view], isDash: s.view === 'dash', isDeals: s.view === 'deals', isToday: s.view === 'today', isOther: !['dash', 'deals', 'today'].includes(s.view),
+      monthDetail: M[s.month][2], goDeals: () => set({ view: 'deals' }), toggleLost: () => set({ lost: !s.lost }), lostLabel: s.lost ? 'Hide lost deals' : 'Show lost deals',
+      badge: `margin-left:auto;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:${t.badgeBg};color:${t.badgeInk}`,
+      note: `font-size:13px;padding:10px 12px;border-radius:calc(${t.r} - 4px);background:${t.surf2};color:${t.ink}`,
+      dotE: dot(t.acc), dotL: dot(t.acc2), dotC: dot(t.c3),
+      pill: `display:flex;flex-direction:column;gap:2px;padding:10px 16px;border-radius:${t.r};background:${t.surf};border:${border};box-shadow:${t.shadow};font-size:12.5px`,
+      selBox: `display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:12px 16px;border-radius:${t.r};background:${t.navOn};border:1.5px solid ${t.acc};color:${t.ink}`,
+      colBox: `display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:${t.r};background:${t.surf2};min-width:0`,
+      rowStatic: rowBase,
+      sentBar: `display:block;height:100%;width:${Math.round(sent / 40 * 100)}%;background:${t.acc};border-radius:5px;transition:width .4s`,
+      warmBox: `display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px 20px;border-radius:${t.r};background:${t.surf};border:2px dashed ${t.acc}`
+    };
+  }
+}
+</script>
+</body>
+</html>
